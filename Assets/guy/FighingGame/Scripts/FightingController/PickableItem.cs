@@ -8,6 +8,7 @@ public class PickableItem : MonoBehaviour
     
     [Header("Animations")]
     public string[] weaponAttackAnimations = {"Attack_Weapon1", "Attack_Weapon2", "Attack_Weapon3", "Attack_Weapon4"};
+    public AudioClip[] weaponAttackSounds;
 
     private Rigidbody rb;
     private Collider col;

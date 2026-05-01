@@ -31,11 +31,15 @@ public class FightingController : MonoBehaviour
     private PickableItem heldItem; 
 
     [Header("Effects and Sound")]
+    [Range(0f, 1f)] public float sfxVolume = 1f;
     public ParticleSystem attack1Effect;
     public ParticleSystem attack2Effect;
     public ParticleSystem attack3Effect;
     public ParticleSystem attack4Effect;
+    public AudioClip[] attackSounds;
+    public AudioClip dodgeSound;
     public AudioClip[] hitSounds;
+    private AudioSource audioSource;
 
     [Header("Health")]
     public int maxHealth = 100;
@@ -47,6 +51,15 @@ public class FightingController : MonoBehaviour
         currentHealth = maxHealth;
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+        
+        // Setup AudioSource
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        audioSource.spatialBlend = 0f; // 0 = 2D Sound (เสียงดังเท่ากันไม่ว่ามุมกล้องจะอยู่ไหน)
+        audioSource.playOnAwake = false;
     }
 
     void Update()
@@ -119,6 +132,33 @@ public class FightingController : MonoBehaviour
             {
                 animator.CrossFade(animationName, 0.1f);
                 
+                // เล่นเสียงการโจมตี
+                AudioClip clipToPlay = null;
+
+                if (heldItem != null)
+                {
+                    // กรณีถืออาวุธ: ดึงเสียงจากอาวุธมาใช้
+                    if (heldItem.weaponAttackSounds != null && heldItem.weaponAttackSounds.Length > 0)
+                    {
+                        int soundIndex = Mathf.Clamp(attackIndex, 0, heldItem.weaponAttackSounds.Length - 1);
+                        clipToPlay = heldItem.weaponAttackSounds[soundIndex];
+                    }
+                }
+                else
+                {
+                    // กรณีมือเปล่า: ดึงเสียงต่อย/เตะแบบเดิม
+                    if (attackSounds != null && attackSounds.Length > 0)
+                    {
+                        int soundIndex = Mathf.Clamp(attackIndex, 0, attackSounds.Length - 1);
+                        clipToPlay = attackSounds[soundIndex];
+                    }
+                }
+
+                if (clipToPlay != null)
+                {
+                    audioSource.PlayOneShot(clipToPlay, sfxVolume);
+                }
+                
                 int damage = attackDamages + (heldItem != null ? heldItem.additionalDamage : 0);
                 Debug.Log("Attack: " + animationName + " | Damage: " + damage);
 
@@ -166,6 +206,13 @@ public class FightingController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q) && Time.time - lastDodgeTime > dodgeCooldown)
         {
             animator.Play("DodgeFrontAnimation");
+            
+            // เล่นเสียงตอนพุ่งหลบ (ถ้ามี)
+            if (dodgeSound != null)
+            {
+                audioSource.PlayOneShot(dodgeSound, sfxVolume);
+            }
+            
             Vector3 dodgeDirection = transform.forward * dodgeDistance;
             characterController.Move(dodgeDirection);
             lastDodgeTime = Time.time;
@@ -178,7 +225,7 @@ public class FightingController : MonoBehaviour
         if(hitSounds != null && hitSounds.Length > 0)
         {
             int randomIndex = Random.Range(0, hitSounds.Length);
-            AudioSource.PlayClipAtPoint(hitSounds[randomIndex], transform.position);
+            audioSource.PlayOneShot(hitSounds[randomIndex], sfxVolume);
         }
         currentHealth -= takeDamage;
         if(healthBar != null) healthBar.SetHealth(currentHealth);
