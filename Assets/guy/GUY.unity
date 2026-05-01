@@ -16873,10 +16873,7 @@ MonoBehaviour:
   itemName: Weapon
   additionalDamage: 10
   weaponAttackAnimations:
-  - Attack_Weapon1
-  - Attack_Weapon2
-  - Attack_Weapon3
-  - Attack_Weapon4
+  - Attack_Human3
   weaponAttackSounds: []
 --- !u!1 &4891759945516303062
 GameObject:
