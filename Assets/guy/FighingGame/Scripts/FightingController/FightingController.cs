@@ -30,17 +30,17 @@ public class FightingController : MonoBehaviour
     public float pickupRange = 2.5f; 
     private PickableItem heldItem; 
 
-     [Header("Effects and Sound")]
+    [Header("Effects and Sound")]
     public ParticleSystem attack1Effect;
     public ParticleSystem attack2Effect;
     public ParticleSystem attack3Effect;
     public ParticleSystem attack4Effect;
     public AudioClip[] hitSounds;
 
-     [Header("Health")]
-     public int maxHealth = 100;
-     public int currentHealth;
-     public HealthBar healthBar;
+    [Header("Health")]
+    public int maxHealth = 100;
+    public int currentHealth;
+    public HealthBar healthBar;
 
     void Awake()
     {
@@ -54,7 +54,6 @@ public class FightingController : MonoBehaviour
         PerformMovement();
         PerformDodgeFront();
 
-        // ตรวจสอบการกดปุ่มเพื่อส่งค่า Index (0-3) ไปยังฟังก์ชันโจมตี
         if (Input.GetKeyDown(KeyCode.H)) PerformAttack(0);
         else if (Input.GetKeyDown(KeyCode.J)) PerformAttack(1);
         else if (Input.GetKeyDown(KeyCode.K)) PerformAttack(2);
@@ -92,7 +91,6 @@ public class FightingController : MonoBehaviour
         characterController.Move(moveVector * Time.deltaTime);
     }
 
-    // ฟังก์ชันโจมตีที่ปรับปรุงใหม่: แยกแอนิเมชันอาวุธและมือเปล่า
     void PerformAttack(int attackIndex)
     {
         if (Time.time - lastAttackTime > attackCooldown)
@@ -102,14 +100,10 @@ public class FightingController : MonoBehaviour
             if (heldItem != null)
             {
                 // --- กรณีถืออาวุธ ---
-                // ถ้าอาวุธมีท่าตามปุ่มที่กด (0-3) ให้ใช้ท่านั้น ถ้าไม่มีให้ใช้ท่าแรก (0)
+                // มีท่าตามปุ่มที่กดเท่านั้น ถ้าไม่มีช่องนั้นจะไม่ทำอะไรเลย
                 if (attackIndex < heldItem.weaponAttackAnimations.Length)
                 {
                     animationName = heldItem.weaponAttackAnimations[attackIndex];
-                }
-                else if (heldItem.weaponAttackAnimations.Length > 0)
-                {
-                    animationName = heldItem.weaponAttackAnimations[0];
                 }
             }
             else
@@ -121,7 +115,6 @@ public class FightingController : MonoBehaviour
                 }
             }
 
-            // เล่นแอนิเมชันด้วย CrossFade เพื่อความสมูท (ไม่กระตุก)
             if (!string.IsNullOrEmpty(animationName))
             {
                 animator.CrossFade(animationName, 0.1f);
@@ -131,12 +124,12 @@ public class FightingController : MonoBehaviour
 
                 lastAttackTime = Time.time;
 
-                // จัดการความเสียหายศัตรู
                 foreach(Transform opponent in opponents)
                 {
                     if(Vector3.Distance(transform.position, opponent.position) <= attackRadius)
                     {
-                        opponent.GetComponent<OpponentAI>().StartCoroutine(opponent.GetComponent<OpponentAI>().PlayHitDamageAnimation(damage));
+                        opponent.GetComponent<OpponentAI>().StartCoroutine(
+                            opponent.GetComponent<OpponentAI>().PlayHitDamageAnimation(damage));
                     }
                 }
             }
@@ -195,7 +188,6 @@ public class FightingController : MonoBehaviour
 
     void Die() { Debug.Log("Player died."); }
 
-    // ฟังก์ชันสำหรับเรียกใช้ Particle จาก Animation Event (ถ้ามี)
     public void Attack1Effect() { if(attack1Effect) attack1Effect.Play(); }
     public void Attack2Effect() { if(attack2Effect) attack2Effect.Play(); }
     public void Attack3Effect() { if(attack3Effect) attack3Effect.Play(); }
