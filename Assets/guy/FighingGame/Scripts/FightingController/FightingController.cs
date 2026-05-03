@@ -26,6 +26,10 @@ public class FightingController : MonoBehaviour
     private float lastAttackTime; // เวลาโจมตีล่าสุด
     private float lastDodgeTime = -Mathf.Infinity; // เวลา dodge ล่าสุด เริ่มต้นด้วย -Infinity เพื่อให้ dodge ครั้งแรกทำได้ทันที
 
+    [Header("Inventory & Pickup")]
+    public Transform handTransform; 
+    public float pickupRange = 2.5f; 
+    private PickableItem heldItem;
      [Header("Effects and Sound")]
     public ParticleSystem attack1Effect;
     public ParticleSystem attack2Effect;
@@ -77,6 +81,8 @@ public class FightingController : MonoBehaviour
         {
             PerformAttack(3);
         }
+        if (Input.GetKeyDown(KeyCode.F)) TryPickupItem();
+        if (Input.GetKeyDown(KeyCode.G)) DropItem();
     }
 
     void PerformMovement()
@@ -107,11 +113,38 @@ public class FightingController : MonoBehaviour
         // เช็คว่าโจมตีได้หรือยัง (รอคูลดาวน์ให้ครบ)
         if (Time.time - lastAttackTime > attackCooldown)
         {
-            animator.Play(attackAnumations[attackIndex]); // เล่นแอนิเมชันตาม index
+            string animName = "";
+            int damage = 5;
+            KnockbackType kbType = KnockbackType.None;
+            float kbPower = 0f;
 
-            int damage = (attackDamages != null && attackIndex < attackDamages.Length) ? attackDamages[attackIndex] : 5;
-            KnockbackType kbType = (attackKnockbackTypes != null && attackIndex < attackKnockbackTypes.Length) ? attackKnockbackTypes[attackIndex] : KnockbackType.None;
-            float kbPower = (attackKnockbackPowers != null && attackIndex < attackKnockbackPowers.Length) ? attackKnockbackPowers[attackIndex] : 0f;
+            if (heldItem != null)
+            {
+                // ถ้าถืออาวุธอยู่ ให้ใช้ท่าของอาวุธเท่านั้น
+                if (heldItem.weaponAttackAnimations != null && attackIndex < heldItem.weaponAttackAnimations.Length) 
+                    animName = heldItem.weaponAttackAnimations[attackIndex];
+
+                // ถ้าอาวุธไม่มีท่าสำหรับปุ่มนี้ (ชื่อแอนิเมชันว่างเปล่า) ให้ยกเลิกการโจมตีเลย (ไม่ต่อยเตะ)
+                if (string.IsNullOrEmpty(animName)) return;
+
+                if (heldItem.weaponAttackDamages != null && attackIndex < heldItem.weaponAttackDamages.Length) damage = heldItem.weaponAttackDamages[attackIndex];
+                if (heldItem.weaponKnockbackTypes != null && attackIndex < heldItem.weaponKnockbackTypes.Length) kbType = heldItem.weaponKnockbackTypes[attackIndex];
+                if (heldItem.weaponKnockbackPowers != null && attackIndex < heldItem.weaponKnockbackPowers.Length) kbPower = heldItem.weaponKnockbackPowers[attackIndex];
+            }
+            else
+            {
+                // ถ้ามือเปล่า
+                if (attackAnumations != null && attackIndex < attackAnumations.Length) 
+                    animName = attackAnumations[attackIndex];
+
+                if (string.IsNullOrEmpty(animName)) return;
+
+                if (attackDamages != null && attackIndex < attackDamages.Length) damage = attackDamages[attackIndex];
+                if (attackKnockbackTypes != null && attackIndex < attackKnockbackTypes.Length) kbType = attackKnockbackTypes[attackIndex];
+                if (attackKnockbackPowers != null && attackIndex < attackKnockbackPowers.Length) kbPower = attackKnockbackPowers[attackIndex];
+            }
+
+            animator.Play(animName);
             
             Debug.Log("Performed attack " + (attackIndex + 1) + " dealing " + damage + " damage");
 
@@ -252,4 +285,28 @@ public class FightingController : MonoBehaviour
         attack4Effect.Play();
     }
     
+    void TryPickupItem()
+    {
+        if (heldItem != null) return;
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, pickupRange);
+        foreach (var hitCollider in hitColliders)
+        {
+            PickableItem item = hitCollider.GetComponent<PickableItem>();
+            if (item != null)
+            {
+                heldItem = item;
+                item.OnPickedUp(handTransform);
+                break;
+            }
+        }
+    }
+
+    void DropItem()
+    {
+        if (heldItem != null)
+        {
+            heldItem.OnDropped();
+            heldItem = null;
+        }
+    }
 }
