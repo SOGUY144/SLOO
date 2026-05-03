@@ -39,7 +39,11 @@ public class FightingController : MonoBehaviour
      public int currentHealth;
      public HealthBar healthBar;
 
-
+     [Header("Combo & Knockdown System")]
+     public int maxHitsToKnockdown = 3; // โดนตีกี่ทีล้ม
+     public float comboResetTime = 1.5f; // ไม่โดนตีกี่วิถึงจะรีเซ็ตคอมโบ
+     private int currentHitCount = 0;
+     private float lastTimeHit;
 
     void Awake()
     {
@@ -153,6 +157,30 @@ public class FightingController : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         isStunned = true; // ล็อคการกระทำ
+
+        // --- ระบบ Combo Knockdown ---
+        if (Time.time - lastTimeHit > comboResetTime)
+        {
+            currentHitCount = 0; // รีเซ็ตถ้ารอดไปได้นานพอ
+        }
+        
+        lastTimeHit = Time.time;
+        currentHitCount++; // โดนบวก 1 ฮิตเสมอ
+
+        if (kbType == KnockbackType.Knockdown)
+        {
+            // โดนท่าเกรียน ล้มเลยแล้วรีเซ็ต
+            currentHitCount = 0;
+        }
+        else if (currentHitCount >= maxHitsToKnockdown)
+        {
+            // โดนตีครบจำนวนฮิต บังคับล้ม!
+            kbType = KnockbackType.Knockdown;
+            if (kbPower < 5f) kbPower = 5f; // กำหนดแรงไถลมาตรฐานขั้นต่ำถ้าโดนคอมโบล้ม
+            currentHitCount = 0; // รีเซ็ตคอมโบ
+            Debug.Log("Combo Limit Reached! Forced Knockdown.");
+        }
+        // -----------------------------
 
         if(hitSounds != null && hitSounds.Length > 0)
         {
