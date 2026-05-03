@@ -16,7 +16,8 @@ public class FightingController : MonoBehaviour
     [Header("Player Fight")]
     public float attackCooldown = 0.5f; 
     public float dodgeCooldown = 1.5f; 
-    public int attackDamages = 5; 
+    // กำหนดดาเมจมือเปล่าแยกตามแต่ละปุ่ม (0=H, 1=J, 2=K, 3=L)
+    public int[] attackDamages = { 5, 8, 12, 15 }; 
     // ลำดับ: 0=H, 1=J, 2=K, 3=L
     public string[] attackAnumations = {"Attack1Animation","Attack2Animation","Attack3Animation","Attack4Animation"};
     public float dodgeDistance = 2f; 
@@ -159,7 +160,17 @@ public class FightingController : MonoBehaviour
                     audioSource.PlayOneShot(clipToPlay, sfxVolume);
                 }
                 
-                int damage = attackDamages + (heldItem != null ? heldItem.additionalDamage : 0);
+                // --- คำนวณดาเมจตามท่าและอาวุธที่ถือ ---
+                int damage = 5;
+                if (heldItem != null && heldItem.weaponAttackDamages != null && attackIndex < heldItem.weaponAttackDamages.Length)
+                {
+                    damage = heldItem.weaponAttackDamages[attackIndex]; // ใช้อาวุธ
+                }
+                else if (attackDamages != null && attackIndex < attackDamages.Length)
+                {
+                    damage = attackDamages[attackIndex]; // มือเปล่า
+                }
+
                 Debug.Log("Attack: " + animationName + " | Damage: " + damage);
 
                 lastAttackTime = Time.time;

@@ -536,7 +536,7 @@ MonoBehaviour:
   gravity: 9.81
   attackCooldown: 1
   dodgeCooldown: 1.5
-  attackDamages: 5
+  attackDamages: 
   attackAnumations:
   - Attack1Animation
   - Attack2Animation
@@ -5825,7 +5825,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.0036585683, y: -0.009304511, z: -0.6887976, w: -0.7248848}
   m_LocalPosition: {x: -0.00006, y: -0.00087, z: 0.00019}
-  m_LocalScale: {x: 0.011944995, y: 0.011944962, z: 0.011944998}
+  m_LocalScale: {x: 0.023980774, y: 0.023980707, z: 0.02398078}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2132960266346550218}
@@ -50942,7 +50942,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemName: Weapon
-  additionalDamage: 10
+  weaponAttackDamages: 0f00000014000000190000001e000000
   weaponAttackAnimations:
   - Attack_Human3
   weaponAttackSounds: []

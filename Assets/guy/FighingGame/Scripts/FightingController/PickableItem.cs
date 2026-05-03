@@ -4,7 +4,8 @@ public class PickableItem : MonoBehaviour
 {
     [Header("Item Settings")]
     public string itemName = "Weapon";
-    public int additionalDamage = 10;
+    // กำหนดดาเมจของอาวุธแยกตามแต่ละปุ่ม (0=H, 1=J, 2=K, 3=L)
+    public int[] weaponAttackDamages = { 15, 20, 25, 30 };
     
     [Header("Animations")]
     public string[] weaponAttackAnimations = {"Attack_Weapon1", "Attack_Weapon2", "Attack_Weapon3", "Attack_Weapon4"};
