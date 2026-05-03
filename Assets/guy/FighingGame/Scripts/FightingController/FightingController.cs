@@ -10,11 +10,14 @@ public class FightingController : MonoBehaviour
     public float rotationSpeed = 10f; // ความเร็วในการหมุนตัวของตัวละคร
     private CharacterController characterController; // ใช้ควบคุมการชนของตัวละคร
     private Animator animator; // ควบคุมแอนิเมชันของตัวละคร
+    public bool isStunned = false;
 
     [Header("Player Fight")]
     public float attackCooldown = 0.5f; // คูลดาวน์ของการโจมตี
     public float dodgeCooldown = 1.5f; // คูลดาวน์ของการหลบ
-    public int attackDamages = 5; // ความเสียหายของการโจมตี
+    public int[] attackDamages = { 5, 8, 12, 15 }; // ความเสียหายแต่ละท่า
+    public KnockbackType[] attackKnockbackTypes = { KnockbackType.None, KnockbackType.None, KnockbackType.Pushback, KnockbackType.Knockdown };
+    public float[] attackKnockbackPowers = { 0f, 0f, 3f, 6f };
     // รายชื่อแอนิเมชันของการโจมตีแต่ละแบบ (0 = Attack1, 1 = Attack2, ...)
     public string[] attackAnumations = {"Attack1Animation","Attack2Animation","Attack3Animation","Attack4Animation"};
     public float dodgeDistance = 2f; // ระยะที่ตัวละครจะพุ่งไปข้างหน้าตอน dodge
@@ -48,6 +51,8 @@ public class FightingController : MonoBehaviour
 
     void Update()
     {
+        if (isStunned) return; // ล็อคการขยับและโจมตีตอนติดสตัน
+
         PerformMovement(); // เรียกฟังก์ชันเคลื่อนที่
         PerformDodgeFront(); // เรียกฟังก์ชันหลบ
 
@@ -100,7 +105,10 @@ public class FightingController : MonoBehaviour
         {
             animator.Play(attackAnumations[attackIndex]); // เล่นแอนิเมชันตาม index
 
-            int damage = attackDamages; // กำหนดความเสียหาย (ตอนนี้ fix เป็นค่าคงที่)
+            int damage = attackDamages[attackIndex];
+            KnockbackType kbType = attackKnockbackTypes[attackIndex];
+            float kbPower = attackKnockbackPowers[attackIndex];
+            
             Debug.Log("Performed attack " + (attackIndex + 1) + " dealing " + damage + " damage");
 
             lastAttackTime = Time.time; // บันทึกเวลาโจมตีล่าสุด
@@ -109,7 +117,9 @@ public class FightingController : MonoBehaviour
             {
                 if(Vector3.Distance(transform.position,opponent.position) <= attackRadius)
                 {
-                    opponent.GetComponent<OpponentAI>().StartCoroutine(opponent.GetComponent<OpponentAI>().PlayHitDamageAnimation(attackDamages));
+                    Vector3 kbDir = (opponent.position - transform.position).normalized;
+                    kbDir.y = 0; // ป้องกันการลอยขึ้นฟ้า
+                    opponent.GetComponent<OpponentAI>().StartCoroutine(opponent.GetComponent<OpponentAI>().PlayHitDamageAnimation(damage, kbType, kbDir, kbPower));
                 }
             }
         }
@@ -138,9 +148,11 @@ public class FightingController : MonoBehaviour
         }
     }
 
-    public IEnumerator PlayHitDamageAnimation(int takeDamage)
+    public IEnumerator PlayHitDamageAnimation(int takeDamage, KnockbackType kbType = KnockbackType.None, Vector3 kbDir = default(Vector3), float kbPower = 0f)
     {
         yield return new WaitForSeconds(0.5f);
+
+        isStunned = true; // ล็อคการกระทำ
 
         if(hitSounds != null && hitSounds.Length > 0)
         {
@@ -156,8 +168,38 @@ public class FightingController : MonoBehaviour
             Die();
         }
 
+        if (kbType == KnockbackType.Knockdown)
+        {
+            animator.Play("KnockdownAnimation");
+            StartCoroutine(ApplyKnockbackRoutine(kbDir, kbPower, 2.5f));
+        }
+        else if (kbType == KnockbackType.Pushback)
+        {
+            animator.Play("PushbackAnimation");
+            StartCoroutine(ApplyKnockbackRoutine(kbDir, kbPower, 1.0f));
+        }
+        else
+        {
+            animator.Play("HitDamageAnimation");
+            yield return new WaitForSeconds(0.5f);
+            isStunned = false;
+        }
+    }
 
-        animator.Play("HitDamageAnimation");
+    private IEnumerator ApplyKnockbackRoutine(Vector3 direction, float power, float stunDuration)
+    {
+        float timer = 0f;
+        float moveDuration = 0.3f; // เวลาไถล
+
+        while (timer < moveDuration)
+        {
+            characterController.Move(direction * power * Time.deltaTime);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(stunDuration - moveDuration);
+        isStunned = false;
     }
 
     void Die()

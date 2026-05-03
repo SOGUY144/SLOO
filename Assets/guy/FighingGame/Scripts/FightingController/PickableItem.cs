@@ -6,6 +6,8 @@ public class PickableItem : MonoBehaviour
     public string itemName = "Weapon";
     // กำหนดดาเมจของอาวุธแยกตามแต่ละปุ่ม (0=H, 1=J, 2=K, 3=L)
     public int[] weaponAttackDamages = { 15, 20, 25, 30 };
+    public KnockbackType[] weaponKnockbackTypes = { KnockbackType.None, KnockbackType.None, KnockbackType.Pushback, KnockbackType.Knockdown };
+    public float[] weaponKnockbackPowers = { 0f, 0f, 2f, 5f };
     
     [Header("Animations")]
     public string[] weaponAttackAnimations = {"Attack_Weapon1", "Attack_Weapon2", "Attack_Weapon3", "Attack_Weapon4"};
