@@ -92,9 +92,9 @@ public class OpponentAI : MonoBehaviour
                         PerformAttack(randomAttackIndex);
                     }
 
-                    int damage = attackDamages[randomAttackIndex];
-                    KnockbackType kbType = attackKnockbackTypes[randomAttackIndex];
-                    float kbPower = attackKnockbackPowers[randomAttackIndex];
+                    int damage = (attackDamages != null && randomAttackIndex < attackDamages.Length) ? attackDamages[randomAttackIndex] : 5;
+                    KnockbackType kbType = (attackKnockbackTypes != null && randomAttackIndex < attackKnockbackTypes.Length) ? attackKnockbackTypes[randomAttackIndex] : KnockbackType.None;
+                    float kbPower = (attackKnockbackPowers != null && randomAttackIndex < attackKnockbackPowers.Length) ? attackKnockbackPowers[randomAttackIndex] : 0f;
                     Vector3 kbDir = (players[i].position - transform.position).normalized;
                     kbDir.y = 0; // ป้องกันลอยขึ้นฟ้า
 
@@ -129,7 +129,7 @@ public class OpponentAI : MonoBehaviour
             if (audioSource != null) audioSource.PlayOneShot(attackSounds[soundIndex], sfxVolume);
         }
 
-        int damage = attackDamages[attackIndex]; // ความเสียหายตามท่า
+        int damage = (attackDamages != null && attackIndex < attackDamages.Length) ? attackDamages[attackIndex] : 5;
         Debug.Log("Performed attack " + (attackIndex + 1) + " dealing " + damage + " damage"); // แสดงใน Console
 
         lastAttackTime = Time.time; // บันทึกเวลาโจมตีล่าสุด

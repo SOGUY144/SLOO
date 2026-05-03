@@ -564,9 +564,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 5
   rotationSpeed: 10
+  isStunned: 0
   attackCooldown: 1
   dodgeCooldown: 1.5
-  attackDamages: 5
+  attackDamages: 
+  attackKnockbackTypes: 00000000000000000100000002000000
+  attackKnockbackPowers:
+  - 0
+  - 0
+  - 3
+  - 6
   attackAnumations:
   - Attack1Animation
   - Attack2Animation
@@ -584,6 +591,8 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   healthBar: {fileID: 0}
+  maxHitsToKnockdown: 3
+  comboResetTime: 1.5
 --- !u!1 &54671748258850589
 GameObject:
   m_ObjectHideFlags: 0
@@ -52014,6 +52023,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponKnockbackTypes: 00000000000000000100000002000000
+  weaponKnockbackPowers:
+  - 0
+  - 0
+  - 2
+  - 5
   weaponAttackAnimations:
   - Attack_Human3
   weaponAttackSounds: []
@@ -72229,7 +72244,13 @@ MonoBehaviour:
   animator: {fileID: 2366250876831597877}
   attackCooldown: 1
   dodgeCooldown: 1.5
-  attackDamages: 5
+  attackDamages: 00000000000000000000000000000000
+  attackKnockbackTypes: 00000000000000000100000002000000
+  attackKnockbackPowers:
+  - 0
+  - 0
+  - 3
+  - 6
   attackAnumations:
   - Attack1Animation
   - Attack2Animation
@@ -72244,6 +72265,7 @@ MonoBehaviour:
   players:
   - {fileID: 1047230137830956862}
   isTakingFammage: 0
+  isStunned: 0
   sfxVolume: 1
   attack1Effect: {fileID: 0}
   attack2Effect: {fileID: 0}
@@ -72254,6 +72276,8 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   healthBar: {fileID: 0}
+  maxHitsToKnockdown: 3
+  comboResetTime: 1.5
 --- !u!1 &5966771726529860350
 GameObject:
   m_ObjectHideFlags: 0

@@ -109,9 +109,9 @@ public class FightingController : MonoBehaviour
         {
             animator.Play(attackAnumations[attackIndex]); // เล่นแอนิเมชันตาม index
 
-            int damage = attackDamages[attackIndex];
-            KnockbackType kbType = attackKnockbackTypes[attackIndex];
-            float kbPower = attackKnockbackPowers[attackIndex];
+            int damage = (attackDamages != null && attackIndex < attackDamages.Length) ? attackDamages[attackIndex] : 5;
+            KnockbackType kbType = (attackKnockbackTypes != null && attackIndex < attackKnockbackTypes.Length) ? attackKnockbackTypes[attackIndex] : KnockbackType.None;
+            float kbPower = (attackKnockbackPowers != null && attackIndex < attackKnockbackPowers.Length) ? attackKnockbackPowers[attackIndex] : 0f;
             
             Debug.Log("Performed attack " + (attackIndex + 1) + " dealing " + damage + " damage");
 
