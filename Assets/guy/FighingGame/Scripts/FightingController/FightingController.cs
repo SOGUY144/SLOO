@@ -2,252 +2,184 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// ควบคุมการเคลื่อนที่และการโจมตีของตัวละคร (ฉบับปรับปรุงระบบ Moveset)
+// ควบคุมการเคลื่อนที่และการโจมตีของตัวละคร
 public class FightingController : MonoBehaviour
 {
     [Header("Player Movement")]
-    public float movementSpeed = 5f;
-    public float rotationSpeed = 10f;
-    public float gravity = 9.81f;
-    private float verticalVelocity;
-    private CharacterController characterController;
-    private Animator animator;
+    public float movementSpeed = 1f; // ความเร็วในการเคลื่อนที่ของตัวละคร
+    public float rotationSpeed = 10f; // ความเร็วในการหมุนตัวของตัวละคร
+    private CharacterController characterController; // ใช้ควบคุมการชนของตัวละคร
+    private Animator animator; // ควบคุมแอนิเมชันของตัวละคร
 
     [Header("Player Fight")]
-    public float attackCooldown = 0.5f; 
-    public float dodgeCooldown = 1.5f; 
-    // กำหนดดาเมจมือเปล่าแยกตามแต่ละปุ่ม (0=H, 1=J, 2=K, 3=L)
-    public int[] attackDamages = { 5, 8, 12, 15 }; 
-    // ลำดับ: 0=H, 1=J, 2=K, 3=L
+    public float attackCooldown = 0.5f; // คูลดาวน์ของการโจมตี
+    public float dodgeCooldown = 1.5f; // คูลดาวน์ของการหลบ
+    public int attackDamages = 5; // ความเสียหายของการโจมตี
+    // รายชื่อแอนิเมชันของการโจมตีแต่ละแบบ (0 = Attack1, 1 = Attack2, ...)
     public string[] attackAnumations = {"Attack1Animation","Attack2Animation","Attack3Animation","Attack4Animation"};
-    public float dodgeDistance = 2f; 
+    public float dodgeDistance = 2f; // ระยะที่ตัวละครจะพุ่งไปข้างหน้าตอน dodge
     public float attackRadius = 2.2f;
     public Transform[] opponents;
-    private float lastAttackTime; 
-    private float lastDodgeTime = -Mathf.Infinity; 
+    private float lastAttackTime; // เวลาโจมตีล่าสุด
+    private float lastDodgeTime = -Mathf.Infinity; // เวลา dodge ล่าสุด เริ่มต้นด้วย -Infinity เพื่อให้ dodge ครั้งแรกทำได้ทันที
 
-    [Header("Inventory & Pickup")]
-    public Transform handTransform; 
-    public float pickupRange = 2.5f; 
-    private PickableItem heldItem; 
-
-    [Header("Effects and Sound")]
-    [Range(0f, 1f)] public float sfxVolume = 1f;
+     [Header("Effects and Sound")]
     public ParticleSystem attack1Effect;
     public ParticleSystem attack2Effect;
     public ParticleSystem attack3Effect;
     public ParticleSystem attack4Effect;
-    public AudioClip[] attackSounds;
-    public AudioClip dodgeSound;
-    public AudioClip[] hitSounds;
-    private AudioSource audioSource;
 
-    [Header("Health")]
-    public int maxHealth = 100;
-    public int currentHealth;
-    public HealthBar healthBar;
+    public AudioClip[] hitSounds;
+
+     [Header("Health")]
+     public int maxHealth = 100;
+     public int currentHealth;
+     public HealthBar healthBar;
+
+
 
     void Awake()
     {
         currentHealth = maxHealth;
-        characterController = GetComponent<CharacterController>();
-        animator = GetComponent<Animator>();
-        
-        // Setup AudioSource
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
-        audioSource.spatialBlend = 0f; // 0 = 2D Sound (เสียงดังเท่ากันไม่ว่ามุมกล้องจะอยู่ไหน)
-        audioSource.playOnAwake = false;
+        //healthBar.GiveFullHealth(currentHealth);
+        characterController = GetComponent<CharacterController>(); // ดึงคอมโพเนนต์ CharacterController
+        animator = GetComponent<Animator>(); // ดึงคอมโพเนนต์ Animator
     }
 
     void Update()
     {
-        PerformMovement();
-        PerformDodgeFront();
+        PerformMovement(); // เรียกฟังก์ชันเคลื่อนที่
+        PerformDodgeFront(); // เรียกฟังก์ชันหลบ
 
-        if (Input.GetKeyDown(KeyCode.H)) PerformAttack(0);
-        else if (Input.GetKeyDown(KeyCode.J)) PerformAttack(1);
-        else if (Input.GetKeyDown(KeyCode.K)) PerformAttack(2);
-        else if (Input.GetKeyDown(KeyCode.L)) PerformAttack(3);
-
-        if (Input.GetKeyDown(KeyCode.F)) TryPickupItem();
-        if (Input.GetKeyDown(KeyCode.G)) DropItem();
+        // ตรวจสอบการกดปุ่มตัวเลข 1 ถึง 4 เพื่อเลือกท่าโจมตี
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            PerformAttack(0);
+        }
+        else if (Input.GetKeyDown(KeyCode.J))
+        {
+            PerformAttack(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.K))
+        {
+            PerformAttack(2);
+        }
+        else if (Input.GetKeyDown(KeyCode.L))
+        {
+            PerformAttack(3);
+        }
     }
 
     void PerformMovement()
     {
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
-        float verticalInput = Input.GetAxisRaw("Vertical");
+        float horizontalInput = Input.GetAxis("Horizontal"); // รับค่าการกดซ้าย-ขวา (A/D หรือ ลูกศร)
+        float verticalInput = Input.GetAxis("Vertical"); // รับค่าการกดหน้า-หลัง (W/S หรือ ลูกศร)
 
+        // เวกเตอร์การเคลื่อนไหว (หมายเหตุ: แกน Z กับ X ถูกสลับตามมุมกล้องของเกม)
         Vector3 movement = new Vector3(-verticalInput, 0f, horizontalInput);
 
-        if (movement.magnitude > 0.1f)
+        if (movement != Vector3.zero) // ถ้ามีการกดปุ่มเคลื่อนที่
         {
-            movement.Normalize();
-            Quaternion targetRotation = Quaternion.LookRotation(movement);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-            animator.SetBool("Walking", true);
+            Quaternion targetRotation = Quaternion.LookRotation(movement); // หมุนไปยังทิศทางของ movement
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime); // หมุนอย่างนุ่มนวล
+            animator.SetBool("Walking", true); // สั่งเล่นแอนิเมชันเดิน
         }
         else
         {
-            animator.SetBool("Walking", false);
-            movement = Vector3.zero;
+            animator.SetBool("Walking", false); // หยุดแอนิเมชันเดิน
         }
 
-        if (characterController.isGrounded) verticalVelocity = -0.5f;
-        else verticalVelocity -= gravity * Time.deltaTime;
-
-        Vector3 moveVector = movement * movementSpeed;
-        moveVector.y = verticalVelocity;
-        characterController.Move(moveVector * Time.deltaTime);
+        characterController.Move(movement * movementSpeed * Time.deltaTime); // เคลื่อนที่
     }
 
+    // ฟังก์ชันโจมตี รับ index เพื่อเลือกแอนิเมชันโจมตีจาก array
     void PerformAttack(int attackIndex)
     {
+        // เช็คว่าโจมตีได้หรือยัง (รอคูลดาวน์ให้ครบ)
         if (Time.time - lastAttackTime > attackCooldown)
         {
-            string animationName = "";
+            animator.Play(attackAnumations[attackIndex]); // เล่นแอนิเมชันตาม index
 
-            if (heldItem != null)
+            int damage = attackDamages; // กำหนดความเสียหาย (ตอนนี้ fix เป็นค่าคงที่)
+            Debug.Log("Performed attack " + (attackIndex + 1) + " dealing " + damage + " damage");
+
+            lastAttackTime = Time.time; // บันทึกเวลาโจมตีล่าสุด
+
+            foreach(Transform opponent in opponents)
             {
-                // --- กรณีถืออาวุธ ---
-                // มีท่าตามปุ่มที่กดเท่านั้น ถ้าไม่มีช่องนั้นจะไม่ทำอะไรเลย
-                if (attackIndex < heldItem.weaponAttackAnimations.Length)
+                if(Vector3.Distance(transform.position,opponent.position) <= attackRadius)
                 {
-                    animationName = heldItem.weaponAttackAnimations[attackIndex];
-                }
-            }
-            else
-            {
-                // --- กรณีมือเปล่า ---
-                if (attackIndex < attackAnumations.Length)
-                {
-                    animationName = attackAnumations[attackIndex];
-                }
-            }
-
-            if (!string.IsNullOrEmpty(animationName))
-            {
-                animator.CrossFade(animationName, 0.1f);
-                
-                // เล่นเสียงการโจมตี
-                AudioClip clipToPlay = null;
-
-                if (heldItem != null)
-                {
-                    // กรณีถืออาวุธ: ดึงเสียงจากอาวุธมาใช้
-                    if (heldItem.weaponAttackSounds != null && heldItem.weaponAttackSounds.Length > 0)
-                    {
-                        int soundIndex = Mathf.Clamp(attackIndex, 0, heldItem.weaponAttackSounds.Length - 1);
-                        clipToPlay = heldItem.weaponAttackSounds[soundIndex];
-                    }
-                }
-                else
-                {
-                    // กรณีมือเปล่า: ดึงเสียงต่อย/เตะแบบเดิม
-                    if (attackSounds != null && attackSounds.Length > 0)
-                    {
-                        int soundIndex = Mathf.Clamp(attackIndex, 0, attackSounds.Length - 1);
-                        clipToPlay = attackSounds[soundIndex];
-                    }
-                }
-
-                if (clipToPlay != null)
-                {
-                    audioSource.PlayOneShot(clipToPlay, sfxVolume);
-                }
-                
-                // --- คำนวณดาเมจตามท่าและอาวุธที่ถือ ---
-                int damage = 5;
-                if (heldItem != null && heldItem.weaponAttackDamages != null && attackIndex < heldItem.weaponAttackDamages.Length)
-                {
-                    damage = heldItem.weaponAttackDamages[attackIndex]; // ใช้อาวุธ
-                }
-                else if (attackDamages != null && attackIndex < attackDamages.Length)
-                {
-                    damage = attackDamages[attackIndex]; // มือเปล่า
-                }
-
-                Debug.Log("Attack: " + animationName + " | Damage: " + damage);
-
-                lastAttackTime = Time.time;
-
-                foreach(Transform opponent in opponents)
-                {
-                    if(Vector3.Distance(transform.position, opponent.position) <= attackRadius)
-                    {
-                        opponent.GetComponent<OpponentAI>().StartCoroutine(
-                            opponent.GetComponent<OpponentAI>().PlayHitDamageAnimation(damage));
-                    }
+                    opponent.GetComponent<OpponentAI>().StartCoroutine(opponent.GetComponent<OpponentAI>().PlayHitDamageAnimation(attackDamages));
                 }
             }
         }
-    }
-
-    void TryPickupItem()
-    {
-        if (heldItem != null) return;
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, pickupRange);
-        foreach (var hitCollider in hitColliders)
+        else
         {
-            PickableItem item = hitCollider.GetComponent<PickableItem>();
-            if (item != null)
-            {
-                heldItem = item;
-                item.OnPickedUp(handTransform);
-                break;
-            }
+            Debug.Log("Cannot perform attack yet. Cooldown time remaining."); // แจ้งว่ากำลังคูลดาวน์
         }
     }
 
-    void DropItem()
-    {
-        if (heldItem != null)
-        {
-            heldItem.OnDropped();
-            heldItem = null;
-        }
-    }
-
+    // ฟังก์ชันหลบไปด้านหน้า (Dodge)
     void PerformDodgeFront()
     {
-        if (Input.GetKeyDown(KeyCode.Q) && Time.time - lastDodgeTime > dodgeCooldown)
+        // ตรวจสอบว่า Player กด E และพ้นระยะคูลดาวน์หรือยัง
+        if (Input.GetKeyDown(KeyCode.E) && Time.time - lastDodgeTime > dodgeCooldown)
         {
-            animator.Play("DodgeFrontAnimation");
-            
-            // เล่นเสียงตอนพุ่งหลบ (ถ้ามี)
-            if (dodgeSound != null)
-            {
-                audioSource.PlayOneShot(dodgeSound, sfxVolume);
-            }
-            
-            Vector3 dodgeDirection = transform.forward * dodgeDistance;
-            characterController.Move(dodgeDirection);
-            lastDodgeTime = Time.time;
+            animator.Play("DodgeFrontAnimation"); // เล่นแอนิเมชันหลบ
+
+            Vector3 dodgeDirection = transform.forward * dodgeDistance; // คำนวณทิศทางหลบ (ไปข้างหน้า)
+            characterController.Move(dodgeDirection); // สั่งหลบโดยการ Move ตัวละคร
+
+            lastDodgeTime = Time.time; // บันทึกเวลาหลบล่าสุด
+        }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            Debug.Log("Cannot dodge yet. Cooldown time remaining."); // แจ้งว่าหลบไม่ได้เพราะยังไม่พ้นคูลดาวน์
         }
     }
 
     public IEnumerator PlayHitDamageAnimation(int takeDamage)
     {
         yield return new WaitForSeconds(0.5f);
+
         if(hitSounds != null && hitSounds.Length > 0)
         {
             int randomIndex = Random.Range(0, hitSounds.Length);
-            audioSource.PlayOneShot(hitSounds[randomIndex], sfxVolume);
+            AudioSource.PlayClipAtPoint(hitSounds[randomIndex], transform.position);
         }
+
         currentHealth -= takeDamage;
-        if(healthBar != null) healthBar.SetHealth(currentHealth);
-        if(currentHealth <= 0) Die();
+        healthBar.SetHealth(currentHealth);
+
+        if(currentHealth <= 0)
+        {
+            Die();
+        }
+
+
         animator.Play("HitDamageAnimation");
     }
 
-    void Die() { Debug.Log("Player died."); }
+    void Die()
+    {
+        Debug.Log("Player died.");
+    }
 
-    public void Attack1Effect() { if(attack1Effect) attack1Effect.Play(); }
-    public void Attack2Effect() { if(attack2Effect) attack2Effect.Play(); }
-    public void Attack3Effect() { if(attack3Effect) attack3Effect.Play(); }
-    public void Attack4Effect() { if(attack4Effect) attack4Effect.Play(); }
+    public void Attack1Effect()
+    {
+        attack1Effect.Play();
+    }
+     public void Attack2Effect()
+    {
+        attack2Effect.Play();
+    }
+     public void Attack3Effect()
+    {
+        attack3Effect.Play();
+    }
+     public void Attack4Effect()
+    {
+        attack4Effect.Play();
+    }
+    
 }

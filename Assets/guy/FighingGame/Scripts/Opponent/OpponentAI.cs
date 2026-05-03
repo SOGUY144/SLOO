@@ -26,12 +26,15 @@ public class OpponentAI : MonoBehaviour
     private float lastDodgeTime = -Mathf.Infinity; // เวลา dodge ล่าสุด เริ่มที่ -Infinity เพื่อให้สามารถหลบได้ทันทีเมื่อเริ่ม
 
     [Header("Effects and Sound")]
+    [Range(0f, 1f)] public float sfxVolume = 1f; // ความดังของเสียง
     public ParticleSystem attack1Effect; // เอฟเฟกต์สำหรับการโจมตีที่ 1
     public ParticleSystem attack2Effect; // เอฟเฟกต์สำหรับการโจมตีที่ 2
     public ParticleSystem attack3Effect; // เอฟเฟกต์สำหรับการโจมตีที่ 3
     public ParticleSystem attack4Effect; // เอฟเฟกต์สำหรับการโจมตีที่ 4
     
-    public AudioClip[] hitSounds;
+    public AudioClip[] attackSounds; // เสียงตอนโจมตี
+    public AudioClip[] hitSounds; // เสียงตอนโดนตี
+    private AudioSource audioSource;
 
     [Header("Health")]
     public int maxHealth = 100;
@@ -43,6 +46,15 @@ public class OpponentAI : MonoBehaviour
         currentHealth = maxHealth;
         //healthBar.GiveFullHealth(currentHealth);
         CreateRandomNuber(); // สร้างเลขสุ่มตอนเริ่มเกม
+
+        // ติดตั้ง AudioSource สำหรับเล่นเสียง
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        audioSource.spatialBlend = 1f; // 1 = 3D Sound (เสียงเบาลงตามระยะห่าง)
+        audioSource.playOnAwake = false;
     }
 
     void Update()
@@ -93,6 +105,13 @@ public class OpponentAI : MonoBehaviour
     {
         animator.Play(attackAnumations[attackIndex]); // เล่นแอนิเมชันตาม index ที่ส่งเข้ามา
 
+        // --- เล่นเสียงโจมตี ---
+        if (attackSounds != null && attackSounds.Length > 0)
+        {
+            int soundIndex = Mathf.Clamp(attackIndex, 0, attackSounds.Length - 1);
+            if (audioSource != null) audioSource.PlayOneShot(attackSounds[soundIndex], sfxVolume);
+        }
+
         int damage = attackDamages; // ความเสียหายคงที่
         Debug.Log("Performed attack " + (attackIndex + 1) + " dealing " + damage + " damage"); // แสดงใน Console
 
@@ -123,7 +142,8 @@ public class OpponentAI : MonoBehaviour
         if(hitSounds != null && hitSounds.Length > 0)
         {
             int randomIndex = Random.Range(0, hitSounds.Length);
-            AudioSource.PlayClipAtPoint(hitSounds[randomIndex], transform.position);
+            if (audioSource != null) audioSource.PlayOneShot(hitSounds[randomIndex], sfxVolume);
+            else AudioSource.PlayClipAtPoint(hitSounds[randomIndex], transform.position);
         }
 
         currentHealth -= takeDamage;
