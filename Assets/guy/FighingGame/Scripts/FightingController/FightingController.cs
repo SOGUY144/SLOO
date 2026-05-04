@@ -2,115 +2,139 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// ควบคุมการเคลื่อนที่และการโจมตีของตัวละคร
 public class FightingController : MonoBehaviour
 {
     [Header("Player Movement")]
-    public float movementSpeed = 1f; // ความเร็วในการเคลื่อนที่ของตัวละคร
-    public float rotationSpeed = 10f; // ความเร็วในการหมุนตัวของตัวละคร
-    private CharacterController characterController; // ใช้ควบคุมการชนของตัวละคร
-    private Animator animator; // ควบคุมแอนิเมชันของตัวละคร
+    public float movementSpeed = 5f; // ปรับตามภาพ image_9b05fb.jpg
+    public float rotationSpeed = 10f; 
+    private CharacterController characterController; 
+    private Animator animator; 
     public bool isStunned = false;
 
     [Header("Player Fight")]
-    public float attackCooldown = 0.5f; // คูลดาวน์ของการโจมตี
-    public float dodgeCooldown = 1.5f; // คูลดาวน์ของการหลบ
-    public int[] attackDamages = { 5, 8, 12, 15 }; // ความเสียหายแต่ละท่า
-    public KnockbackType[] attackKnockbackTypes = { KnockbackType.None, KnockbackType.None, KnockbackType.Pushback, KnockbackType.Knockdown };
-    public float[] attackKnockbackPowers = { 0f, 0f, 3f, 6f };
-    // รายชื่อแอนิเมชันของการโจมตีแต่ละแบบ (0 = Attack1, 1 = Attack2, ...)
-    public string[] attackAnumations = {"Attack1Animation","Attack2Animation","Attack3Animation","Attack4Animation"};
-    public float dodgeDistance = 2f; // ระยะที่ตัวละครจะพุ่งไปข้างหน้าตอน dodge
+    public float attackCooldown = 1f; // ปรับตามภาพ image_9b05fb.jpg
+    public float dodgeCooldown = 1.5f; 
+    public int[] attackDamages; 
+    public KnockbackType[] attackKnockbackTypes;
+    public float[] attackKnockbackPowers;
+    public string[] attackAnumations;
+    public float dodgeDistance = 2f; 
     public float attackRadius = 2.2f;
     public Transform[] opponents;
-    private float lastAttackTime; // เวลาโจมตีล่าสุด
-    private float lastDodgeTime = -Mathf.Infinity; // เวลา dodge ล่าสุด เริ่มต้นด้วย -Infinity เพื่อให้ dodge ครั้งแรกทำได้ทันที
+    private float lastAttackTime; 
+    private float lastDodgeTime = -Mathf.Infinity; 
 
     [Header("Inventory & Pickup")]
     public Transform handTransform; 
     public float pickupRange = 2.5f; 
     private PickableItem heldItem;
-     [Header("Effects and Sound")]
+
+    [Header("Effects and Sound")]
     public ParticleSystem attack1Effect;
     public ParticleSystem attack2Effect;
     public ParticleSystem attack3Effect;
     public ParticleSystem attack4Effect;
-
     public AudioClip[] hitSounds;
 
-     [Header("Health")]
-     public int maxHealth = 100;
-     public int currentHealth;
-     public HealthBar healthBar;
+    [Header("Health")]
+    public int maxHealth = 100;
+    public int currentHealth;
+    public HealthBar healthBar;
 
-     [Header("Combo & Knockdown System")]
-     public int maxHitsToKnockdown = 3; // โดนตีกี่ทีล้ม
-     public float comboResetTime = 1.5f; // ไม่โดนตีกี่วิถึงจะรีเซ็ตคอมโบ
-     private int currentHitCount = 0;
-     private float lastTimeHit;
+    [Header("Combo & Knockdown System")]
+    public int maxHitsToKnockdown = 5; 
+    public float comboWindowTime = 1.5f; 
+    private int currentHitCount = 0;
+    private float lastTimeHit;
 
     void Awake()
     {
         currentHealth = maxHealth;
-        //healthBar.GiveFullHealth(currentHealth);
-        characterController = GetComponent<CharacterController>(); // ดึงคอมโพเนนต์ CharacterController
-        animator = GetComponent<Animator>(); // ดึงคอมโพเนนต์ Animator
+        characterController = GetComponent<CharacterController>(); 
+        animator = GetComponent<Animator>(); 
     }
 
     void Update()
     {
-        if (isStunned) return; // ล็อคการขยับและโจมตีตอนติดสตัน
+        if (isStunned) return; 
 
-        PerformMovement(); // เรียกฟังก์ชันเคลื่อนที่
-        PerformDodgeFront(); // เรียกฟังก์ชันหลบ
+        PerformMovement(); 
+        PerformDodgeFront(); 
 
-        // ตรวจสอบการกดปุ่มตัวเลข 1 ถึง 4 เพื่อเลือกท่าโจมตี
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            PerformAttack(0);
-        }
-        else if (Input.GetKeyDown(KeyCode.J))
-        {
-            PerformAttack(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.K))
-        {
-            PerformAttack(2);
-        }
-        else if (Input.GetKeyDown(KeyCode.L))
-        {
-            PerformAttack(3);
-        }
+        if (Input.GetKeyDown(KeyCode.H)) PerformAttack(0);
+        else if (Input.GetKeyDown(KeyCode.J)) PerformAttack(1);
+        else if (Input.GetKeyDown(KeyCode.K)) PerformAttack(2);
+        else if (Input.GetKeyDown(KeyCode.L)) PerformAttack(3);
+        
         if (Input.GetKeyDown(KeyCode.F)) TryPickupItem();
         if (Input.GetKeyDown(KeyCode.G)) DropItem();
     }
 
-    void PerformMovement()
+    // --- ส่วนที่ปรับปรุง: ระบบโดนโจมตีแบบล้มแล้วลุกตาม Animator ---
+    public IEnumerator PlayHitDamageAnimation(int takeDamage, KnockbackType kbType = KnockbackType.None, Vector3 kbDir = default(Vector3), float kbPower = 0f)
     {
-        float horizontalInput = Input.GetAxis("Horizontal"); // รับค่าการกดซ้าย-ขวา (A/D หรือ ลูกศร)
-        float verticalInput = Input.GetAxis("Vertical"); // รับค่าการกดหน้า-หลัง (W/S หรือ ลูกศร)
-
-        // เวกเตอร์การเคลื่อนไหว (หมายเหตุ: แกน Z กับ X ถูกสลับตามมุมกล้องของเกม)
-        Vector3 movement = new Vector3(-verticalInput, 0f, horizontalInput);
-
-        if (movement != Vector3.zero) // ถ้ามีการกดปุ่มเคลื่อนที่
+        // ระบบนับคอมโบภายในเวลา 1.5 วินาที
+        if (Time.time - lastTimeHit > comboWindowTime)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(movement); // หมุนไปยังทิศทางของ movement
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime); // หมุนอย่างนุ่มนวล
-            animator.SetBool("Walking", true); // สั่งเล่นแอนิเมชันเดิน
+            currentHitCount = 0;
+        }
+        
+        lastTimeHit = Time.time; 
+        currentHitCount++; 
+        isStunned = true; 
+
+        currentHealth -= takeDamage;
+        if(healthBar != null) healthBar.SetHealth(currentHealth);
+        if(hitSounds != null && hitSounds.Length > 0)
+        {
+            AudioSource.PlayClipAtPoint(hitSounds[Random.Range(0, hitSounds.Length)], transform.position);
+        }
+
+        // เช็กเงื่อนไขล้ม (โดนครบ 5 ครั้ง)
+        if (currentHitCount >= maxHitsToKnockdown)
+        {
+            currentHitCount = 0; 
+
+            // สั่งเล่นท่าล้มตามชื่อในภาพ image_9a91f6.jpg
+            animator.Play("Falling_Down"); 
+            
+            // ใส่แรงกระเด็นถอยหลังเล็กน้อย
+            StartCoroutine(ApplyKnockbackRoutine(kbDir, 5f, 0.3f));
+            
+            // เวลารอรวมสำหรับแอนิเมชัน Falling_Down -> Getting_Up (ปรับตามความเหมาะสม)
+            yield return new WaitForSeconds(2.5f); 
         }
         else
         {
-            animator.SetBool("Walking", false); // หยุดแอนิเมชันเดิน
+            // เล่นท่าโดนตีปกติถ้ายังไม่ครบ 5 ครั้ง
+            animator.Play("HitDamageAnimation");
+            yield return new WaitForSeconds(0.5f);
         }
 
-        characterController.Move(movement * movementSpeed * Time.deltaTime); // เคลื่อนที่
+        isStunned = false; 
+        if (currentHealth <= 0) Die();
     }
 
-    // ฟังก์ชันโจมตี รับ index เพื่อเลือกแอนิเมชันโจมตีจาก array
+    // --- ฟังก์ชันช่วยเหลือ (รักษาโครงสร้างเดิม) ---
+    void PerformMovement()
+    {
+        float horizontalInput = Input.GetAxis("Horizontal"); 
+        float verticalInput = Input.GetAxis("Vertical"); 
+        Vector3 movement = new Vector3(-verticalInput, 0f, horizontalInput);
+
+        if (movement != Vector3.zero) 
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(movement); 
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime); 
+            animator.SetBool("Walking", true); 
+        }
+        else { animator.SetBool("Walking", false); }
+
+        characterController.Move(movement * movementSpeed * Time.deltaTime); 
+    }
+
     void PerformAttack(int attackIndex)
     {
-        // เช็คว่าโจมตีได้หรือยัง (รอคูลดาวน์ให้ครบ)
         if (Time.time - lastAttackTime > attackCooldown)
         {
             string animName = "";
@@ -120,11 +144,9 @@ public class FightingController : MonoBehaviour
 
             if (heldItem != null)
             {
-                // ถ้าถืออาวุธอยู่ ให้ใช้ท่าของอาวุธเท่านั้น
                 if (heldItem.weaponAttackAnimations != null && attackIndex < heldItem.weaponAttackAnimations.Length) 
                     animName = heldItem.weaponAttackAnimations[attackIndex];
 
-                // ถ้าอาวุธไม่มีท่าสำหรับปุ่มนี้ (ชื่อแอนิเมชันว่างเปล่า) ให้ยกเลิกการโจมตีเลย (ไม่ต่อยเตะ)
                 if (string.IsNullOrEmpty(animName)) return;
 
                 if (heldItem.weaponAttackDamages != null && attackIndex < heldItem.weaponAttackDamages.Length) damage = heldItem.weaponAttackDamages[attackIndex];
@@ -133,157 +155,60 @@ public class FightingController : MonoBehaviour
             }
             else
             {
-                // ถ้ามือเปล่า
-                if (attackAnumations != null && attackIndex < attackAnumations.Length) 
-                    animName = attackAnumations[attackIndex];
-
+                if (attackAnumations != null && attackIndex < attackAnumations.Length) animName = attackAnumations[attackIndex];
                 if (string.IsNullOrEmpty(animName)) return;
-
                 if (attackDamages != null && attackIndex < attackDamages.Length) damage = attackDamages[attackIndex];
                 if (attackKnockbackTypes != null && attackIndex < attackKnockbackTypes.Length) kbType = attackKnockbackTypes[attackIndex];
                 if (attackKnockbackPowers != null && attackIndex < attackKnockbackPowers.Length) kbPower = attackKnockbackPowers[attackIndex];
             }
 
             animator.Play(animName);
-            
-            Debug.Log("Performed attack " + (attackIndex + 1) + " dealing " + damage + " damage");
-
-            lastAttackTime = Time.time; // บันทึกเวลาโจมตีล่าสุด
+            lastAttackTime = Time.time; 
 
             foreach(Transform opponent in opponents)
             {
-                if(Vector3.Distance(transform.position,opponent.position) <= attackRadius)
+                if(opponent != null && Vector3.Distance(transform.position, opponent.position) <= attackRadius)
                 {
                     Vector3 kbDir = (opponent.position - transform.position).normalized;
-                    kbDir.y = 0; // ป้องกันการลอยขึ้นฟ้า
-                    opponent.GetComponent<OpponentAI>().StartCoroutine(opponent.GetComponent<OpponentAI>().PlayHitDamageAnimation(damage, kbType, kbDir, kbPower));
+                    kbDir.y = 0; 
+                    var opponentAI = opponent.GetComponent<OpponentAI>();
+                    if (opponentAI != null)
+                    {
+                        opponentAI.StartCoroutine(opponentAI.PlayHitDamageAnimation(damage, kbType, kbDir, kbPower));
+                    }
                 }
             }
         }
-        else
-        {
-            Debug.Log("Cannot perform attack yet. Cooldown time remaining."); // แจ้งว่ากำลังคูลดาวน์
-        }
     }
 
-    // ฟังก์ชันหลบไปด้านหน้า (Dodge)
     void PerformDodgeFront()
     {
-        // ตรวจสอบว่า Player กด E และพ้นระยะคูลดาวน์หรือยัง
         if (Input.GetKeyDown(KeyCode.E) && Time.time - lastDodgeTime > dodgeCooldown)
         {
-            animator.Play("DodgeFrontAnimation"); // เล่นแอนิเมชันหลบ
-
-            Vector3 dodgeDirection = transform.forward * dodgeDistance; // คำนวณทิศทางหลบ (ไปข้างหน้า)
-            characterController.Move(dodgeDirection); // สั่งหลบโดยการ Move ตัวละคร
-
-            lastDodgeTime = Time.time; // บันทึกเวลาหลบล่าสุด
-        }
-        else if (Input.GetKeyDown(KeyCode.E))
-        {
-            Debug.Log("Cannot dodge yet. Cooldown time remaining."); // แจ้งว่าหลบไม่ได้เพราะยังไม่พ้นคูลดาวน์
+            animator.Play("DodgeFrontAnimation"); 
+            Vector3 dodgeDirection = transform.forward * dodgeDistance; 
+            characterController.Move(dodgeDirection); 
+            lastDodgeTime = Time.time; 
         }
     }
 
-    public IEnumerator PlayHitDamageAnimation(int takeDamage, KnockbackType kbType = KnockbackType.None, Vector3 kbDir = default(Vector3), float kbPower = 0f)
-    {
-        yield return new WaitForSeconds(0.5f);
-
-        isStunned = true; // ล็อคการกระทำ
-
-        // --- ระบบ Combo Knockdown ---
-        if (Time.time - lastTimeHit > comboResetTime)
-        {
-            currentHitCount = 0; // รีเซ็ตถ้ารอดไปได้นานพอ
-        }
-        
-        lastTimeHit = Time.time;
-        currentHitCount++; // โดนบวก 1 ฮิตเสมอ
-
-        if (kbType == KnockbackType.Knockdown)
-        {
-            // โดนท่าเกรียน ล้มเลยแล้วรีเซ็ต
-            currentHitCount = 0;
-        }
-        else if (currentHitCount >= maxHitsToKnockdown)
-        {
-            // โดนตีครบจำนวนฮิต บังคับล้ม!
-            kbType = KnockbackType.Knockdown;
-            if (kbPower < 5f) kbPower = 5f; // กำหนดแรงไถลมาตรฐานขั้นต่ำถ้าโดนคอมโบล้ม
-            currentHitCount = 0; // รีเซ็ตคอมโบ
-            Debug.Log("Combo Limit Reached! Forced Knockdown.");
-        }
-        // -----------------------------
-
-        if(hitSounds != null && hitSounds.Length > 0)
-        {
-            int randomIndex = Random.Range(0, hitSounds.Length);
-            AudioSource.PlayClipAtPoint(hitSounds[randomIndex], transform.position);
-        }
-
-        currentHealth -= takeDamage;
-        healthBar.SetHealth(currentHealth);
-
-        if(currentHealth <= 0)
-        {
-            Die();
-        }
-
-        if (kbType == KnockbackType.Knockdown)
-        {
-            animator.Play("KnockdownAnimation");
-            StartCoroutine(ApplyKnockbackRoutine(kbDir, kbPower, 2.5f));
-        }
-        else if (kbType == KnockbackType.Pushback)
-        {
-            animator.Play("PushbackAnimation");
-            StartCoroutine(ApplyKnockbackRoutine(kbDir, kbPower, 1.0f));
-        }
-        else
-        {
-            animator.Play("HitDamageAnimation");
-            yield return new WaitForSeconds(0.5f);
-            isStunned = false;
-        }
-    }
-
-    private IEnumerator ApplyKnockbackRoutine(Vector3 direction, float power, float stunDuration)
+    private IEnumerator ApplyKnockbackRoutine(Vector3 direction, float power, float moveDuration)
     {
         float timer = 0f;
-        float moveDuration = 0.3f; // เวลาไถล
-
         while (timer < moveDuration)
         {
             characterController.Move(direction * power * Time.deltaTime);
             timer += Time.deltaTime;
             yield return null;
         }
-
-        yield return new WaitForSeconds(stunDuration - moveDuration);
-        isStunned = false;
     }
 
-    void Die()
-    {
-        Debug.Log("Player died.");
-    }
+    void Die() { Debug.Log("Player died."); }
 
-    public void Attack1Effect()
-    {
-        attack1Effect.Play();
-    }
-     public void Attack2Effect()
-    {
-        attack2Effect.Play();
-    }
-     public void Attack3Effect()
-    {
-        attack3Effect.Play();
-    }
-     public void Attack4Effect()
-    {
-        attack4Effect.Play();
-    }
+    public void Attack1Effect() { if(attack1Effect != null) attack1Effect.Play(); }
+    public void Attack2Effect() { if(attack2Effect != null) attack2Effect.Play(); }
+    public void Attack3Effect() { if(attack3Effect != null) attack3Effect.Play(); }
+    public void Attack4Effect() { if(attack4Effect != null) attack4Effect.Play(); }
     
     void TryPickupItem()
     {
@@ -292,21 +217,9 @@ public class FightingController : MonoBehaviour
         foreach (var hitCollider in hitColliders)
         {
             PickableItem item = hitCollider.GetComponent<PickableItem>();
-            if (item != null)
-            {
-                heldItem = item;
-                item.OnPickedUp(handTransform);
-                break;
-            }
+            if (item != null) { heldItem = item; item.OnPickedUp(handTransform); break; }
         }
     }
 
-    void DropItem()
-    {
-        if (heldItem != null)
-        {
-            heldItem.OnDropped();
-            heldItem = null;
-        }
-    }
+    void DropItem() { if (heldItem != null) { heldItem.OnDropped(); heldItem = null; } }
 }
