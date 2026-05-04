@@ -5,14 +5,15 @@ using UnityEngine;
 public class FightingController : MonoBehaviour
 {
     [Header("Player Movement")]
-    public float movementSpeed = 5f; // ปรับตามภาพ image_9b05fb.jpg
+    public float movementSpeed = 5f; 
     public float rotationSpeed = 10f; 
     private CharacterController characterController; 
     private Animator animator; 
     public bool isStunned = false;
+    private bool isInvincible = false; // ตัวแปรควบคุมสถานะอมตะ (Internal)
 
     [Header("Player Fight")]
-    public float attackCooldown = 1f; // ปรับตามภาพ image_9b05fb.jpg
+    public float attackCooldown = 1f; 
     public float dodgeCooldown = 1.5f; 
     public int[] attackDamages; 
     public KnockbackType[] attackKnockbackTypes;
@@ -70,19 +71,20 @@ public class FightingController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G)) DropItem();
     }
 
-    // --- ส่วนที่ปรับปรุง: ระบบโดนโจมตีแบบล้มแล้วลุกตาม Animator ---
+    // --- ส่วนที่ปรับปรุง: ปลอดภัยและไม่กระทบส่วนอื่น ---
     public IEnumerator PlayHitDamageAnimation(int takeDamage, KnockbackType kbType = KnockbackType.None, Vector3 kbDir = default(Vector3), float kbPower = 0f)
     {
-        // ระบบนับคอมโบภายในเวลา 1.5 วินาที
-        if (Time.time - lastTimeHit > comboWindowTime)
-        {
-            currentHitCount = 0;
-        }
-        
+        // กฎเหล็ก: ถ้าอมตะอยู่ (ล้ม/ลุก) จะไม่รันโค้ดส่วนลดเลือดข้างล่างเลย
+        if (isInvincible) yield break;
+
+        // ระบบคอมโบ
+        if (Time.time - lastTimeHit > comboWindowTime) currentHitCount = 0;
         lastTimeHit = Time.time; 
         currentHitCount++; 
-        isStunned = true; 
+        
+        isStunned = true; // หยุดการควบคุมชั่วคราว
 
+        // จัดการเลือดและเสียง
         currentHealth -= takeDamage;
         if(healthBar != null) healthBar.SetHealth(currentHealth);
         if(hitSounds != null && hitSounds.Length > 0)
@@ -90,32 +92,38 @@ public class FightingController : MonoBehaviour
             AudioSource.PlayClipAtPoint(hitSounds[Random.Range(0, hitSounds.Length)], transform.position);
         }
 
-        // เช็กเงื่อนไขล้ม (โดนครบ 5 ครั้ง)
-        if (currentHitCount >= maxHitsToKnockdown)
+        if (currentHealth <= 0)
         {
+            Die();
+            yield break;
+        }
+
+        // เช็กเงื่อนไขการล้ม
+        if (currentHitCount >= maxHitsToKnockdown || kbType == KnockbackType.Knockdown)
+        {
+            isInvincible = true; // เปิดโหมดอมตะ
             currentHitCount = 0; 
 
-            // สั่งเล่นท่าล้มตามชื่อในภาพ image_9a91f6.jpg
             animator.Play("Falling_Down"); 
-            
-            // ใส่แรงกระเด็นถอยหลังเล็กน้อย
             StartCoroutine(ApplyKnockbackRoutine(kbDir, 5f, 0.3f));
             
-            // เวลารอรวมสำหรับแอนิเมชัน Falling_Down -> Getting_Up (ปรับตามความเหมาะสม)
-            yield return new WaitForSeconds(2.5f); 
+            yield return new WaitForSeconds(1.5f); // นอนอยู่ (ปรับตามคลิปแอนิเมชัน)
+
+            animator.Play("Getting_Up"); 
+            yield return new WaitForSeconds(1.0f); // กำลังลุก (ปรับตามคลิปแอนิเมชัน)
+
+            isInvincible = false; // ปิดโหมดอมตะ
         }
         else
         {
-            // เล่นท่าโดนตีปกติถ้ายังไม่ครบ 5 ครั้ง
             animator.Play("HitDamageAnimation");
             yield return new WaitForSeconds(0.5f);
         }
 
-        isStunned = false; 
-        if (currentHealth <= 0) Die();
+        isStunned = false; // กลับมาควบคุมได้ปกติ
     }
 
-    // --- ฟังก์ชันช่วยเหลือ (รักษาโครงสร้างเดิม) ---
+    // --- ฟังก์ชันดั้งเดิม (ไม่มีการเปลี่ยนแปลงโครงสร้าง) ---
     void PerformMovement()
     {
         float horizontalInput = Input.GetAxis("Horizontal"); 
@@ -146,9 +154,7 @@ public class FightingController : MonoBehaviour
             {
                 if (heldItem.weaponAttackAnimations != null && attackIndex < heldItem.weaponAttackAnimations.Length) 
                     animName = heldItem.weaponAttackAnimations[attackIndex];
-
                 if (string.IsNullOrEmpty(animName)) return;
-
                 if (heldItem.weaponAttackDamages != null && attackIndex < heldItem.weaponAttackDamages.Length) damage = heldItem.weaponAttackDamages[attackIndex];
                 if (heldItem.weaponKnockbackTypes != null && attackIndex < heldItem.weaponKnockbackTypes.Length) kbType = heldItem.weaponKnockbackTypes[attackIndex];
                 if (heldItem.weaponKnockbackPowers != null && attackIndex < heldItem.weaponKnockbackPowers.Length) kbPower = heldItem.weaponKnockbackPowers[attackIndex];
@@ -172,10 +178,7 @@ public class FightingController : MonoBehaviour
                     Vector3 kbDir = (opponent.position - transform.position).normalized;
                     kbDir.y = 0; 
                     var opponentAI = opponent.GetComponent<OpponentAI>();
-                    if (opponentAI != null)
-                    {
-                        opponentAI.StartCoroutine(opponentAI.PlayHitDamageAnimation(damage, kbType, kbDir, kbPower));
-                    }
+                    if (opponentAI != null) opponentAI.StartCoroutine(opponentAI.PlayHitDamageAnimation(damage, kbType, kbDir, kbPower));
                 }
             }
         }
@@ -203,7 +206,13 @@ public class FightingController : MonoBehaviour
         }
     }
 
-    void Die() { Debug.Log("Player died."); }
+    void Die() 
+    { 
+        Debug.Log("<color=red><b>PLAYER HAS DIED!</b></color>"); 
+        animator.Play("Falling_Down"); 
+        isStunned = true;
+        isInvincible = true; 
+    }
 
     public void Attack1Effect() { if(attack1Effect != null) attack1Effect.Play(); }
     public void Attack2Effect() { if(attack2Effect != null) attack2Effect.Play(); }
