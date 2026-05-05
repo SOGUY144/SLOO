@@ -39851,10 +39851,11 @@ MonoBehaviour:
   movementSpeed: 5
   rotationSpeed: 10
   isStunned: 0
+  isInvincible: 0
   attackCooldown: 1
   dodgeCooldown: 1.5
   attackDamages: 050000000a0000000f00000014000000
-  attackKnockbackTypes: 00000000000000000100000002000000
+  attackKnockbackTypes: 01000000010000000100000001000000
   attackKnockbackPowers:
   - 0
   - 0
@@ -39876,7 +39877,7 @@ MonoBehaviour:
   attack3Effect: {fileID: 2444646116028763822}
   attack4Effect: {fileID: 0}
   hitSounds: []
-  maxHealth: 100
+  maxHealth: 1000000
   currentHealth: 0
   healthBar: {fileID: 0}
   maxHitsToKnockdown: 5
@@ -56871,14 +56872,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38bff0e074a15544c82aea9134bd8558, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 2
+  movementSpeed: 1
   rotationSpeed: 10
   characterController: {fileID: 2738747859928858840}
   animator: {fileID: 2721323704321017288}
   attackCooldown: 2
   dodgeCooldown: 1.5
   attackDamages: 
-  attackKnockbackTypes: 00000000000000000100000002000000
+  attackKnockbackTypes: 01000000010000000100000001000000
   attackKnockbackPowers:
   - 0
   - 0
@@ -56906,7 +56907,7 @@ MonoBehaviour:
   attack4Effect: {fileID: 0}
   attackSounds: []
   hitSounds: []
-  maxHealth: 1000
+  maxHealth: 10000
   currentHealth: 0
   healthBar: {fileID: 0}
   maxHitsToKnockdown: 3

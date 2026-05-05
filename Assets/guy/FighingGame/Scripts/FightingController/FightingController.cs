@@ -10,7 +10,7 @@ public class FightingController : MonoBehaviour
     private CharacterController characterController; 
     private Animator animator; 
     public bool isStunned = false;
-    private bool isInvincible = false; // ตัวแปรควบคุมสถานะอมตะ (Internal)
+    public bool isInvincible = false;
 
     [Header("Player Fight")]
     public float attackCooldown = 1f; 
@@ -71,26 +71,24 @@ public class FightingController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G)) DropItem();
     }
 
-    // --- ส่วนที่ปรับปรุง: ปลอดภัยและไม่กระทบส่วนอื่น ---
     public IEnumerator PlayHitDamageAnimation(int takeDamage, KnockbackType kbType = KnockbackType.None, Vector3 kbDir = default(Vector3), float kbPower = 0f)
     {
-        // กฎเหล็ก: ถ้าอมตะอยู่ (ล้ม/ลุก) จะไม่รันโค้ดส่วนลดเลือดข้างล่างเลย
-        if (isInvincible) yield break;
+        // ป้องกัน Coroutine ใหม่แทรกระหว่างโดนตี/ล้ม/ลุก
+        if (isInvincible || isStunned) yield break;
 
-        // ระบบคอมโบ
+        // lock ทันทีก่อนทำอะไรทั้งนั้น ไม่มี WaitForSeconds นำหน้า
+        isStunned = true;
+
+        // ระบบคอมโบ: รีเซ็ตถ้าเว้นช่วงนานเกินไป
         if (Time.time - lastTimeHit > comboWindowTime) currentHitCount = 0;
-        lastTimeHit = Time.time; 
-        currentHitCount++; 
-        
-        isStunned = true; // หยุดการควบคุมชั่วคราว
+        lastTimeHit = Time.time;
+        currentHitCount++;
 
-        // จัดการเลือดและเสียง
+        // ลด HP และเล่นเสียง
         currentHealth -= takeDamage;
-        if(healthBar != null) healthBar.SetHealth(currentHealth);
-        if(hitSounds != null && hitSounds.Length > 0)
-        {
+        if (healthBar != null) healthBar.SetHealth(currentHealth);
+        if (hitSounds != null && hitSounds.Length > 0)
             AudioSource.PlayClipAtPoint(hitSounds[Random.Range(0, hitSounds.Length)], transform.position);
-        }
 
         if (currentHealth <= 0)
         {
@@ -98,21 +96,20 @@ public class FightingController : MonoBehaviour
             yield break;
         }
 
-        // เช็กเงื่อนไขการล้ม
+        // เช็กเงื่อนไขล้ม
         if (currentHitCount >= maxHitsToKnockdown || kbType == KnockbackType.Knockdown)
         {
-            isInvincible = true; // เปิดโหมดอมตะ
-            currentHitCount = 0; 
+            isInvincible = true; // ล้มแล้วห้ามโดนซ้ำ
+            currentHitCount = 0;
 
-            animator.Play("Falling_Down"); 
-            StartCoroutine(ApplyKnockbackRoutine(kbDir, 5f, 0.3f));
-            
-            yield return new WaitForSeconds(1.5f); // นอนอยู่ (ปรับตามคลิปแอนิเมชัน)
+            animator.Play("Falling_Down");
+            yield return StartCoroutine(ApplyKnockbackRoutine(kbDir, 5f, 0.3f));
+            yield return new WaitForSeconds(1.5f); // นอนอยู่กับพื้น
 
-            animator.Play("Getting_Up"); 
-            yield return new WaitForSeconds(1.0f); // กำลังลุก (ปรับตามคลิปแอนิเมชัน)
+            animator.Play("Getting_Up");
+            yield return new WaitForSeconds(1.0f); // กำลังลุก
 
-            isInvincible = false; // ปิดโหมดอมตะ
+            isInvincible = false;
         }
         else
         {
@@ -120,10 +117,9 @@ public class FightingController : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
 
-        isStunned = false; // กลับมาควบคุมได้ปกติ
+        isStunned = false;
     }
 
-    // --- ฟังก์ชันดั้งเดิม (ไม่มีการเปลี่ยนแปลงโครงสร้าง) ---
     void PerformMovement()
     {
         float horizontalInput = Input.GetAxis("Horizontal"); 

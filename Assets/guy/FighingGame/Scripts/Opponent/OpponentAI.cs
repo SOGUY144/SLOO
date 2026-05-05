@@ -82,13 +82,17 @@ public class OpponentAI : MonoBehaviour
                     if (!isTakingFammage)
                         PerformAttack(randomAttackIndex);
 
-                    int damage = (attackDamages != null && randomAttackIndex < attackDamages.Length) ? attackDamages[randomAttackIndex] : 5;
-                    KnockbackType kbType = (attackKnockbackTypes != null && randomAttackIndex < attackKnockbackTypes.Length) ? attackKnockbackTypes[randomAttackIndex] : KnockbackType.None;
-                    float kbPower = (attackKnockbackPowers != null && randomAttackIndex < attackKnockbackPowers.Length) ? attackKnockbackPowers[randomAttackIndex] : 0f;
-                    Vector3 kbDir = (players[i].position - transform.position).normalized;
-                    kbDir.y = 0;
+                    // ✅ เช็คก่อนว่า player ไม่ได้กำลัง stun หรือ invincible อยู่
+                    if (!fightingController[i].isStunned && !fightingController[i].isInvincible)
+                    {
+                        int damage = (attackDamages != null && randomAttackIndex < attackDamages.Length) ? attackDamages[randomAttackIndex] : 5;
+                        KnockbackType kbType = (attackKnockbackTypes != null && randomAttackIndex < attackKnockbackTypes.Length) ? attackKnockbackTypes[randomAttackIndex] : KnockbackType.None;
+                        float kbPower = (attackKnockbackPowers != null && randomAttackIndex < attackKnockbackPowers.Length) ? attackKnockbackPowers[randomAttackIndex] : 0f;
+                        Vector3 kbDir = (players[i].position - transform.position).normalized;
+                        kbDir.y = 0;
 
-                    fightingController[i].StartCoroutine(fightingController[i].PlayHitDamageAnimation(damage, kbType, kbDir, kbPower));
+                        fightingController[i].StartCoroutine(fightingController[i].PlayHitDamageAnimation(damage, kbType, kbDir, kbPower));
+                    }
                 }
             }
             else
@@ -140,11 +144,10 @@ public class OpponentAI : MonoBehaviour
 
     public IEnumerator PlayHitDamageAnimation(int takeDamage, KnockbackType kbType = KnockbackType.None, Vector3 kbDir = default(Vector3), float kbPower = 0f)
     {
-        // ✅ FIX 1: ถ้ากำลัง stun อยู่แล้ว ไม่ต้องเริ่ม Coroutine ใหม่ทับ
+        // ป้องกัน Coroutine ใหม่แทรกระหว่างโดนตี/ล้ม
         if (isStunned) yield break;
 
-        yield return new WaitForSeconds(0.5f);
-
+        // lock ทันทีก่อนทำอะไรทั้งนั้น ไม่มี WaitForSeconds นำหน้า
         isStunned = true;
 
         // --- ระบบ Combo Knockdown ---
@@ -175,12 +178,12 @@ public class OpponentAI : MonoBehaviour
         }
 
         currentHealth -= takeDamage;
-        if (healthBar != null) healthBar.SetHealth(currentHealth); // ✅ เช็ค null ก่อน
+        if (healthBar != null) healthBar.SetHealth(currentHealth);
 
         if (currentHealth <= 0)
         {
             Die();
-            yield break; // ✅ FIX 2: หยุดทันทีไม่ให้โค้ดวิ่งต่อหลังตาย
+            yield break;
         }
 
         if (kbType == KnockbackType.Knockdown)
