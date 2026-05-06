@@ -132,6 +132,10 @@ PrefabInstance:
       value: Main Camera
       objectReference: {fileID: 0}
     - target: {fileID: 2044832868062182444, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
+      propertyPath: offset.x
+      value: 4.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2044832868062182444, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
       propertyPath: 'targets.Array.data[0]'
       value: 
       objectReference: {fileID: 6616103678733597499}
@@ -22452,7 +22456,7 @@ MonoBehaviour:
   attackCooldown: 2
   dodgeCooldown: 1.5
   attackDamages: 
-  attackKnockbackTypes: 00000000000000000200000002000000
+  attackKnockbackTypes: 00000000000000000100000002000000
   attackKnockbackPowers:
   - 0
   - 0
@@ -27634,7 +27638,7 @@ MonoBehaviour:
   isStunned: 0
   isInvincible: 0
   getUpAnimationDuration: 0.5
-  knockdownStunTime: 0.3
+  knockdownStunTime: 0.6
   attackCooldown: 1
   dodgeCooldown: 0.5
   attackDamages: 050000000a0000000f00000014000000
@@ -27642,7 +27646,7 @@ MonoBehaviour:
   attackKnockbackPowers:
   - 0
   - 0
-  - 3
+  - 3.5
   - 6
   attackAnumations:
   - Attack1Animation

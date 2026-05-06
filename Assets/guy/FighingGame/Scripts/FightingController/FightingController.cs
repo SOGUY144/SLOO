@@ -5,34 +5,34 @@ using UnityEngine;
 public class FightingController : MonoBehaviour
 {
     [Header("Player Movement")]
-    public float movementSpeed = 5f; 
-    public float rotationSpeed = 10f; 
-    private CharacterController characterController; 
-    private PlayerAnimator playerAnimator; 
+    public float movementSpeed = 5f;
+    public float rotationSpeed = 10f;
+    private CharacterController characterController;
+    private PlayerAnimator playerAnimator;
     public bool isStunned = false;
     public bool isInvincible = false;
-    private bool isTakingDamage = false; // ป้องกัน Coroutine ซ้อนกัน
+    private bool isTakingDamage = false;
 
     [Header("Knockdown & Get Up Timing")]
-    public float getUpAnimationDuration = 1.5f; // เวลาที่ใช้เล่นอนิเมชันลุกขึ้น
-    public float knockdownStunTime = 0.3f;      // เวลาที่นอนรอที่พื้นก่อนลุก
+    public float getUpAnimationDuration = 1.5f;
+    public float knockdownStunTime = 0.3f;
 
     [Header("Player Fight")]
-    public float attackCooldown = 1f; 
-    public float dodgeCooldown = 1.5f; 
-    public int[] attackDamages; 
+    public float attackCooldown = 1f;
+    public float dodgeCooldown = 1.5f;
+    public int[] attackDamages;
     public KnockbackType[] attackKnockbackTypes;
     public float[] attackKnockbackPowers;
     public string[] attackAnumations;
-    public float dodgeDistance = 2f; 
+    public float dodgeDistance = 2f;
     public float attackRadius = 2.2f;
     public Transform[] opponents;
-    private float lastAttackTime; 
-    private float lastDodgeTime = -Mathf.Infinity; 
+    private float lastAttackTime;
+    private float lastDodgeTime = -Mathf.Infinity;
 
     [Header("Inventory & Pickup")]
-    public Transform handTransform; 
-    public float pickupRange = 2.5f; 
+    public Transform handTransform;
+    public float pickupRange = 2.5f;
     private PickableItem heldItem;
 
     [Header("Effects and Sound")]
@@ -48,42 +48,41 @@ public class FightingController : MonoBehaviour
     public HealthBar healthBar;
 
     [Header("Combo & Knockdown System")]
-    public int maxHitsToKnockdown = 5; 
-    public float comboWindowTime = 1.5f; 
+    public int maxHitsToKnockdown = 5;
+    public float comboWindowTime = 1.5f;
     private int currentHitCount = 0;
     private float lastTimeHit;
+    private const float hitReactionDuration = 0.45f;
+    private const float knockbackMoveDuration = 0.3f;
 
     void Awake()
     {
         currentHealth = maxHealth;
-        characterController = GetComponent<CharacterController>(); 
-        playerAnimator = GetComponent<PlayerAnimator>(); 
+        characterController = GetComponent<CharacterController>();
+        playerAnimator = GetComponent<PlayerAnimator>();
     }
 
     void Update()
     {
-        // ป้องกันการเดิน/โจมตี ขณะ Stun หรือ อมตะ (ตอนล้ม/ลุก)
-        if (isStunned || isInvincible) return; 
+        if (isStunned || isInvincible) return;
 
-        PerformMovement(); 
-        PerformDodgeFront(); 
+        PerformMovement();
+        PerformDodgeFront();
 
         if (Input.GetKeyDown(KeyCode.H)) PerformAttack(0);
         else if (Input.GetKeyDown(KeyCode.J)) PerformAttack(1);
         else if (Input.GetKeyDown(KeyCode.K)) PerformAttack(2);
         else if (Input.GetKeyDown(KeyCode.L)) PerformAttack(3);
-        
+
         if (Input.GetKeyDown(KeyCode.F)) TryPickupItem();
         if (Input.GetKeyDown(KeyCode.G)) DropItem();
     }
 
     public IEnumerator PlayHitDamageAnimation(int takeDamage, KnockbackType kbType = KnockbackType.None, Vector3 kbDir = default(Vector3), float kbPower = 0f)
     {
-        // ถ้ากำลัง knockdown อยู่ (invincible) → ไม่รับ hit ใหม่
         if (isInvincible) yield break;
-
-        // ป้องกัน Coroutine ซ้อนกัน → ถ้ากำลังโดนตีอยู่ ไม่รับ hit ใหม่
         if (isTakingDamage) yield break;
+
         isTakingDamage = true;
 
         if (Time.time - lastTimeHit > comboWindowTime) currentHitCount = 0;
@@ -106,56 +105,53 @@ public class FightingController : MonoBehaviour
         {
             isStunned = true;
             isInvincible = true;
-            isTakingDamage = false; // ปลด lock — hit ระหว่างล้มถูก block ด้วย isInvincible
+            isTakingDamage = false;
             currentHitCount = 0;
 
-            playerAnimator.PlayFall();
-            yield return StartCoroutine(ApplyKnockbackRoutine(kbDir, 5f, 0.3f));
-            // นิ่งชะงัก (Stun) แป๊บนึง
-            yield return new WaitForSeconds(knockdownStunTime);
-
-            // ข้ามท่า GetUp ไปเลย แล้วบังคับกลับท่ายืน Idle ทันที
+            playerAnimator.PlayHit();
+            yield return StartCoroutine(ApplyKnockbackRoutine(kbDir, Mathf.Max(kbPower, 5f), knockbackMoveDuration));
+            yield return new WaitForSeconds(Mathf.Max(knockdownStunTime, hitReactionDuration));
             playerAnimator.PlayIdle();
 
             isInvincible = false;
             isStunned = false;
+            yield break;
+        }
+
+        isStunned = true;
+
+        if (kbType == KnockbackType.Pushback)
+        {
+            playerAnimator.PlayPushback();
+            yield return StartCoroutine(ApplyKnockbackRoutine(kbDir, Mathf.Max(kbPower, 3f), knockbackMoveDuration));
+            yield return new WaitForSeconds(0.15f);
+            playerAnimator.PlayIdle();
         }
         else
         {
-            isStunned = true;
-
-            if (kbType == KnockbackType.Pushback)
-            {
-                playerAnimator.PlayPushback();
-                yield return new WaitForSeconds(0.4f);
-            }
-            else
-            {
-                playerAnimator.PlayHit();
-                yield return new WaitForSeconds(0.4f);
-            }
-
-            isStunned = false;
-            isTakingDamage = false;
+            playerAnimator.PlayHit();
+            yield return new WaitForSeconds(hitReactionDuration);
         }
+
+        isStunned = false;
+        isTakingDamage = false;
     }
 
-    // --- ส่วนที่เหลือ (Movement, Attack, Dodge, Item) คงเดิมตามที่คุณส่งมา ---
     void PerformMovement()
     {
-        float horizontalInput = Input.GetAxis("Horizontal"); 
-        float verticalInput = Input.GetAxis("Vertical"); 
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
         Vector3 movement = new Vector3(-verticalInput, 0f, horizontalInput);
 
-        if (movement != Vector3.zero) 
+        if (movement != Vector3.zero)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(movement); 
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime); 
+            Quaternion targetRotation = Quaternion.LookRotation(movement);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
             playerAnimator.SetWalking(true);
         }
         else playerAnimator.SetWalking(false);
 
-        characterController.Move(movement * movementSpeed * Time.deltaTime); 
+        characterController.Move(movement * movementSpeed * Time.deltaTime);
     }
 
     void PerformAttack(int attackIndex)
@@ -169,7 +165,7 @@ public class FightingController : MonoBehaviour
 
             if (heldItem != null)
             {
-                if (heldItem.weaponAttackAnimations != null && attackIndex < heldItem.weaponAttackAnimations.Length) 
+                if (heldItem.weaponAttackAnimations != null && attackIndex < heldItem.weaponAttackAnimations.Length)
                     animName = heldItem.weaponAttackAnimations[attackIndex];
                 if (string.IsNullOrEmpty(animName)) return;
                 if (heldItem.weaponAttackDamages != null && attackIndex < heldItem.weaponAttackDamages.Length) damage = heldItem.weaponAttackDamages[attackIndex];
@@ -186,14 +182,14 @@ public class FightingController : MonoBehaviour
             }
 
             playerAnimator.PlayAttack(animName);
-            lastAttackTime = Time.time; 
+            lastAttackTime = Time.time;
 
-            foreach(Transform opponent in opponents)
+            foreach (Transform opponent in opponents)
             {
-                if(opponent != null && Vector3.Distance(transform.position, opponent.position) <= attackRadius)
+                if (opponent != null && Vector3.Distance(transform.position, opponent.position) <= attackRadius)
                 {
                     Vector3 kbDir = (opponent.position - transform.position).normalized;
-                    kbDir.y = 0; 
+                    kbDir.y = 0;
                     var opponentAI = opponent.GetComponent<OpponentAI>();
                     if (opponentAI != null) opponentAI.StartCoroutine(opponentAI.PlayHitDamageAnimation(damage, kbType, kbDir, kbPower));
                 }
@@ -206,9 +202,9 @@ public class FightingController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E) && Time.time - lastDodgeTime > dodgeCooldown)
         {
             playerAnimator.PlayDodge();
-            Vector3 dodgeDirection = transform.forward * dodgeDistance; 
-            characterController.Move(dodgeDirection); 
-            lastDodgeTime = Time.time; 
+            Vector3 dodgeDirection = transform.forward * dodgeDistance;
+            characterController.Move(dodgeDirection);
+            lastDodgeTime = Time.time;
         }
     }
 
@@ -223,18 +219,18 @@ public class FightingController : MonoBehaviour
         }
     }
 
-    void Die() 
-    { 
+    void Die()
+    {
         playerAnimator.PlayDie();
         isStunned = true;
-        isInvincible = true; 
+        isInvincible = true;
     }
 
-    public void Attack1Effect() { if(attack1Effect != null) attack1Effect.Play(); }
-    public void Attack2Effect() { if(attack2Effect != null) attack2Effect.Play(); }
-    public void Attack3Effect() { if(attack3Effect != null) attack3Effect.Play(); }
-    public void Attack4Effect() { if(attack4Effect != null) attack4Effect.Play(); }
-    
+    public void Attack1Effect() { if (attack1Effect != null) attack1Effect.Play(); }
+    public void Attack2Effect() { if (attack2Effect != null) attack2Effect.Play(); }
+    public void Attack3Effect() { if (attack3Effect != null) attack3Effect.Play(); }
+    public void Attack4Effect() { if (attack4Effect != null) attack4Effect.Play(); }
+
     void TryPickupItem()
     {
         if (heldItem != null) return;
