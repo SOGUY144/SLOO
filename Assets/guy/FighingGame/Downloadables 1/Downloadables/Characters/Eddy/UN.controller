@@ -414,7 +414,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Getting_Up
+  m_Name: GetUpAnimation
   m_Speed: 2
   m_CycleOffset: 0
   m_Transitions: []
@@ -1135,7 +1135,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Falling_Down
+  m_Name: PushbackAnimation
   m_Speed: 2
   m_CycleOffset: 0
   m_Transitions: []

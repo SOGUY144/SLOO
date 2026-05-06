@@ -10,6 +10,10 @@ public class OpponentAI : MonoBehaviour
     public CharacterController characterController;
     public Animator animator;
 
+    [Header("Knockdown & Get Up Timing")]
+    public float getUpAnimationDuration = 1.5f; // เวลาที่ใช้เล่นท่าลุก
+    public float knockdownStunTime = 0.3f;      // เวลานอนรอที่พื้นก่อนลุก
+
     [Header("Opponent Fight")]
     public float attackCooldown = 0.5f;
     public float dodgeCooldown = 1.5f;
@@ -23,7 +27,8 @@ public class OpponentAI : MonoBehaviour
     public float attackRadius = 2f;
     public FightingController[] fightingController;
     public Transform[] players;
-    public bool isTakingFammage;
+    public bool isTakingDamage = false;    // ป้องกัน Coroutine ซ้อนกัน
+    public bool isKnockedDown = false;      // กำลังล้มอยู่ (invincible)
     public bool isStunned = false;
     private float lastAttackTime;
     private float lastDodgeTime = -Mathf.Infinity;
@@ -64,7 +69,7 @@ public class OpponentAI : MonoBehaviour
 
     void Update()
     {
-        if (isStunned) return;
+        if (isStunned || isKnockedDown) return;
 
         for (int i = 0; i < fightingController.Length; i++)
         {
@@ -77,21 +82,25 @@ public class OpponentAI : MonoBehaviour
 
                 if (Time.time - lastAttackTime > attackCooldown)
                 {
+                    lastAttackTime = Time.time; // อัปเดต cooldown เสมอ ไม่ว่าจะ isTakingDamage หรือไม่
+
                     int randomAttackIndex = Random.Range(0, attackAnumations.Length);
 
-                    if (!isTakingFammage)
+                    if (!isTakingDamage)
+                    {
                         PerformAttack(randomAttackIndex);
 
-                    // ✅ เช็คก่อนว่า player ไม่ได้กำลัง stun หรือ invincible อยู่
-                    if (!fightingController[i].isStunned && !fightingController[i].isInvincible)
-                    {
-                        int damage = (attackDamages != null && randomAttackIndex < attackDamages.Length) ? attackDamages[randomAttackIndex] : 5;
-                        KnockbackType kbType = (attackKnockbackTypes != null && randomAttackIndex < attackKnockbackTypes.Length) ? attackKnockbackTypes[randomAttackIndex] : KnockbackType.None;
-                        float kbPower = (attackKnockbackPowers != null && randomAttackIndex < attackKnockbackPowers.Length) ? attackKnockbackPowers[randomAttackIndex] : 0f;
-                        Vector3 kbDir = (players[i].position - transform.position).normalized;
-                        kbDir.y = 0;
+                        // โจมตี player เฉพาะตอนที่ไม่ได้โดนตีอยู่
+                        if (!fightingController[i].isStunned && !fightingController[i].isInvincible)
+                        {
+                            int damage = (attackDamages != null && randomAttackIndex < attackDamages.Length) ? attackDamages[randomAttackIndex] : 5;
+                            KnockbackType kbType = (attackKnockbackTypes != null && randomAttackIndex < attackKnockbackTypes.Length) ? attackKnockbackTypes[randomAttackIndex] : KnockbackType.None;
+                            float kbPower = (attackKnockbackPowers != null && randomAttackIndex < attackKnockbackPowers.Length) ? attackKnockbackPowers[randomAttackIndex] : 0f;
+                            Vector3 kbDir = (players[i].position - transform.position).normalized;
+                            kbDir.y = 0;
 
-                        fightingController[i].StartCoroutine(fightingController[i].PlayHitDamageAnimation(damage, kbType, kbDir, kbPower));
+                            fightingController[i].StartCoroutine(fightingController[i].PlayHitDamageAnimation(damage, kbType, kbDir, kbPower));
+                        }
                     }
                 }
             }
@@ -113,7 +122,7 @@ public class OpponentAI : MonoBehaviour
 
     void PerformAttack(int attackIndex)
     {
-        animator.Play(attackAnumations[attackIndex]);
+        animator.Play(attackAnumations[attackIndex], 0, 0f);
 
         if (attackSounds != null && attackSounds.Length > 0)
         {
@@ -123,8 +132,6 @@ public class OpponentAI : MonoBehaviour
 
         int damage = (attackDamages != null && attackIndex < attackDamages.Length) ? attackDamages[attackIndex] : 5;
         Debug.Log("Performed attack " + (attackIndex + 1) + " dealing " + damage + " damage");
-
-        lastAttackTime = Time.time;
     }
 
     void PerformDodgeFront()
@@ -144,32 +151,39 @@ public class OpponentAI : MonoBehaviour
 
     public IEnumerator PlayHitDamageAnimation(int takeDamage, KnockbackType kbType = KnockbackType.None, Vector3 kbDir = default(Vector3), float kbPower = 0f)
     {
-        // ป้องกัน Coroutine ใหม่แทรกระหว่างโดนตี/ล้ม
-        if (isStunned) yield break;
+        // ถ้ากำลังล้มอยู่ (invincible) ไม่รับ damage ใหม่เลย
+        if (isKnockedDown) yield break;
 
-        // lock ทันทีก่อนทำอะไรทั้งนั้น ไม่มี WaitForSeconds นำหน้า
-        isStunned = true;
+        // ป้องกัน Coroutine โดนตีซ้อนกัน (แต่ยังนับ hit ได้)
+        if (isTakingDamage) yield break;
+        isTakingDamage = true;
 
         // --- ระบบ Combo Knockdown ---
+        // ถ้าเวลาผ่านไปนานเกิน comboResetTime ให้ reset counter
         if (Time.time - lastTimeHit > comboResetTime)
             currentHitCount = 0;
 
         lastTimeHit = Time.time;
         currentHitCount++;
 
+        Debug.Log($"[HitCount] {currentHitCount} / {maxHitsToKnockdown} | kbType: {kbType}");
+
+        // ถ้า attack นี้เป็น Knockdown อยู่แล้ว ให้ reset counter
         if (kbType == KnockbackType.Knockdown)
         {
             currentHitCount = 0;
         }
+        // ถ้า combo ครบกำหนด → บังคับ Knockdown
         else if (currentHitCount >= maxHitsToKnockdown)
         {
             kbType = KnockbackType.Knockdown;
             if (kbPower < 5f) kbPower = 5f;
             currentHitCount = 0;
-            Debug.Log("Combo Limit Reached! Forced Knockdown.");
+            Debug.Log("[Combo Knockdown] Forced Knockdown after " + maxHitsToKnockdown + " hits!");
         }
         // ----------------------------
 
+        // เล่นเสียง hit
         if (hitSounds != null && hitSounds.Length > 0)
         {
             int randomIndex = Random.Range(0, hitSounds.Length);
@@ -177,38 +191,64 @@ public class OpponentAI : MonoBehaviour
             else AudioSource.PlayClipAtPoint(hitSounds[randomIndex], transform.position);
         }
 
+        // ลด HP
         currentHealth -= takeDamage;
         if (healthBar != null) healthBar.SetHealth(currentHealth);
 
         if (currentHealth <= 0)
         {
+            isTakingDamage = false;
             Die();
             yield break;
         }
 
+        // --- เล่น Animation ตาม kbType ---
         if (kbType == KnockbackType.Knockdown)
         {
-            animator.Play("KnockdownAnimation");
-            yield return StartCoroutine(ApplyKnockbackRoutine(kbDir, kbPower, 2.5f)); // ✅ FIX 3: yield return รอให้เสร็จก่อน
+            // ⚠️ ไม่มี KnockdownAnimation ใน Animator → ใช้ HitDamageAnimation + stun นานขึ้นแทน
+            isKnockedDown = true;
+            isStunned = true;
+            isTakingDamage = false;
+
+            animator.Play("HitDamageAnimation", 0, 0f);
+            yield return StartCoroutine(ApplyKnockbackRoutine(kbDir, kbPower, 0.3f));
+            // นิ่งชะงัก (Stun) แป๊บนึง (ปรับได้ใน Inspector ผ่าน knockdownStunTime)
+            yield return new WaitForSeconds(knockdownStunTime);
+
+            // ข้ามท่า GetUp ไปเลย แล้วบังคับกลับท่ายืน Idle ทันที
+            animator.CrossFade("IdleAnimation", 0.1f, 0, 0f);
+
+            isKnockedDown = false;
+            isStunned = false;
         }
         else if (kbType == KnockbackType.Pushback)
         {
-            animator.Play("PushbackAnimation");
-            yield return StartCoroutine(ApplyKnockbackRoutine(kbDir, kbPower, 1.0f)); // ✅ FIX 3: yield return รอให้เสร็จก่อน
+            isStunned = true;
+            animator.Play("PushbackAnimation", 0, 0f);
+            yield return StartCoroutine(ApplyKnockbackRoutine(kbDir, kbPower, 0.3f));
+            yield return new WaitForSeconds(0.5f);
+
+            // บังคับกลับ IdleAnimation ทันทีหลัง Pushback
+            animator.CrossFade("IdleAnimation", 0.1f, 0, 0f);
+
+            isStunned = false;
+            isTakingDamage = false;
         }
         else
         {
-            animator.Play("HitDamageAnimation");
-            yield return new WaitForSeconds(0.5f);
-        }
+            // Hit ธรรมดา
+            isStunned = true;
+            animator.Play("HitDamageAnimation", 0, 0f);
+            yield return new WaitForSeconds(0.45f);
 
-        isStunned = false; // ✅ FIX 4: ย้ายมาจุดเดียว ครอบคลุมทุก kbType
+            isStunned = false;
+            isTakingDamage = false;
+        }
     }
 
-    private IEnumerator ApplyKnockbackRoutine(Vector3 direction, float power, float stunDuration)
+    private IEnumerator ApplyKnockbackRoutine(Vector3 direction, float power, float moveDuration)
     {
         float timer = 0f;
-        float moveDuration = 0.3f;
 
         while (timer < moveDuration)
         {
@@ -216,13 +256,13 @@ public class OpponentAI : MonoBehaviour
             timer += Time.deltaTime;
             yield return null;
         }
-
-        yield return new WaitForSeconds(stunDuration - moveDuration);
-        // ✅ ลบ isStunned = false ออกจากที่นี่ เพราะย้ายไปจัดการใน PlayHitDamageAnimation แล้ว
     }
 
     void Die()
     {
+        isKnockedDown = true;
+        isStunned = true;
+        animator.Play("HitDamageAnimation", 0, 0f);
         Debug.Log("Opponent died.");
     }
 

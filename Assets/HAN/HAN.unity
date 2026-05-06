@@ -39853,10 +39853,12 @@ MonoBehaviour:
   rotationSpeed: 10
   isStunned: 0
   isInvincible: 0
+  getUpAnimationDuration: 1.5
+  knockdownStunTime: 0.3
   attackCooldown: 1
   dodgeCooldown: 1.5
   attackDamages: 050000000a0000000f00000014000000
-  attackKnockbackTypes: 01000000010000000100000001000000
+  attackKnockbackTypes: 00000000000000000100000002000000
   attackKnockbackPowers:
   - 0
   - 0
@@ -48896,7 +48898,7 @@ Transform:
   m_GameObject: {fileID: 5246285271047380672}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 1.0000867, y: -0.01059705, z: 0.80554366}
+  m_LocalPosition: {x: 1.0000867, y: 1.25, z: 0.81}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -56877,10 +56879,12 @@ MonoBehaviour:
   rotationSpeed: 10
   characterController: {fileID: 2738747859928858840}
   animator: {fileID: 2721323704321017288}
+  getUpAnimationDuration: 1.5
+  knockdownStunTime: 0.3
   attackCooldown: 2
   dodgeCooldown: 1.5
   attackDamages: 
-  attackKnockbackTypes: 01000000010000000100000001000000
+  attackKnockbackTypes: 00000000000000000100000002000000
   attackKnockbackPowers:
   - 0
   - 0
@@ -56899,7 +56903,8 @@ MonoBehaviour:
   - {fileID: 2959421674511337872}
   players:
   - {fileID: 2835470254367956458}
-  isTakingFammage: 0
+  isTakingDamage: 0
+  isKnockedDown: 0
   isStunned: 0
   sfxVolume: 1
   attack1Effect: {fileID: 0}

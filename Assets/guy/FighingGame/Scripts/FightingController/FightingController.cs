@@ -11,6 +11,11 @@ public class FightingController : MonoBehaviour
     private PlayerAnimator playerAnimator; 
     public bool isStunned = false;
     public bool isInvincible = false;
+    private bool isTakingDamage = false; // ป้องกัน Coroutine ซ้อนกัน
+
+    [Header("Knockdown & Get Up Timing")]
+    public float getUpAnimationDuration = 1.5f; // เวลาที่ใช้เล่นอนิเมชันลุกขึ้น
+    public float knockdownStunTime = 0.3f;      // เวลาที่นอนรอที่พื้นก่อนลุก
 
     [Header("Player Fight")]
     public float attackCooldown = 1f; 
@@ -74,7 +79,12 @@ public class FightingController : MonoBehaviour
 
     public IEnumerator PlayHitDamageAnimation(int takeDamage, KnockbackType kbType = KnockbackType.None, Vector3 kbDir = default(Vector3), float kbPower = 0f)
     {
+        // ถ้ากำลัง knockdown อยู่ (invincible) → ไม่รับ hit ใหม่
         if (isInvincible) yield break;
+
+        // ป้องกัน Coroutine ซ้อนกัน → ถ้ากำลังโดนตีอยู่ ไม่รับ hit ใหม่
+        if (isTakingDamage) yield break;
+        isTakingDamage = true;
 
         if (Time.time - lastTimeHit > comboWindowTime) currentHitCount = 0;
         lastTimeHit = Time.time;
@@ -87,6 +97,7 @@ public class FightingController : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            isTakingDamage = false;
             Die();
             yield break;
         }
@@ -95,35 +106,37 @@ public class FightingController : MonoBehaviour
         {
             isStunned = true;
             isInvincible = true;
+            isTakingDamage = false; // ปลด lock — hit ระหว่างล้มถูก block ด้วย isInvincible
             currentHitCount = 0;
 
             playerAnimator.PlayFall();
             yield return StartCoroutine(ApplyKnockbackRoutine(kbDir, 5f, 0.3f));
-            yield return new WaitForSeconds(1.5f);
+            // นิ่งชะงัก (Stun) แป๊บนึง
+            yield return new WaitForSeconds(knockdownStunTime);
 
-            playerAnimator.PlayGetUp();
-            yield return new WaitForSeconds(1.0f);
+            // ข้ามท่า GetUp ไปเลย แล้วบังคับกลับท่ายืน Idle ทันที
+            playerAnimator.PlayIdle();
 
             isInvincible = false;
             isStunned = false;
         }
-        else 
+        else
         {
-            // บังคับ Stun เพื่อเล่นแอนิเมชันโดนตีแน่นอน
             isStunned = true;
 
             if (kbType == KnockbackType.Pushback)
             {
                 playerAnimator.PlayPushback();
-                yield return new WaitForSeconds(0.3f);
+                yield return new WaitForSeconds(0.4f);
             }
             else
             {
                 playerAnimator.PlayHit();
-                yield return new WaitForSeconds(0.3f);
+                yield return new WaitForSeconds(0.4f);
             }
 
             isStunned = false;
+            isTakingDamage = false;
         }
     }
 

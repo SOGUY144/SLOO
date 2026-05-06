@@ -37,12 +37,14 @@ public class PlayerAnimator : MonoBehaviour
 
     public void PlayFall()
     {
-        if (animator != null) animator.CrossFade("Falling_Down", 0.1f, 0, 0f);
+        // ไม่มี Falling_Down ใน Animator → ใช้ HitDamageAnimation แทน
+        if (animator != null) animator.CrossFade("HitDamageAnimation", 0.1f, 0, 0f);
     }
 
     public void PlayGetUp()
     {
-        if (animator != null) animator.CrossFade("Getting_Up", 0.1f, 0, 0f);
+        // ชื่อจริงใน Animator คือ GetUpAnimation
+        if (animator != null) animator.CrossFade("GetUpAnimation", 0.1f, 0, 0f);
     }
 
     public void PlayDodge()
@@ -52,6 +54,13 @@ public class PlayerAnimator : MonoBehaviour
 
     public void PlayDie()
     {
-        if (animator != null) animator.CrossFade("Falling_Down", 0.1f, 0, 0f);
+        // ไม่มี Falling_Down ใน Animator → ใช้ HitDamageAnimation แทน
+        if (animator != null) animator.CrossFade("HitDamageAnimation", 0.1f, 0, 0f);
+    }
+
+    public void PlayIdle()
+    {
+        // บังคับกลับ Idle หลัง knockdown recovery
+        if (animator != null) animator.CrossFade("IdleAnimation", 0.1f, 0, 0f);
     }
 }
