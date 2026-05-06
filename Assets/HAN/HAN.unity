@@ -33602,6 +33602,7 @@ GameObject:
   - component: {fileID: 2959421674511337872}
   - component: {fileID: 5949062497371170623}
   - component: {fileID: 2922453924748293519}
+  - component: {fileID: 5949062497371170624}
   m_Layer: 0
   m_Name: "\u0E04\u0E19\u0E14\u0E35 1"
   m_TagString: Player
@@ -57383,6 +57384,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5949062497371170624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2418535267076002647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 179daf56be4b41045a050093eac6f247, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!23 &5950622771630271151
 MeshRenderer:
   m_ObjectHideFlags: 0

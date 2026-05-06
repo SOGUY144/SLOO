@@ -8,7 +8,7 @@ public class FightingController : MonoBehaviour
     public float movementSpeed = 5f; 
     public float rotationSpeed = 10f; 
     private CharacterController characterController; 
-    private Animator animator; 
+    private PlayerAnimator playerAnimator; 
     public bool isStunned = false;
     public bool isInvincible = false;
 
@@ -52,12 +52,13 @@ public class FightingController : MonoBehaviour
     {
         currentHealth = maxHealth;
         characterController = GetComponent<CharacterController>(); 
-        animator = GetComponent<Animator>(); 
+        playerAnimator = GetComponent<PlayerAnimator>(); 
     }
 
     void Update()
     {
-        if (isStunned) return; 
+        // ป้องกันการเดิน/โจมตี ขณะ Stun หรือ อมตะ (ตอนล้ม/ลุก)
+        if (isStunned || isInvincible) return; 
 
         PerformMovement(); 
         PerformDodgeFront(); 
@@ -73,18 +74,12 @@ public class FightingController : MonoBehaviour
 
     public IEnumerator PlayHitDamageAnimation(int takeDamage, KnockbackType kbType = KnockbackType.None, Vector3 kbDir = default(Vector3), float kbPower = 0f)
     {
-        // ป้องกัน Coroutine ใหม่แทรกระหว่างโดนตี/ล้ม/ลุก
-        if (isInvincible || isStunned) yield break;
+        if (isInvincible) yield break;
 
-        // lock ทันทีก่อนทำอะไรทั้งนั้น ไม่มี WaitForSeconds นำหน้า
-        isStunned = true;
-
-        // ระบบคอมโบ: รีเซ็ตถ้าเว้นช่วงนานเกินไป
         if (Time.time - lastTimeHit > comboWindowTime) currentHitCount = 0;
         lastTimeHit = Time.time;
         currentHitCount++;
 
-        // ลด HP และเล่นเสียง
         currentHealth -= takeDamage;
         if (healthBar != null) healthBar.SetHealth(currentHealth);
         if (hitSounds != null && hitSounds.Length > 0)
@@ -96,30 +91,43 @@ public class FightingController : MonoBehaviour
             yield break;
         }
 
-        // เช็กเงื่อนไขล้ม
         if (currentHitCount >= maxHitsToKnockdown || kbType == KnockbackType.Knockdown)
         {
-            isInvincible = true; // ล้มแล้วห้ามโดนซ้ำ
+            isStunned = true;
+            isInvincible = true;
             currentHitCount = 0;
 
-            animator.Play("Falling_Down");
+            playerAnimator.PlayFall();
             yield return StartCoroutine(ApplyKnockbackRoutine(kbDir, 5f, 0.3f));
-            yield return new WaitForSeconds(1.5f); // นอนอยู่กับพื้น
+            yield return new WaitForSeconds(1.5f);
 
-            animator.Play("Getting_Up");
-            yield return new WaitForSeconds(1.0f); // กำลังลุก
+            playerAnimator.PlayGetUp();
+            yield return new WaitForSeconds(1.0f);
 
             isInvincible = false;
+            isStunned = false;
         }
-        else
+        else 
         {
-            animator.Play("HitDamageAnimation");
-            yield return new WaitForSeconds(0.5f);
-        }
+            // บังคับ Stun เพื่อเล่นแอนิเมชันโดนตีแน่นอน
+            isStunned = true;
 
-        isStunned = false;
+            if (kbType == KnockbackType.Pushback)
+            {
+                playerAnimator.PlayPushback();
+                yield return new WaitForSeconds(0.3f);
+            }
+            else
+            {
+                playerAnimator.PlayHit();
+                yield return new WaitForSeconds(0.3f);
+            }
+
+            isStunned = false;
+        }
     }
 
+    // --- ส่วนที่เหลือ (Movement, Attack, Dodge, Item) คงเดิมตามที่คุณส่งมา ---
     void PerformMovement()
     {
         float horizontalInput = Input.GetAxis("Horizontal"); 
@@ -130,9 +138,9 @@ public class FightingController : MonoBehaviour
         {
             Quaternion targetRotation = Quaternion.LookRotation(movement); 
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime); 
-            animator.SetBool("Walking", true); 
+            playerAnimator.SetWalking(true);
         }
-        else { animator.SetBool("Walking", false); }
+        else playerAnimator.SetWalking(false);
 
         characterController.Move(movement * movementSpeed * Time.deltaTime); 
     }
@@ -164,7 +172,7 @@ public class FightingController : MonoBehaviour
                 if (attackKnockbackPowers != null && attackIndex < attackKnockbackPowers.Length) kbPower = attackKnockbackPowers[attackIndex];
             }
 
-            animator.Play(animName);
+            playerAnimator.PlayAttack(animName);
             lastAttackTime = Time.time; 
 
             foreach(Transform opponent in opponents)
@@ -184,7 +192,7 @@ public class FightingController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E) && Time.time - lastDodgeTime > dodgeCooldown)
         {
-            animator.Play("DodgeFrontAnimation"); 
+            playerAnimator.PlayDodge();
             Vector3 dodgeDirection = transform.forward * dodgeDistance; 
             characterController.Move(dodgeDirection); 
             lastDodgeTime = Time.time; 
@@ -204,8 +212,7 @@ public class FightingController : MonoBehaviour
 
     void Die() 
     { 
-        Debug.Log("<color=red><b>PLAYER HAS DIED!</b></color>"); 
-        animator.Play("Falling_Down"); 
+        playerAnimator.PlayDie();
         isStunned = true;
         isInvincible = true; 
     }
