@@ -440,6 +440,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sabre_Laser_Harlon_COMPLET
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a91dd8eedb9fa34791d7a74b7e90028, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1917675082205299558, guid: 9a91dd8eedb9fa34791d7a74b7e90028, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -686,6 +690,10 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 3d8377b0e3722f0498653d0807be2d00, type: 2}
     - target: {fileID: 919132149155446097, guid: 15e52ea936f33404f882e8d8bf71ea22, type: 3}
       propertyPath: m_Name
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 15e52ea936f33404f882e8d8bf71ea22, type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1476,6 +1484,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sabre_Laser_Harlon_COMPLET (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a91dd8eedb9fa34791d7a74b7e90028, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1917675082205299558, guid: 9a91dd8eedb9fa34791d7a74b7e90028, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -1573,6 +1585,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 50d0815ab2e286644af6a319148f0ce5, type: 3}
       propertyPath: m_Name
       value: LIBRA1_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 50d0815ab2e286644af6a319148f0ce5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2427,6 +2443,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DirtyPlasticChairs&Tables (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 871a5155c3e45e44b8bc4d330b5591db, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 6146275318639410543, guid: 871a5155c3e45e44b8bc4d330b5591db, type: 3}
@@ -2842,6 +2862,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: 1 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 15e52ea936f33404f882e8d8bf71ea22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2992,6 +3016,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b571b55af5cdcf54fab0dfde02f96575, type: 3}
       propertyPath: m_Name
       value: axe (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b571b55af5cdcf54fab0dfde02f96575, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4261,6 +4289,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LIBRA1_1 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 50d0815ab2e286644af6a319148f0ce5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4567,6 +4599,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b571b55af5cdcf54fab0dfde02f96575, type: 3}
       propertyPath: m_Name
       value: axe
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b571b55af5cdcf54fab0dfde02f96575, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5012,6 +5048,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LIBRA1_1 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 50d0815ab2e286644af6a319148f0ce5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5084,6 +5124,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b571b55af5cdcf54fab0dfde02f96575, type: 3}
       propertyPath: m_Name
       value: axe (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b571b55af5cdcf54fab0dfde02f96575, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7571,6 +7615,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\u0E04\u0E19\u0E14\u0E35 1"
       objectReference: {fileID: 0}
+    - target: {fileID: 2418535265322844398, guid: bcab7b9350a2c67428f1d3cd5459480c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2835470252883234387, guid: bcab7b9350a2c67428f1d3cd5459480c, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.0015556136
@@ -8018,6 +8066,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: axe (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b571b55af5cdcf54fab0dfde02f96575, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8283,6 +8335,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 871a5155c3e45e44b8bc4d330b5591db, type: 3}
       propertyPath: m_Name
       value: DirtyPlasticChairs&Tables
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 871a5155c3e45e44b8bc4d330b5591db, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
