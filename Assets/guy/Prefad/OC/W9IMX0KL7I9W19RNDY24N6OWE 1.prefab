@@ -1,0 +1,175 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &4644115806356373388
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.2922635
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.3699999
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -16.447569
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      propertyPath: m_Name
+      value: W9IMX0KL7I9W19RNDY24N6OWE 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6846451250828525572}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2741312035524682181}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7776886955021912546}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2504212056938368909}
+  m_SourcePrefab: {fileID: 100100000, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+--- !u!1 &5526584599488545501 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+  m_PrefabInstance: {fileID: 4644115806356373388}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6846451250828525572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5526584599488545501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b85e8a492106abc4786c777aaa7e958e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementSpeed: 5
+  rotationSpeed: 10
+  isStunned: 0
+  isInvincible: 0
+  getUpAnimationDuration: 1.5
+  knockdownStunTime: 0.3
+  attackCooldown: 1
+  dodgeCooldown: 1.5
+  attackDamages: 
+  attackKnockbackTypes: 
+  attackKnockbackPowers: []
+  attackAnumations: []
+  dodgeDistance: 2
+  attackRadius: 2.2
+  opponents:
+  - {fileID: 0}
+  handTransform: {fileID: 0}
+  pickupRange: 2.5
+  attack1Effect: {fileID: 0}
+  attack2Effect: {fileID: 0}
+  attack3Effect: {fileID: 0}
+  attack4Effect: {fileID: 0}
+  hitSounds: []
+  maxHealth: 100
+  currentHealth: 0
+  healthBar: {fileID: 0}
+  maxHitsToKnockdown: 5
+  comboWindowTime: 1.5
+--- !u!95 &2741312035524682181
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5526584599488545501}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: fc41fa15026ecd84db29f9fa1e1f0397, type: 3}
+  m_Controller: {fileID: 9100000, guid: 9a079173a8792f2448590738a29a2cbe, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7776886955021912546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5526584599488545501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 179daf56be4b41045a050093eac6f247, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!143 &2504212056938368909
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5526584599488545501}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2.84
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 1.42, z: 0}
