@@ -27,6 +27,13 @@ public class VoiceSkillController : MonoBehaviour
     public ParticleSystem pushEffect;
     public ParticleSystem boomEffect;
 
+    [Header("Audio Settings (เสียงสกิล)")]
+    public AudioClip fireSound;
+    public AudioClip pushSound;
+    public AudioClip boomSound;
+    [Tooltip("เสียงที่จะแทรกเข้ามาเพิ่มตอนร่ายแบบตะโกน (SUPER)")]
+    public AudioClip superSound;
+
     [Header("UI System (ไมโครโฟน)")]
     public GameObject micUIPanel;           
     public UnityEngine.UI.Text micStatusText; 
@@ -295,22 +302,28 @@ public class VoiceSkillController : MonoBehaviour
     // --- SKILLS IMPLEMENTATION ---
     private void FireSkill()
     {
-        ApplyDamageAndEffect(fireDamage, KnockbackType.None, 0f, fireEffect);
+        ApplyDamageAndEffect(fireDamage, KnockbackType.None, 0f, fireEffect, fireSound);
     }
 
     private void PushSkill()
     {
-        ApplyDamageAndEffect(pushDamage, KnockbackType.Pushback, 10f, pushEffect);
+        ApplyDamageAndEffect(pushDamage, KnockbackType.Pushback, 10f, pushEffect, pushSound);
     }
 
     private void BoomSkill()
     {
-        ApplyDamageAndEffect(boomDamage, KnockbackType.Knockdown, 15f, boomEffect);
+        ApplyDamageAndEffect(boomDamage, KnockbackType.Knockdown, 15f, boomEffect, boomSound);
     }
 
     // ฟังก์ชันรวบรวมการทำดาเมจและเรียกเอฟเฟกต์ให้ถูกจุด
-    private void ApplyDamageAndEffect(int damage, KnockbackType kbType, float kbPower, ParticleSystem effectPrefab)
+    private void ApplyDamageAndEffect(int damage, KnockbackType kbType, float kbPower, ParticleSystem effectPrefab, AudioClip skillSound)
     {
+        // เล่นเสียงพื้นฐานของสกิล
+        if (skillSound != null)
+        {
+            AudioSource.PlayClipAtPoint(skillSound, transform.position);
+        }
+
         // 1. ตรวจสอบว่าเป็นการ "ตะโกน" หรือไม่ ถ้าใช่ให้อัปเกรดสกิล!
         int finalDamage = damage;
         KnockbackType finalKbType = kbType;
@@ -327,8 +340,19 @@ public class VoiceSkillController : MonoBehaviour
             if (kbType == KnockbackType.None) finalKbType = KnockbackType.Pushback;
             else if (kbType == KnockbackType.Pushback) finalKbType = KnockbackType.Knockdown;
 
-            // สั่นกล้องเพิ่มความสะใจ
-            StartCoroutine(ShakeCamera(0.2f, 0.4f));
+            // เล่นเสียงโบนัสตอนตะโกน (ถ้ามี)
+            if (superSound != null)
+            {
+                AudioSource.PlayClipAtPoint(superSound, transform.position);
+            }
+
+            // สั่นกล้องรุนแรงขึ้น (0.3 วินาที, ความสั่น 0.8)
+            StartCoroutine(ShakeCamera(0.3f, 0.8f));
+        }
+        else
+        {
+            // ร่ายเวทย์ธรรมดาก็ให้กล้องสั่นนิดนึงเพื่อความหนักแน่น (0.15 วินาที, ความสั่น 0.2)
+            StartCoroutine(ShakeCamera(0.15f, 0.2f));
         }
 
         Collider[] hits = Physics.OverlapSphere(transform.position, skillRadius);
