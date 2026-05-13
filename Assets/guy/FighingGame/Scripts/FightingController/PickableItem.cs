@@ -15,13 +15,33 @@ public class PickableItem : MonoBehaviour
     public string[] weaponAttackAnimations = {"Attack_Weapon1", "Attack_Weapon2", "Attack_Weapon3", "Attack_Weapon4"};
     public AudioClip[] weaponAttackSounds;
 
+    // ── แก้ปัญหาตำแหน่งเปลี่ยนหลังใช้ skill ──────────────────────────────
+    [Header("Hold Settings")]
+    [Tooltip("Offset ตำแหน่งจาก Hand Bone — ปรับใน Inspector จนได้มุมที่ต้องการ")]
+    public Vector3 holdLocalPosition = Vector3.zero;
+    [Tooltip("Offset rotation จาก Hand Bone — ปรับใน Inspector จนได้มุมที่ต้องการ")]
+    public Vector3 holdLocalRotation = Vector3.zero;
+    // ─────────────────────────────────────────────────────────────────────
+
     private Rigidbody rb;
     private Collider col;
+    private bool isHeld = false; // flag ควบคุม LateUpdate
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
+    }
+
+    // Force position/rotation ทุก frame หลัง Animator update bone
+    // ป้องกัน animation skill ดึงตำแหน่ง item ให้เปลี่ยนไป
+    void LateUpdate()
+    {
+        if (isHeld)
+        {
+            transform.localPosition = holdLocalPosition;
+            transform.localRotation = Quaternion.Euler(holdLocalRotation);
+        }
     }
 
     // เมื่อถูกหยิบ จะปิดฟิสิกส์เพื่อให้ติดไปกับมือ
@@ -31,13 +51,17 @@ public class PickableItem : MonoBehaviour
         if (col) col.enabled = false;
         
         transform.SetParent(handTransform);
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
+        transform.localPosition = holdLocalPosition;
+        transform.localRotation = Quaternion.Euler(holdLocalRotation);
+
+        isHeld = true;
     }
 
     // (เผื่อในอนาคต) เมื่อถูกทิ้ง จะเปิดฟิสิกส์คืน
     public void OnDropped()
     {
+        isHeld = false;
+
         transform.SetParent(null);
         if (rb) rb.isKinematic = false;
         if (col) col.enabled = true;
