@@ -4,6 +4,8 @@ public class PickableItem : MonoBehaviour
 {
     [Header("Item Settings")]
     public string itemName = "Weapon";
+    [Tooltip("เปิดใช้งานระบบจับเสียง (Voice Magic) เมื่อถือไอเทมชิ้นนี้")]
+    public bool isMagicVoiceItem = false;
     // กำหนดดาเมจของอาวุธแยกตามแต่ละปุ่ม (0=H, 1=J, 2=K, 3=L)
     public int[] weaponAttackDamages = { 15, 20, 25, 30 };
     public KnockbackType[] weaponKnockbackTypes = { KnockbackType.None, KnockbackType.None, KnockbackType.Pushback, KnockbackType.Knockdown };

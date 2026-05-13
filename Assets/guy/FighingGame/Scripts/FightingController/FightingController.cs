@@ -238,9 +238,36 @@ public class FightingController : MonoBehaviour
         foreach (var hitCollider in hitColliders)
         {
             PickableItem item = hitCollider.GetComponent<PickableItem>();
-            if (item != null) { heldItem = item; item.OnPickedUp(handTransform); break; }
+            if (item != null) 
+            { 
+                heldItem = item; 
+                item.OnPickedUp(handTransform); 
+
+                // ถ้านี่คือสมุดเวทย์ ให้เปิดระบบไมค์
+                if (item.isMagicVoiceItem)
+                {
+                    var voiceCtrl = GetComponent<VoiceSkillController>();
+                    if (voiceCtrl != null) voiceCtrl.StartListening();
+                }
+
+                break; 
+            }
         }
     }
 
-    void DropItem() { if (heldItem != null) { heldItem.OnDropped(); heldItem = null; } }
+    void DropItem() 
+    { 
+        if (heldItem != null) 
+        { 
+            // ปิดระบบไมค์ถ้าตอนทิ้งคือสมุดเวทย์
+            if (heldItem.isMagicVoiceItem)
+            {
+                var voiceCtrl = GetComponent<VoiceSkillController>();
+                if (voiceCtrl != null) voiceCtrl.StopListening();
+            }
+
+            heldItem.OnDropped(); 
+            heldItem = null; 
+        } 
+    }
 }
