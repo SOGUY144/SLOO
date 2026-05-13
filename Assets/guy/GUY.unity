@@ -16108,12 +16108,16 @@ MonoBehaviour:
   fireDamage: 15
   pushDamage: 10
   boomDamage: 25
-  fireEffect: {fileID: 1623298396792479162, guid: 1468eeb0963ddad41909c04ad8af0aee, type: 3}
-  pushEffect: {fileID: 6651247000163292862, guid: ecb38e0319a6ad44cbca52d7b5add7a6, type: 3}
-  boomEffect: {fileID: 4739264407584629229, guid: 841004c4c6a39e244abe2257394de913, type: 3}
+  fireEffect: {fileID: 198706150799401992, guid: a990e3ac1318b834488c784d851f42a9, type: 3}
+  pushEffect: {fileID: 198856239026640498, guid: 9bba9cf244c53c5439505dfc96fdd11c, type: 3}
+  boomEffect: {fileID: 198917022394846920, guid: e1b08032bec16ba4eb1ae23cbd572664, type: 3}
+  fireSound: {fileID: 0}
+  pushSound: {fileID: 0}
+  boomSound: {fileID: 0}
+  superSound: {fileID: 0}
   micUIPanel: {fileID: 0}
   micStatusText: {fileID: 0}
-  micSensitivity: 0.8
+  micSensitivity: 1
   shoutThreshold: 0.9
   segmentCount: 15
 --- !u!1 &6803495545076733700
