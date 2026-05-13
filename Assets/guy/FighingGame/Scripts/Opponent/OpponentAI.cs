@@ -185,6 +185,8 @@ public class OpponentAI : MonoBehaviour
 
         currentHealth -= takeDamage;
         if (healthBar != null) healthBar.SetHealth(currentHealth);
+        // แจ้ง HUD โดยตรงทันทีเมื่อ HP เปลี่ยน
+        if (HUDController.Instance != null) HUDController.Instance.SetOpponentHP(currentHealth, maxHealth);
 
         if (currentHealth <= 0)
         {
@@ -246,6 +248,8 @@ public class OpponentAI : MonoBehaviour
         isStunned = true;
         animator.Play("HitDamageAnimation", 0, 0f);
         Debug.Log("Opponent died.");
+        // แจ้ง RoundManager ว่าศัตรูตายแล้ว
+        if (RoundManager.Instance != null) RoundManager.Instance.OnOpponentDied();
     }
 
     public void Attack1Effect() { if (attack1Effect != null) attack1Effect.Play(); }

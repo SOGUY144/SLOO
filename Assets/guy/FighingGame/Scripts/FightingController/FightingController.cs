@@ -91,6 +91,8 @@ public class FightingController : MonoBehaviour
 
         currentHealth -= takeDamage;
         if (healthBar != null) healthBar.SetHealth(currentHealth);
+        // แจ้ง HUD โดยตรงทันทีเมื่อ HP เปลี่ยน
+        if (HUDController.Instance != null) HUDController.Instance.SetPlayerHP(currentHealth, maxHealth);
         if (hitSounds != null && hitSounds.Length > 0)
             AudioSource.PlayClipAtPoint(hitSounds[Random.Range(0, hitSounds.Length)], transform.position);
 
@@ -224,6 +226,8 @@ public class FightingController : MonoBehaviour
         playerAnimator.PlayDie();
         isStunned = true;
         isInvincible = true;
+        // แจ้ง RoundManager ว่า Player ตายแล้ว
+        if (RoundManager.Instance != null) RoundManager.Instance.OnPlayerDied();
     }
 
     public void Attack1Effect() { if (attack1Effect != null) attack1Effect.Play(); }
