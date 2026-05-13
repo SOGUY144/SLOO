@@ -16108,9 +16108,9 @@ MonoBehaviour:
   fireDamage: 15
   pushDamage: 10
   boomDamage: 25
-  fireEffect: {fileID: 0}
-  pushEffect: {fileID: 0}
-  boomEffect: {fileID: 0}
+  fireEffect: {fileID: 1623298396792479162, guid: 1468eeb0963ddad41909c04ad8af0aee, type: 3}
+  pushEffect: {fileID: 6651247000163292862, guid: ecb38e0319a6ad44cbca52d7b5add7a6, type: 3}
+  boomEffect: {fileID: 4739264407584629229, guid: 841004c4c6a39e244abe2257394de913, type: 3}
   micUIPanel: {fileID: 0}
   micStatusText: {fileID: 0}
   micSensitivity: 1

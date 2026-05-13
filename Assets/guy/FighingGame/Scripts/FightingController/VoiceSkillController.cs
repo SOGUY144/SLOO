@@ -258,38 +258,62 @@ public class VoiceSkillController : MonoBehaviour
     // --- SKILLS IMPLEMENTATION ---
     private void FireSkill()
     {
-        if (fireEffect != null) fireEffect.Play();
-        ApplyDamage(fireDamage, KnockbackType.None, 0f);
+        ApplyDamageAndEffect(fireDamage, KnockbackType.None, 0f, fireEffect);
     }
 
     private void PushSkill()
     {
-        if (pushEffect != null) pushEffect.Play();
-        ApplyDamage(pushDamage, KnockbackType.Pushback, 10f);
+        ApplyDamageAndEffect(pushDamage, KnockbackType.Pushback, 10f, pushEffect);
     }
 
     private void BoomSkill()
     {
-        if (boomEffect != null) boomEffect.Play();
-        ApplyDamage(boomDamage, KnockbackType.Knockdown, 15f);
+        ApplyDamageAndEffect(boomDamage, KnockbackType.Knockdown, 15f, boomEffect);
     }
 
-    // ฟังก์ชันรวบรวมการทำดาเมจใส่ศัตรูรอบตัว
-    private void ApplyDamage(int damage, KnockbackType kbType, float kbPower)
+    // ฟังก์ชันรวบรวมการทำดาเมจและเรียกเอฟเฟกต์ให้ถูกจุด
+    private void ApplyDamageAndEffect(int damage, KnockbackType kbType, float kbPower, ParticleSystem effectPrefab)
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, skillRadius);
+        bool hitSomeone = false;
+
         foreach (var hit in hits)
         {
             var ai = hit.GetComponent<OpponentAI>();
             if (ai != null)
             {
-                // คำนวณทิศทางให้กระเด็นออกจากตัว Player
+                hitSomeone = true;
+                
+                // 1. สร้างเอฟเฟกต์ระเบิด/แสง ตรงจุดที่ศัตรูยืนอยู่ (ยกขึ้นมา 1 หน่วยให้ตรงกลางตัว)
+                PlayEffectAtPosition(effectPrefab, hit.transform.position + Vector3.up);
+
+                // 2. คำนวณทิศทางให้กระเด็นออกจากตัว Player
                 Vector3 dir = (hit.transform.position - transform.position).normalized;
                 dir.y = 0;
                 
                 ai.StartCoroutine(ai.PlayHitDamageAnimation(damage, kbType, dir, kbPower));
             }
         }
+
+        // ถ้าร่ายเวทย์แล้วไม่โดนใครเลย (วืด) ให้แสงไปโผล่ข้างหน้าผู้เล่นนิดนึงแทน (จะได้รู้ว่าสกิลออกแล้ว)
+        if (!hitSomeone)
+        {
+            Vector3 frontPosition = transform.position + (transform.forward * 2f) + Vector3.up;
+            PlayEffectAtPosition(effectPrefab, frontPosition);
+        }
+    }
+
+    // ฟังก์ชันสำหรับเล่น Effect ตรงพิกัดที่กำหนด
+    private void PlayEffectAtPosition(ParticleSystem effectPrefab, Vector3 spawnPosition)
+    {
+        if (effectPrefab == null) return;
+
+        ParticleSystem newEffect = Instantiate(effectPrefab, spawnPosition, Quaternion.identity);
+        newEffect.gameObject.SetActive(true);
+        newEffect.Play();
+
+        float destroyTime = newEffect.main.duration + newEffect.main.startLifetime.constantMax;
+        Destroy(newEffect.gameObject, destroyTime > 0 ? destroyTime : 3f);
     }
 
     void OnDestroy()
