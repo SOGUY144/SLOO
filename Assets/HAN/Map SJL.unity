@@ -959,7 +959,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 05000000050000000a0000000c000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -967,7 +967,10 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Chair1
+  - Attack_Chair2
+  - Attack_Chair3
+  - Attack_Chair4
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -3907,7 +3910,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 05000000050000000a0000000c000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -3915,7 +3918,10 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Chair1
+  - Attack_Chair2
+  - Attack_Chair3
+  - Attack_Chair4
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -4909,7 +4915,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 05000000050000000a0000000c000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -4917,7 +4923,10 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Chair1
+  - Attack_Chair2
+  - Attack_Chair3
+  - Attack_Chair4
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -7360,7 +7369,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 05000000050000000a0000000c000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -7368,7 +7377,10 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Chair1
+  - Attack_Chair2
+  - Attack_Chair3
+  - Attack_Chair4
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -8304,7 +8316,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 05000000050000000a0000000c000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -8312,7 +8324,10 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Chair1
+  - Attack_Chair2
+  - Attack_Chair3
+  - Attack_Chair4
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -10386,7 +10401,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 05000000050000000a0000000c000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -10394,7 +10409,10 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Chair1
+  - Attack_Chair2
+  - Attack_Chair3
+  - Attack_Chair4
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}

@@ -322,8 +322,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.1488392, y: 1.3969219, z: 1.2193941}
-  m_Center: {x: 0.0941411, y: -0.19842543, z: -0.23758826}
+  m_Size: {x: 1.1488392, y: 9.443151, z: 2.2487416}
+  m_Center: {x: 0.09414862, y: 3.824648, z: -0.1096511}
 --- !u!114 &1328950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -338,7 +338,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 0a0000000f000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -346,7 +346,8 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Brick1
+  - Attack_Brick2
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -358,14 +359,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1328947}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.1500232, y: 0.6410052, z: -0.7412034, w: -0.13123596}
-  m_LocalPosition: {x: -0.29, y: -1.963, z: -0.889}
+  m_LocalRotation: {x: -0.14357302, y: 0.6757308, z: -0.7096887, w: -0.13826288}
+  m_LocalPosition: {x: -0.172, y: -1.928, z: -0.612}
   m_LocalScale: {x: 0.11950559, y: 0.1195056, z: 0.11950561}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 543450653162899502}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 81.732, y: 22.122, z: -180.882}
+  m_LocalEulerAnglesHint: {x: 87.215, y: 20.386, z: -182.611}
 --- !u!1001 &3708809
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22280,7 +22281,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 0a0000000f00000014000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -22288,7 +22289,9 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Knife1
+  - Attack_Knife2
+  - Attack_Knife3
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -22321,14 +22324,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 429680953}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.6392454, y: 0.30541605, z: -0.30707967, w: -0.63544357}
+  m_LocalRotation: {x: 0.11836632, y: 0.6985006, z: -0.6953008, w: 0.12100885}
   m_LocalPosition: {x: 3.524, y: -1.956, z: 2.588}
   m_LocalScale: {x: 218.44275, y: 218.44275, z: 218.44275}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 543450652451116343}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -269.664, y: -49.298004, z: 2.0310059}
+  m_LocalEulerAnglesHint: {x: -269.664, y: -49.296997, z: 150.193}
 --- !u!1 &429945658
 GameObject:
   m_ObjectHideFlags: 0
@@ -38232,7 +38235,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 050000000a0000000f000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -49813,7 +49816,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 0a0000000f000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -49821,7 +49824,8 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Brick1
+  - Attack_Brick2
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -54331,7 +54335,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 0a0000000f000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -54339,7 +54343,8 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Brick1
+  - Attack_Brick2
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
