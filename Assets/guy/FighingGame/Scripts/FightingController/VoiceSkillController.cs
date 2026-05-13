@@ -34,12 +34,17 @@ public class VoiceSkillController : MonoBehaviour
     [Header("Microphone Settings")]
     [Tooltip("ความไวของหลอดเสียง (ยิ่งเยอะ ยิ่งขยับง่าย)")]
     public float micSensitivity = 30f;
+    [Tooltip("จุดที่ถือว่าเป็นการตะโกน (0.0 ถึง 1.0)")]
+    public float shoutThreshold = 0.8f;
 
     // ตั้งค่าหลอดวัดเสียงแบบจุดๆ (Segment)
     public int segmentCount = 15;
     private UnityEngine.UI.Image[] volumeSegments;
 
     private bool isListening = false;
+    private bool isShouting = false; // ตัวแปรเก็บสถานะว่าตะโกนอยู่ไหมตอนร่ายเวทย์
+    private bool wasShoutingRecently = false; // เก็บความทรงจำว่าเพิ่งตะโกนไป
+    private float peakVolumeTimer = 0f;
     private AudioClip micClip; // เอาไว้อัดเสียงชั่วคราวเพื่อวัดระดับความดัง
 
     void Start()
@@ -123,8 +128,28 @@ public class VoiceSkillController : MonoBehaviour
         // เรียกใช้งานสกิลตามคำพูด
         if (actions.ContainsKey(speech.text))
         {
-            // ลบ Emoji ออก เพราะ Unity พื้นฐานไม่รองรับ ทำให้ข้อความบัคหรือหาย
-            if (micStatusText != null) micStatusText.text = "CASTED: " + speech.text.ToUpper();
+            // เช็คว่าใน 1.5 วินาทีที่ผ่านมา มีจังหวะไหนที่หลอดเสียงทะลุหลอดบ้างไหม
+            isShouting = wasShoutingRecently;
+
+            // รีเซ็ตเพื่อไม่ให้ร่ายเวทย์ครั้งต่อไปติด Super ฟรีๆ
+            wasShoutingRecently = false;
+            peakVolumeTimer = 0f;
+
+            // อัปเดต UI ให้รู้ว่าร่ายแบบปกติ หรือแบบตะโกน
+            if (micStatusText != null) 
+            {
+                if (isShouting)
+                {
+                    micStatusText.text = "SUPER " + speech.text.ToUpper() + "!!!";
+                    micStatusText.color = new Color(1f, 0.4f, 0.2f, 1f); // สีส้มแดง (คริติคอล)
+                }
+                else
+                {
+                    micStatusText.text = "CASTED: " + speech.text.ToUpper();
+                    micStatusText.color = new Color(0.5f, 1f, 0.5f, 1f); // สีเขียวปกติ
+                }
+            }
+
             actions[speech.text].Invoke();
             lastSkillTime = Time.time;
         }
@@ -136,8 +161,20 @@ public class VoiceSkillController : MonoBehaviour
         {
             // อัปเดตหลอดระดับเสียง
             float volume = GetMicVolume();
-            // ใช้ค่าความไวจาก Inspector (ค่าเริ่มต้นคือ 30f)
             float fillAmount = Mathf.Clamp01(volume * micSensitivity); 
+
+            // จำไว้ว่าเพิ่งตะโกน (หน่วงเวลาไว้ 1.5 วินาที เพราะกว่าระบบพูดจะจับคำได้ เสียงเรามักจะเงียบไปแล้ว)
+            if (fillAmount >= shoutThreshold)
+            {
+                wasShoutingRecently = true;
+                peakVolumeTimer = 1.5f;
+            }
+
+            if (peakVolumeTimer > 0)
+            {
+                peakVolumeTimer -= Time.deltaTime;
+                if (peakVolumeTimer <= 0) wasShoutingRecently = false;
+            }
 
             // คำนวณว่าควรจะให้ขีดสว่างกี่ขีด
             int litCount = Mathf.RoundToInt(fillAmount * segmentCount);
@@ -274,6 +311,26 @@ public class VoiceSkillController : MonoBehaviour
     // ฟังก์ชันรวบรวมการทำดาเมจและเรียกเอฟเฟกต์ให้ถูกจุด
     private void ApplyDamageAndEffect(int damage, KnockbackType kbType, float kbPower, ParticleSystem effectPrefab)
     {
+        // 1. ตรวจสอบว่าเป็นการ "ตะโกน" หรือไม่ ถ้าใช่ให้อัปเกรดสกิล!
+        int finalDamage = damage;
+        KnockbackType finalKbType = kbType;
+        float finalKbPower = kbPower;
+        float effectScale = 1f;
+
+        if (isShouting)
+        {
+            finalDamage = damage * 2;          // ดาเมจแรงขึ้น 2 เท่า
+            effectScale = 2f;                  // เอฟเฟกต์ใหญ่ขึ้น 2 เท่า
+            finalKbPower = kbPower * 1.5f;     // กระเด็นแรงขึ้น 1.5 เท่า
+
+            // เลื่อนขั้นสถานะการกระเด็นให้รุนแรงขึ้น
+            if (kbType == KnockbackType.None) finalKbType = KnockbackType.Pushback;
+            else if (kbType == KnockbackType.Pushback) finalKbType = KnockbackType.Knockdown;
+
+            // สั่นกล้องเพิ่มความสะใจ
+            StartCoroutine(ShakeCamera(0.2f, 0.4f));
+        }
+
         Collider[] hits = Physics.OverlapSphere(transform.position, skillRadius);
         bool hitSomeone = false;
 
@@ -284,36 +341,62 @@ public class VoiceSkillController : MonoBehaviour
             {
                 hitSomeone = true;
                 
-                // 1. สร้างเอฟเฟกต์ระเบิด/แสง ตรงจุดที่ศัตรูยืนอยู่ (ยกขึ้นมา 1 หน่วยให้ตรงกลางตัว)
-                PlayEffectAtPosition(effectPrefab, hit.transform.position + Vector3.up);
+                // 1. สร้างเอฟเฟกต์ระเบิด/แสง ตรงจุดที่ศัตรูยืนอยู่ พร้อมขยายขนาดถ้าตะโกน
+                PlayEffectAtPosition(effectPrefab, hit.transform.position + Vector3.up, effectScale);
 
                 // 2. คำนวณทิศทางให้กระเด็นออกจากตัว Player
                 Vector3 dir = (hit.transform.position - transform.position).normalized;
                 dir.y = 0;
                 
-                ai.StartCoroutine(ai.PlayHitDamageAnimation(damage, kbType, dir, kbPower));
+                ai.StartCoroutine(ai.PlayHitDamageAnimation(finalDamage, finalKbType, dir, finalKbPower));
             }
         }
 
-        // ถ้าร่ายเวทย์แล้วไม่โดนใครเลย (วืด) ให้แสงไปโผล่ข้างหน้าผู้เล่นนิดนึงแทน (จะได้รู้ว่าสกิลออกแล้ว)
+        // ถ้าร่ายเวทย์แล้วไม่โดนใครเลย (วืด) ให้แสงไปโผล่ข้างหน้าผู้เล่น
         if (!hitSomeone)
         {
             Vector3 frontPosition = transform.position + (transform.forward * 2f) + Vector3.up;
-            PlayEffectAtPosition(effectPrefab, frontPosition);
+            PlayEffectAtPosition(effectPrefab, frontPosition, effectScale);
         }
     }
 
-    // ฟังก์ชันสำหรับเล่น Effect ตรงพิกัดที่กำหนด
-    private void PlayEffectAtPosition(ParticleSystem effectPrefab, Vector3 spawnPosition)
+    // ฟังก์ชันสำหรับเล่น Effect ตรงพิกัดที่กำหนด พร้อมปรับขนาด
+    private void PlayEffectAtPosition(ParticleSystem effectPrefab, Vector3 spawnPosition, float scaleMultiplier)
     {
         if (effectPrefab == null) return;
 
         ParticleSystem newEffect = Instantiate(effectPrefab, spawnPosition, Quaternion.identity);
+        
+        // ถ้ามีการตะโกน (สเกลไม่ใช่ 1) ให้ขยายขนาด Effect
+        if (scaleMultiplier != 1f)
+        {
+            newEffect.transform.localScale = new Vector3(scaleMultiplier, scaleMultiplier, scaleMultiplier);
+        }
+
         newEffect.gameObject.SetActive(true);
         newEffect.Play();
 
         float destroyTime = newEffect.main.duration + newEffect.main.startLifetime.constantMax;
         Destroy(newEffect.gameObject, destroyTime > 0 ? destroyTime : 3f);
+    }
+
+    // ฟังก์ชันทำกล้องสั่น (Camera Shake)
+    private System.Collections.IEnumerator ShakeCamera(float duration, float magnitude)
+    {
+        if (Camera.main == null) yield break;
+        Vector3 originalPos = Camera.main.transform.localPosition;
+        float elapsed = 0.0f;
+        
+        while (elapsed < duration)
+        {
+            float x = Random.Range(-1f, 1f) * magnitude;
+            float y = Random.Range(-1f, 1f) * magnitude;
+            Camera.main.transform.localPosition = new Vector3(originalPos.x + x, originalPos.y + y, originalPos.z);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        
+        Camera.main.transform.localPosition = originalPos;
     }
 
     void OnDestroy()

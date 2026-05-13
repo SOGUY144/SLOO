@@ -16104,7 +16104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillRadius: 15
-  skillCooldown: 2
+  skillCooldown: 1
   fireDamage: 15
   pushDamage: 10
   boomDamage: 25
@@ -16113,7 +16113,8 @@ MonoBehaviour:
   boomEffect: {fileID: 4739264407584629229, guid: 841004c4c6a39e244abe2257394de913, type: 3}
   micUIPanel: {fileID: 0}
   micStatusText: {fileID: 0}
-  micSensitivity: 1
+  micSensitivity: 0.8
+  shoutThreshold: 0.9
   segmentCount: 15
 --- !u!1 &6803495545076733700
 GameObject:
