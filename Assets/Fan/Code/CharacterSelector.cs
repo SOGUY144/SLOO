@@ -30,10 +30,14 @@ public class CharacterSelector : MonoBehaviour
     private Vector3[] _originalScales;
     private Outline[] _outlines;
 
+    // กันกดซ้ำตอน transition กำลังเล่นอยู่
+    private bool _isTransitioning = false;
+
     private void OnEnable()
     {
         _currentIndex = 0;
         _previousIndex = -1;
+        _isTransitioning = false;
 
         if (_outlines != null)
             UpdateSelection();
@@ -65,6 +69,7 @@ public class CharacterSelector : MonoBehaviour
     private void Update()
     {
         if (!gameObject.activeSelf) return;
+        if (_isTransitioning) return; // ระหว่าง dissolve ห้ามกดอะไร
         HandleInput();
         AnimateItems();
     }
@@ -82,7 +87,7 @@ public class CharacterSelector : MonoBehaviour
                 _currentIndex--;
         }
 
-        // Confirm → บันทึกตัวละคร + โหลด Scene Map ที่เลือกไว้
+        // Confirm → บันทึกตัวละคร + Dissolve ไปแมพ
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
             ConfirmSelection();
 
@@ -133,12 +138,20 @@ public class CharacterSelector : MonoBehaviour
         // บันทึกตัวละครที่เลือก
         GameData.Instance.selectedCharacterIndex = _currentIndex;
 
-        // โหลด Scene Map ตาม Index ที่เลือกไว้ในหน้า Map
         int mapIndex = GameData.Instance.selectedMapIndex;
 
         if (mapSceneNames.Length > mapIndex && !string.IsNullOrEmpty(mapSceneNames[mapIndex]))
         {
-            SceneManager.LoadScene(mapSceneNames[mapIndex]);
+            // กัน transition ซ้ำ
+            if (SceneTransition.Instance == null)
+            {
+                Debug.LogWarning("ไม่พบ SceneTransition! ใช้ SceneManager แทน");
+                SceneManager.LoadScene(mapSceneNames[mapIndex]);
+                return;
+            }
+
+            _isTransitioning = true;
+            SceneTransition.Instance.GoToScene(mapSceneNames[mapIndex]);
         }
         else
         {

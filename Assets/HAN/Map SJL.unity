@@ -1265,7 +1265,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 05000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -1273,7 +1273,7 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Saber1
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -2057,6 +2057,75 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 2668841619902011886, guid: d9b9657b6202d9141ab321786f105537, type: 3}
+--- !u!1001 &310395138
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1719629203172228673, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: wallLayers.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1719629203172228673, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: targets.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1719629203172228673, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: 'targets.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1411847642}
+    - target: {fileID: 2186185184536219820, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: m_Name
+      value: Main Camera
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756475034237427197, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1479.91
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756475034237427197, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1639.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756475034237427197, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6487.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756475034237427197, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.7273398
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756475034237427197, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756475034237427197, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.6862775
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756475034237427197, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756475034237427197, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756475034237427197, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 273.328
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756475034237427197, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 04254ebab1624e346a7f064768ce8bb8, type: 3}
 --- !u!1001 &319979270
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2816,7 +2885,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 05000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -2824,7 +2893,7 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Saber1
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -3086,11 +3155,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 3530945768078225325, guid: 871a5155c3e45e44b8bc4d330b5591db, type: 3}
---- !u!4 &391638003 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 154030915225549077, guid: 0fa6ba9aad5e2b94d90aa3cf37c688d2, type: 3}
-  m_PrefabInstance: {fileID: 1353667152}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &401531384
 GameObject:
   m_ObjectHideFlags: 0
@@ -3266,6 +3330,96 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 3530945768078225325, guid: 871a5155c3e45e44b8bc4d330b5591db, type: 3}
+--- !u!1 &460522002
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 460522003}
+  - component: {fileID: 460522005}
+  - component: {fileID: 460522004}
+  m_Layer: 0
+  m_Name: "\u043A\u043D\u0438\u0433\u0430"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &460522003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460522002}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.00000008940697, y: -0.7071068, z: -0.00000008940697, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.0032101395, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 549064271}
+  m_LocalEulerAnglesHint: {x: -90, y: 89.547, z: 0.93}
+--- !u!23 &460522004
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460522002}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: -7793158466961728529, guid: 8f6d1245c9557be43a48095230e2a0bd, type: 3}
+  - {fileID: -5634944049139579078, guid: 8f6d1245c9557be43a48095230e2a0bd, type: 3}
+  - {fileID: -7237434585488238374, guid: 8f6d1245c9557be43a48095230e2a0bd, type: 3}
+  - {fileID: -7001220965556111841, guid: 8f6d1245c9557be43a48095230e2a0bd, type: 3}
+  - {fileID: 2807873782087252056, guid: 8f6d1245c9557be43a48095230e2a0bd, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &460522005
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460522002}
+  m_Mesh: {fileID: 5170623133437109932, guid: 8f6d1245c9557be43a48095230e2a0bd, type: 3}
 --- !u!1 &464109364 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6146275318639410543, guid: 871a5155c3e45e44b8bc4d330b5591db, type: 3}
@@ -3453,6 +3607,118 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 63003a0b1ba771a4aa7a52c80d78b73e, type: 3}
   m_PrefabInstance: {fileID: 497154206}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &549064267
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 549064271}
+  - component: {fileID: 549064270}
+  - component: {fileID: 549064269}
+  - component: {fileID: 549064268}
+  m_Layer: 0
+  m_Name: GameObject (19)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!54 &549064268
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 549064267}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &549064269
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 549064267}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0016017668, y: 0.006826047, z: 0.011358678}
+  m_Center: {x: -0.00043281636, y: 0.0031801283, z: -0.00007836265}
+--- !u!114 &549064270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 549064267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eab63d7a1b8db5a4daa2ddaa94e71712, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: Weapon
+  isMagicVoiceItem: 1
+  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponKnockbackTypes: 00000000000000000100000002000000
+  weaponKnockbackPowers:
+  - 0
+  - 0
+  - 2
+  - 5
+  weaponAttackAnimations:
+  - Attack_Weapon1
+  - Attack_Weapon2
+  - Attack_Weapon3
+  - Attack_Weapon4
+  weaponAttackSounds: []
+  holdLocalPosition: {x: 0, y: 0, z: 0}
+  holdLocalRotation: {x: 0, y: 0, z: 0}
+--- !u!4 &549064271
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 549064267}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.58926594, y: 0.58926594, z: 0.3908525, w: -0.39085245}
+  m_LocalPosition: {x: -1483.122, y: 1636.812, z: -6481.291}
+  m_LocalScale: {x: 54.599995, y: 54.599995, z: 54.599995}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 460522003}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: -180, y: 67.112, z: 90}
 --- !u!1 &550280418
 GameObject:
   m_ObjectHideFlags: 0
@@ -3801,7 +4067,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 0f00000014000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -3809,7 +4075,8 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Human1
+  - Attack_Human2
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -4345,7 +4612,7 @@ GameObject:
   - component: {fileID: 763489079}
   - component: {fileID: 763489078}
   - component: {fileID: 763489077}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Quad (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4632,7 +4899,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 05000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -4640,7 +4907,7 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Saber1
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -5044,7 +5311,7 @@ GameObject:
   - component: {fileID: 869503138}
   - component: {fileID: 869503137}
   - component: {fileID: 869503136}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Quad (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5154,7 +5421,7 @@ GameObject:
   - component: {fileID: 887710969}
   - component: {fileID: 887710968}
   - component: {fileID: 887710967}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Quad (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5454,7 +5721,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 1400000019000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -5462,7 +5729,8 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Human1
+  - Attack_Human2
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -6996,7 +7264,7 @@ GameObject:
   - component: {fileID: 1151447667}
   - component: {fileID: 1151447666}
   - component: {fileID: 1151447665}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Quad (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7260,7 +7528,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 03000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -7268,7 +7536,7 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Bigsword1
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -8057,7 +8325,7 @@ GameObject:
   - component: {fileID: 1289917221}
   - component: {fileID: 1289917220}
   - component: {fileID: 1289917219}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Quad (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8347,63 +8615,6 @@ Transform:
   - {fileID: 1697410881}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!1001 &1353667152
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 154030915225549077, guid: 0fa6ba9aad5e2b94d90aa3cf37c688d2, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1483.84
-      objectReference: {fileID: 0}
-    - target: {fileID: 154030915225549077, guid: 0fa6ba9aad5e2b94d90aa3cf37c688d2, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1636.835
-      objectReference: {fileID: 0}
-    - target: {fileID: 154030915225549077, guid: 0fa6ba9aad5e2b94d90aa3cf37c688d2, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -6486.8896
-      objectReference: {fileID: 0}
-    - target: {fileID: 154030915225549077, guid: 0fa6ba9aad5e2b94d90aa3cf37c688d2, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 154030915225549077, guid: 0fa6ba9aad5e2b94d90aa3cf37c688d2, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 154030915225549077, guid: 0fa6ba9aad5e2b94d90aa3cf37c688d2, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 154030915225549077, guid: 0fa6ba9aad5e2b94d90aa3cf37c688d2, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 154030915225549077, guid: 0fa6ba9aad5e2b94d90aa3cf37c688d2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 154030915225549077, guid: 0fa6ba9aad5e2b94d90aa3cf37c688d2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 154030915225549077, guid: 0fa6ba9aad5e2b94d90aa3cf37c688d2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 565098789081335749, guid: 0fa6ba9aad5e2b94d90aa3cf37c688d2, type: 3}
-      propertyPath: m_Name
-      value: "\u0E04\u0E19\u0E14\u0E35 OC"
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 0fa6ba9aad5e2b94d90aa3cf37c688d2, type: 3}
 --- !u!1 &1365638939
 GameObject:
   m_ObjectHideFlags: 0
@@ -8658,7 +8869,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 03000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -8666,7 +8877,7 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Bigsword1
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -8718,6 +8929,11 @@ Transform:
   - {fileID: 1847023954}
   m_Father: {fileID: 1183273154}
   m_LocalEulerAnglesHint: {x: 50.087, y: 207.338, z: 158.145}
+--- !u!4 &1411847642 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5303442796659795596, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+  m_PrefabInstance: {fileID: 2030235717}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1412627321
 GameObject:
   m_ObjectHideFlags: 0
@@ -8827,67 +9043,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8552134717624371188, guid: 871a5155c3e45e44b8bc4d330b5591db, type: 3}
---- !u!1001 &1425980542
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1060551110927845705, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
-      propertyPath: m_Name
-      value: Main Camera (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 2044832868062182444, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
-      propertyPath: 'targets.Array.data[0]'
-      value: 
-      objectReference: {fileID: 391638003}
-    - target: {fileID: 6768588066594199425, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1479.237
-      objectReference: {fileID: 0}
-    - target: {fileID: 6768588066594199425, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1638.9208
-      objectReference: {fileID: 0}
-    - target: {fileID: 6768588066594199425, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -6486.4937
-      objectReference: {fileID: 0}
-    - target: {fileID: 6768588066594199425, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: -0.7273398
-      objectReference: {fileID: 0}
-    - target: {fileID: 6768588066594199425, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6768588066594199425, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.6862775
-      objectReference: {fileID: 0}
-    - target: {fileID: 6768588066594199425, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6768588066594199425, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6768588066594199425, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 273.328
-      objectReference: {fileID: 0}
-    - target: {fileID: 6768588066594199425, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 237626557f5e442419ba66aa6c8f0da8, type: 3}
 --- !u!1 &1464246426
 GameObject:
   m_ObjectHideFlags: 0
@@ -9251,7 +9406,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 0a0000000a0000000f000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -9259,7 +9414,9 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Sword1
+  - Attack_Sword2
+  - Attack_Sword3
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -9980,7 +10137,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 0500000008000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -9988,7 +10145,8 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Brick1
+  - Attack_Brick2
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -10244,7 +10402,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 0500000008000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -10252,7 +10410,8 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Brick1
+  - Attack_Brick2
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -10518,7 +10677,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 03000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -10526,7 +10685,7 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Bigsword1
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -10851,7 +11010,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 0500000008000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -10859,7 +11018,8 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Brick1
+  - Attack_Brick2
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -11734,7 +11894,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 03000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -11742,7 +11902,7 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Bigsword1
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -11774,7 +11934,7 @@ GameObject:
   - component: {fileID: 1965167920}
   - component: {fileID: 1965167919}
   - component: {fileID: 1965167918}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Quad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11884,7 +12044,7 @@ GameObject:
   - component: {fileID: 1984899404}
   - component: {fileID: 1984899403}
   - component: {fileID: 1984899402}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Quad (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12308,6 +12468,63 @@ MonoBehaviour:
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
+--- !u!1001 &2030235717
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5303442796659795596, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1483.734
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303442796659795596, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1636.795
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303442796659795596, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6486.982
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303442796659795596, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303442796659795596, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303442796659795596, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303442796659795596, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303442796659795596, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303442796659795596, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303442796659795596, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7025094449998166308, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: m_Name
+      value: "\u0E04\u0E19\u0E14\u0E35 OC (1)"
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 56b10fda975dffc4d924757e27326361, type: 3}
 --- !u!1 &2039850371
 GameObject:
   m_ObjectHideFlags: 0
@@ -12389,7 +12606,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 0a0000000a0000000f000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -12397,7 +12614,9 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human1
+  - Attack_Sword1
+  - Attack_Sword2
+  - Attack_Sword3
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -12456,7 +12675,7 @@ GameObject:
   - component: {fileID: 2049470020}
   - component: {fileID: 2049470019}
   - component: {fileID: 2049470018}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Quad (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12634,7 +12853,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 0a0000000a0000000f000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -12642,7 +12861,9 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Sword1
+  - Attack_Sword2
+  - Attack_Sword3
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -13181,7 +13402,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Weapon
   isMagicVoiceItem: 0
-  weaponAttackDamages: 0f00000014000000190000001e000000
+  weaponAttackDamages: 0a0000000a0000000f000000
   weaponKnockbackTypes: 00000000000000000100000002000000
   weaponKnockbackPowers:
   - 0
@@ -13189,7 +13410,9 @@ MonoBehaviour:
   - 2
   - 5
   weaponAttackAnimations:
-  - Attack_Human3
+  - Attack_Sword1
+  - Attack_Sword2
+  - Attack_Sword3
   weaponAttackSounds: []
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
@@ -16237,8 +16460,6 @@ SceneRoots:
   - {fileID: 1936142812}
   - {fileID: 1397881759}
   - {fileID: 1789020524}
-  - {fileID: 1353667152}
-  - {fileID: 1425980542}
   - {fileID: 1965167921}
   - {fileID: 869503139}
   - {fileID: 1984899405}
@@ -16265,3 +16486,6 @@ SceneRoots:
   - {fileID: 1931013463}
   - {fileID: 1021419432}
   - {fileID: 213071336}
+  - {fileID: 549064271}
+  - {fileID: 310395138}
+  - {fileID: 2030235717}

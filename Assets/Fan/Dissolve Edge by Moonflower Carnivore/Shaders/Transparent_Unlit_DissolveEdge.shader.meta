@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 3e7899f24eae03e43910c579b8481df4
+timeCreated: 1496913651
+licenseType: Store
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92681
+  packageName: Dissolve Edge
+  packageVersion: 1.0
+  assetPath: Assets/Dissolve Edge by Moonflower Carnivore/Shaders/Transparent_Unlit_DissolveEdge.shader
+  uploadId: 187471

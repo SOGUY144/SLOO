@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 5a0e9086bd6bbf245bd506367fc008db
+timeCreated: 1496913102
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92681
+  packageName: Dissolve Edge
+  packageVersion: 1.0
+  assetPath: Assets/Dissolve Edge by Moonflower Carnivore/Materials/mat_DissolveEdge.mat
+  uploadId: 187471
