@@ -499,8 +499,10 @@ public class HUDController : MonoBehaviour
 
     private void SetMessageScale(float scale)
     {
-        if (centerMessageText != null) centerMessageText.transform.localScale = Vector3.one * scale;
-        if (centerMessageShadow != null) centerMessageShadow.transform.localScale = Vector3.one * scale;
+        if (centerMessageText != null && centerMessageText.transform.parent != null)
+        {
+            centerMessageText.transform.parent.localScale = Vector3.one * scale;
+        }
     }
 
     private struct MessageStyle

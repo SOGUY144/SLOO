@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System.Collections;
 
 public class ResultManager : MonoBehaviour
 {
@@ -11,11 +12,20 @@ public class ResultManager : MonoBehaviour
     public Button restartButton;
     public Button mainMenuButton;
 
-    [Header("Auto Panel")]
+    [Header("UI Transition (Optional)")]
+    public Image dissolveOverlay;
+    public float dissolveDuration = 1.5f;
+    public string dissolvePropertyName = "_DissolveAmount";
+    public float startValue = 0f;
+    public float endValue = 1f;
+
+    [Header("Auto-Generation Settings")]
     public bool createPanelIfMissing = true;
     public string winText = "YOU WIN!";
     public string loseText = "YOU LOSE...";
     public string mainMenuSceneName = "MainMenu";
+
+    private bool isResultActive = false;
 
     void Start()
     {
@@ -25,7 +35,9 @@ public class ResultManager : MonoBehaviour
         if (resultPanel != null)
             resultPanel.SetActive(false);
 
-        // เชื่อมคำสั่งให้ปุ่มอัตโนมัติ (ถ้ามีการลากปุ่มมาใส่ใน Inspector)
+        if (dissolveOverlay != null)
+            dissolveOverlay.gameObject.SetActive(false);
+
         if (restartButton != null)
             restartButton.onClick.AddListener(RestartMatch);
             
@@ -38,8 +50,7 @@ public class ResultManager : MonoBehaviour
 
     void Update()
     {
-        // บังคับปลดล็อคเมาส์ตลอดเวลาที่หน้าต่างจบเกมเปิดอยู่ (ป้องกันสคริปต์อื่น เช่น ตัวละคร ล็อคเมาส์กลับ)
-        if (resultPanel != null && resultPanel.activeSelf)
+        if (isResultActive)
         {
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
@@ -54,22 +65,65 @@ public class ResultManager : MonoBehaviour
 
     private void ShowGameResult(bool playerWon)
     {
-        SetResult(playerWon ? winText : loseText);
+        SetResult(playerWon);
     }
 
-    public void SetResult(string result)
+    public void SetResult(bool playerWon)
     {
         if (resultText != null)
-            resultText.text = result;
+        {
+            resultText.text = playerWon ? winText : loseText;
+        }
 
-        if (resultPanel != null)
-            resultPanel.SetActive(true);
+        StartCoroutine(ShowResultSequence());
+    }
 
+    private IEnumerator ShowResultSequence()
+    {
+        if (dissolveOverlay != null)
+        {
+            dissolveOverlay.gameObject.SetActive(true);
+            Color c = dissolveOverlay.color;
+
+            // --- 1. ค่อยๆ มืดลง (Fade TO Black) ---
+            float elapsed = 0;
+            while (elapsed < dissolveDuration * 0.5f) // ใช้เวลาครึ่งแรก
+            {
+                elapsed += Time.unscaledDeltaTime;
+                c.a = Mathf.Clamp01(elapsed / (dissolveDuration * 0.5f));
+                dissolveOverlay.color = c;
+                yield return null;
+            }
+            c.a = 1f;
+            dissolveOverlay.color = c;
+
+            // --- 2. จังหวะที่จอมืดสนิท ให้เปิดหน้าต่างสรุปผลขึ้นมา ---
+            if (resultPanel != null)
+                resultPanel.SetActive(true);
+
+            // --- 3. ค่อยๆ สว่างกลับมา (Fade FROM Black) ---
+            elapsed = 0;
+            while (elapsed < dissolveDuration * 0.5f) // ใช้เวลาครึ่งหลัง
+            {
+                elapsed += Time.unscaledDeltaTime;
+                c.a = Mathf.Clamp01(1f - (elapsed / (dissolveDuration * 0.5f)));
+                dissolveOverlay.color = c;
+                yield return null;
+            }
+            
+            // ปิด Overlay ไปเลยเมื่อสว่างแล้ว
+            dissolveOverlay.gameObject.SetActive(false);
+        }
+        else
+        {
+            // ถ้าไม่มี Overlay ก็แค่เปิด Panel เลย
+            if (resultPanel != null)
+                resultPanel.SetActive(true);
+        }
+
+        // หยุดเวลาเกม
         Time.timeScale = 0f;
-
-        // ปลดล็อคเมาส์เพื่อให้ผู้เล่นสามารถคลิกปุ่มได้
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        isResultActive = true;
     }
 
     public void RestartMatch()
