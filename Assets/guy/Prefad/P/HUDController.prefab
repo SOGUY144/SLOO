@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5807070353201005313
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3385788908733037019}
+  - component: {fileID: 274778778748557607}
+  m_Layer: 0
+  m_Name: HUDController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3385788908733037019
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5807070353201005313}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.7565246, y: 3.0198188, z: -21.944859}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &274778778748557607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5807070353201005313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b58e790226840045a192daa0b7458c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerHealthFill: {fileID: 0}
+  opponentHealthFill: {fileID: 0}
+  playerDamageFill: {fileID: 0}
+  opponentDamageFill: {fileID: 0}
+  timerText: {fileID: 0}
+  centerMessageText: {fileID: 0}
+  centerMessageShadow: {fileID: 0}
+  playerComboText: {fileID: 0}
+  opponentComboText: {fileID: 0}
+  customFightUI: {fileID: 0}
+  customKOUI: {fileID: 0}
+  customTimeUpUI: {fileID: 0}
+  customYouWinUI: {fileID: 0}
+  customYouLoseUI: {fileID: 0}
+  playerRoundDots: []
+  opponentRoundDots: []
+  roundDotOn: {r: 1, g: 1, b: 1, a: 1}
+  roundDotOff: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+  overlayBackground: {fileID: 0}
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.58}
+  messagePunchDuration: 0.12
+  messageFadeDuration: 0.35
+  defaultMessageHold: 1.15
+  koMessageHold: 1.65
+  resultMessageHold: 2.2
+  damageDelay: 0.65
+  damageLerpSpeed: 8
+  logHealthBarUpdates: 0
+  fightSound: {fileID: 8300000, guid: 2710745412b178e47a8a04ea3878d5ff, type: 3}
+  koSound: {fileID: 8300000, guid: 255a88bee48a5254e87070cdea91add9, type: 3}
+  timeUpSound: {fileID: 0}
+  youWinSound: {fileID: 8300000, guid: fb6db0c0491595047bf48a17f940a454, type: 3}
+  youLoseSound: {fileID: 8300000, guid: 2deacb4be39597348b512a38c8208f16, type: 3}
+  round1Sound: {fileID: 8300000, guid: 2470c2aba2bc0c74fa5fdb828f122b89, type: 3}
+  round2Sound: {fileID: 8300000, guid: d3a15f1ad827ae448ace1ba2b78da620, type: 3}
+  round3Sound: {fileID: 8300000, guid: e5ad479374ae579479edcceb61634403, type: 3}
+  round4Sound: {fileID: 8300000, guid: e5ad479374ae579479edcceb61634403, type: 3}
+  round5Sound: {fileID: 0}

@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &635148635971457349
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6700447913398757489}
+  - component: {fileID: 9114507657516038111}
+  m_Layer: 0
+  m_Name: Tekken Health Bar Builder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6700447913398757489
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635148635971457349}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1112.3074, y: 1125.6586, z: -614.34064}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9114507657516038111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635148635971457349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6af5246019bf533439b2286844720fe6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetCanvas: {fileID: 0}
+  playerLabel: PLAYER 1
+  playerName: PLAYER 2
+  playerHealthFill: {fileID: 0}
+  opponentLabel: CPU
+  opponentName: CHUN-LI
+  opponentHealthFill: {fileID: 0}
+  topOffset: 32
+  sidePadding: 28
+  centerGap: 160
+  barHeight: 18
+  barWidth: 640
+  meterWidth: 220
+  meterHeight: 8
+  frameColor: {r: 0.78, g: 0.86, b: 0.9, a: 1}
+  frameShadowColor: {r: 0.08, g: 0.12, b: 0.12, a: 0.75}
+  healthColor: {r: 0.05, g: 0.78, b: 0.12, a: 1}
+  healthHighlightColor: {r: 1, g: 1, b: 1, a: 0.65}
+  emptyColor: {r: 0.18, g: 0.2, b: 0.22, a: 0.95}
+  meterColor: {r: 0.45, g: 0.72, b: 0.78, a: 0.85}
+  roundDotCount: 2
+  roundDotOnColor: {r: 1, g: 1, b: 1, a: 1}
+  roundDotOffColor: {r: 0.15, g: 0.16, b: 0.16, a: 1}
+  roundDotFrameColor: {r: 0.78, g: 0.86, b: 0.9, a: 1}
+  roundDotSize: 12
+  roundDotSpacing: 18
+  buildOnStart: 1
+  clearOldGeneratedUI: 1
+  autoConnectToHUDController: 1
+  showCenterPlate: 0
