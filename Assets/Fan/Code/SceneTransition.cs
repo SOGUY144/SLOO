@@ -12,9 +12,13 @@ public class SceneTransition : MonoBehaviour
     public Material dissolveMaterial;
 
     [Header("Settings")]
-    public float duration = 1.0f;
+    [Tooltip("ความเร็วตอน dissolve ออก (วินาที)")]
+    public float durationOut = 1.0f;
+    [Tooltip("ความเร็วตอน dissolve เข้า (วินาที)")]
+    public float durationIn = 1.0f;
+    public string dissolvePropertyName = "_Progress";
 
-    private static readonly int DissolveID = Shader.PropertyToID("_Dissolve");
+    private int DissolveID;
     private Material _matInstance;
 
     void Awake()
@@ -30,60 +34,81 @@ public class SceneTransition : MonoBehaviour
             return;
         }
 
+        DissolveID = Shader.PropertyToID(dissolvePropertyName);
         _matInstance = new Material(dissolveMaterial);
         dissolveOverlay.material = _matInstance;
+
+        // Debug property ทั้งหมด
+        Shader shader = _matInstance.shader;
+        for (int i = 0; i < shader.GetPropertyCount(); i++)
+        {
+            Debug.Log("Property " + i + ": " + shader.GetPropertyName(i));
+        }
+
         _matInstance.SetFloat(DissolveID, 0f);
-        dissolveOverlay.enabled = false;
+        dissolveOverlay.gameObject.SetActive(false);
     }
 
-    // เรียกจาก CharacterSelector ตอนเลือกแมพ
+    // เรียกปกติ ใช้ค่า duration จาก Inspector
     public void GoToScene(string sceneName)
     {
-        StartCoroutine(TransitionRoutine(sceneName));
+        StartCoroutine(TransitionRoutine(sceneName, durationOut, durationIn));
     }
 
-    // Retry — โหลด scene ปัจจุบันใหม่
+    // เรียกแบบกำหนด duration เองได้
+    public void GoToScene(string sceneName, float outDuration, float inDuration)
+    {
+        StartCoroutine(TransitionRoutine(sceneName, outDuration, inDuration));
+    }
+
     public void RestartScene()
     {
-        StartCoroutine(TransitionRoutine(SceneManager.GetActiveScene().name));
+        StartCoroutine(TransitionRoutine(SceneManager.GetActiveScene().name, durationOut, durationIn));
     }
 
-    // กลับ MainMenu
+    public void RestartScene(float outDuration, float inDuration)
+    {
+        StartCoroutine(TransitionRoutine(SceneManager.GetActiveScene().name, outDuration, inDuration));
+    }
+
     public void GoToMenu()
     {
-        StartCoroutine(TransitionRoutine("Mainmenu"));
+        StartCoroutine(TransitionRoutine("Mainmenu", durationOut, durationIn));
     }
 
-    IEnumerator TransitionRoutine(string sceneName)
+    public void GoToMenu(float outDuration, float inDuration)
     {
-        dissolveOverlay.enabled = true;
+        StartCoroutine(TransitionRoutine("Mainmenu", outDuration, inDuration));
+    }
 
-        // Dissolve OUT: 0 → 1 (หน้าจอมืด)
-        yield return StartCoroutine(Animate(0f, 1f));
+    IEnumerator TransitionRoutine(string sceneName, float outDur, float inDur)
+    {
+        dissolveOverlay.gameObject.SetActive(true);
 
-        // โหลด scene ใหม่
+        // Dissolve OUT: 0 → 1
+        yield return StartCoroutine(Animate(0f, 1f, outDur));
+
+        // โหลด scene
         AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
         op.allowSceneActivation = false;
         while (op.progress < 0.9f) yield return null;
         op.allowSceneActivation = true;
-
-        // รอ 2 frame ให้ scene ใหม่ init
         yield return null;
         yield return null;
 
-        // Dissolve IN: 1 → 0 (scene ใหม่โผล่)
-        yield return StartCoroutine(Animate(1f, 0f));
+        // Dissolve IN: 1 → 0
+        yield return StartCoroutine(Animate(1f, 0f, inDur));
 
-        dissolveOverlay.enabled = false;
+        dissolveOverlay.gameObject.SetActive(false);
     }
 
-    IEnumerator Animate(float from, float to)
+    IEnumerator Animate(float from, float to, float dur)
     {
         float elapsed = 0f;
-        while (elapsed < duration)
+        while (elapsed < dur)
         {
             elapsed += Time.deltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
+            float t = Mathf.SmoothStep(0f, 1f, elapsed / dur);
             _matInstance.SetFloat(DissolveID, Mathf.Lerp(from, to, t));
             yield return null;
         }

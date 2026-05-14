@@ -451,7 +451,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dissolveOverlay: {fileID: 10164558}
   dissolveMaterial: {fileID: 2100000, guid: 592f20914d6e09a4bae255d94da3d68e, type: 2}
-  duration: 2
+  durationOut: 1
+  durationIn: 1
+  dissolvePropertyName: _Progress
 --- !u!4 &200114736
 Transform:
   m_ObjectHideFlags: 0
@@ -524,7 +526,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c933c9cf7c64fdb4fb11ddd86a5598ca, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b033b1060934fd344be4bcd59bc42f92, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -749,7 +751,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b033b1060934fd344be4bcd59bc42f92, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c933c9cf7c64fdb4fb11ddd86a5598ca, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1638,7 +1640,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b033b1060934fd344be4bcd59bc42f92, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c933c9cf7c64fdb4fb11ddd86a5598ca, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2189,7 +2191,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c933c9cf7c64fdb4fb11ddd86a5598ca, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b033b1060934fd344be4bcd59bc42f92, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
