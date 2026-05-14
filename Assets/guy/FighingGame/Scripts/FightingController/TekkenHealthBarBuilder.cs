@@ -45,6 +45,7 @@ public class TekkenHealthBarBuilder : MonoBehaviour
     public bool buildOnStart = true;
     public bool clearOldGeneratedUI = true;
     public bool autoConnectToHUDController = true;
+    public bool showCenterPlate = false;
 
     private const string generatedRootName = "TekkenHealthBars_Generated";
     private Image[] playerRoundDots;
@@ -90,7 +91,8 @@ public class TekkenHealthBarBuilder : MonoBehaviour
         BuildSide(root.transform, false);
         playerRoundDots = BuildRoundDots(root.transform, true);
         opponentRoundDots = BuildRoundDots(root.transform, false);
-        BuildInfinityIcon(root.transform);
+        if (showCenterPlate)
+            BuildInfinityIcon(root.transform);
 
         ConnectToHUDController();
     }

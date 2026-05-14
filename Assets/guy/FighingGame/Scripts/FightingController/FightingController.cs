@@ -91,8 +91,22 @@ public class FightingController : MonoBehaviour
 
         currentHealth -= takeDamage;
         if (healthBar != null) healthBar.SetHealth(currentHealth);
-        // แจ้ง HUD โดยตรงทันทีเมื่อ HP เปลี่ยน
-        if (HUDController.Instance != null) HUDController.Instance.SetPlayerHP(currentHealth, maxHealth);
+        if (HUDController.Instance != null)
+        {
+            HUDController.Instance.SetPlayerHP(currentHealth, maxHealth);
+            HUDController.Instance.ShowCombo(false, currentHitCount); // Player โดนตี = Opponent ทำคอมโบ
+        }
+
+        // --- แสดง Hit Popup สไตล์ Tekken ---
+        if (HitPopupManager.Instance != null)
+        {
+            HitType type = HitType.Normal;
+            if (kbType == KnockbackType.Knockdown) type = HitType.Launch;
+            else if (currentHitCount > 3) type = HitType.Counter;
+            
+            HitPopupManager.Instance.ShowHit(transform.position + Vector3.up, type);
+        }
+
         if (hitSounds != null && hitSounds.Length > 0)
             AudioSource.PlayClipAtPoint(hitSounds[Random.Range(0, hitSounds.Length)], transform.position);
 

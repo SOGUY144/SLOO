@@ -3,13 +3,17 @@ using UnityEngine;
 
 public class RoundManager : MonoBehaviour
 {
-    // Singleton ให้เรียกใช้จากที่ไหนก็ได้
     public static RoundManager Instance;
 
     [Header("Round Settings")]
-    public int totalRounds = 3;         // Best of 3
-    public float roundTime = 60f;       // วินาทีต่อ Round
-    public float messageDisplayTime = 2f; // นานแค่ไหนที่ข้อความ FIGHT! / KO! จะโชว์
+    public int totalRounds = 3;
+    public float roundTime = 60f;
+    public float roundIntroTime = 1.35f;
+    public float fightMessageTime = 0.8f;
+    public float koFreezeTime = 0.25f;
+    public float koDisplayTime = 1.65f;
+    public float nextRoundDelay = 0.85f;
+    public float matchEndPanelDelay = 2.4f;
 
     [Header("References")]
     public FightingController player;
@@ -19,25 +23,29 @@ public class RoundManager : MonoBehaviour
     public Transform playerStartPoint;
     public Transform opponentStartPoint;
 
-    // State
+    [Header("Audio")]
+    public AudioClip backgroundMusic;
+    [Range(0f, 1f)] public float bgmVolume = 0.5f;
+    private AudioSource bgmSource;
+
     public int currentRound { get; private set; } = 1;
     public float timeRemaining { get; private set; }
     public int playerRoundWins { get; private set; } = 0;
     public int opponentRoundWins { get; private set; } = 0;
     public bool isRoundActive { get; private set; } = false;
 
-    // Events ที่ HUDController จะฟัง
     public System.Action<float> OnTimerUpdate;
-    public System.Action<int, int> OnRoundWinsUpdate;      // (playerWins, opponentWins)
-    public System.Action<string> OnMessageShow;            // ข้อความกลางจอ
+    public System.Action<int, int> OnRoundWinsUpdate;
+    public System.Action<string> OnMessageShow;
     public System.Action OnRoundStart;
     public System.Action OnRoundEnd;
-    public System.Action<bool> OnGameEnd;                  // true = player ชนะ
+    public System.Action<bool> OnGameEnd;
 
     private Vector3 playerInitialPosition;
     private Quaternion playerInitialRotation;
     private Vector3 opponentInitialPosition;
     private Quaternion opponentInitialRotation;
+    private bool isEndingRound;
 
     void Awake()
     {
@@ -47,18 +55,27 @@ public class RoundManager : MonoBehaviour
 
     void Start()
     {
+        if (backgroundMusic != null)
+        {
+            bgmSource = gameObject.AddComponent<AudioSource>();
+            bgmSource.clip = backgroundMusic;
+            bgmSource.volume = bgmVolume;
+            bgmSource.loop = true;
+            bgmSource.playOnAwake = false;
+            bgmSource.Play();
+        }
+
         CacheInitialPositions();
         StartCoroutine(StartRoundSequence());
     }
 
     void Update()
     {
-        if (!isRoundActive) return;
+        if (!isRoundActive || isEndingRound) return;
 
         timeRemaining -= Time.deltaTime;
         OnTimerUpdate?.Invoke(timeRemaining);
 
-        // หมดเวลา
         if (timeRemaining <= 0f)
         {
             timeRemaining = 0f;
@@ -66,90 +83,73 @@ public class RoundManager : MonoBehaviour
         }
     }
 
-    // เรียกเมื่อ Player ตาย (จาก FightingController)
     public void OnPlayerDied()
     {
-        if (!isRoundActive) return;
+        if (!isRoundActive || isEndingRound) return;
         StartCoroutine(EndRound_KO(playerWon: false));
     }
 
-    // เรียกเมื่อ Opponent ตาย (จาก OpponentAI)
     public void OnOpponentDied()
     {
-        if (!isRoundActive) return;
+        if (!isRoundActive || isEndingRound) return;
         StartCoroutine(EndRound_KO(playerWon: true));
     }
 
-    // --- ROUND FLOW ---
     private IEnumerator StartRoundSequence()
     {
+        isEndingRound = false;
         isRoundActive = false;
-
-        // รีเซ็ต HP ทั้งคู่
+        SetCombatantsLocked(true);
         ResetCombatants();
 
-        // แสดงข้อความ "ROUND X"
+        OnTimerUpdate?.Invoke(roundTime);
         OnMessageShow?.Invoke("ROUND " + currentRound);
-        yield return new WaitForSeconds(messageDisplayTime);
+        yield return new WaitForSeconds(roundIntroTime);
 
-        // แสดง "FIGHT!"
         OnMessageShow?.Invoke("FIGHT!");
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(fightMessageTime);
 
         OnMessageShow?.Invoke("");
         timeRemaining = roundTime;
         isRoundActive = true;
+        SetCombatantsLocked(false);
         OnRoundStart?.Invoke();
     }
 
     private IEnumerator EndRound_KO(bool playerWon)
     {
+        isEndingRound = true;
         isRoundActive = false;
+        SetCombatantsLocked(true);
         OnRoundEnd?.Invoke();
 
-        // แสดง KO!
+        if (koFreezeTime > 0f)
+            yield return new WaitForSeconds(koFreezeTime);
+
         OnMessageShow?.Invoke("K.O.!");
-        yield return new WaitForSeconds(messageDisplayTime);
+        yield return new WaitForSeconds(koDisplayTime);
 
-        // บันทึกแต้ม
-        if (playerWon) playerRoundWins++;
-        else opponentRoundWins++;
-
-        OnRoundWinsUpdate?.Invoke(playerRoundWins, opponentRoundWins);
-
-        // เช็คว่าใครชนะเกม
-        int winsNeeded = Mathf.CeilToInt(totalRounds / 2f);
-        if (playerRoundWins >= winsNeeded)
-        {
-            OnMessageShow?.Invoke("YOU WIN!");
-            OnGameEnd?.Invoke(true);
-            yield break;
-        }
-        else if (opponentRoundWins >= winsNeeded)
-        {
-            OnMessageShow?.Invoke("YOU LOSE...");
-            OnGameEnd?.Invoke(false);
-            yield break;
-        }
-
-        // ยังไม่จบเกม ขึ้น Round ต่อไป
-        currentRound++;
-        yield return new WaitForSeconds(1f);
-        StartCoroutine(StartRoundSequence());
+        yield return StartCoroutine(ApplyRoundResult(playerWon));
     }
 
     private IEnumerator EndRound_TimeUp()
     {
+        isEndingRound = true;
         isRoundActive = false;
+        SetCombatantsLocked(true);
         OnRoundEnd?.Invoke();
 
-        OnMessageShow?.Invoke("TIME UP!");
-        yield return new WaitForSeconds(messageDisplayTime);
-
-        // ใครเลือดเหลือมากกว่า = ชนะ Round นี้
         bool playerWon = (player != null && opponent != null) &&
                          (player.currentHealth >= opponent.currentHealth);
 
+        OnMessageShow?.Invoke("TIME UP!");
+        yield return new WaitForSeconds(koDisplayTime);
+
+        yield return StartCoroutine(ApplyRoundResult(playerWon));
+    }
+
+    private IEnumerator ApplyRoundResult(bool playerWon)
+    {
         if (playerWon) playerRoundWins++;
         else opponentRoundWins++;
 
@@ -158,45 +158,63 @@ public class RoundManager : MonoBehaviour
         int winsNeeded = Mathf.CeilToInt(totalRounds / 2f);
         if (playerRoundWins >= winsNeeded)
         {
+            if (bgmSource != null) bgmSource.Stop();
             OnMessageShow?.Invoke("YOU WIN!");
+            yield return new WaitForSeconds(matchEndPanelDelay);
             OnGameEnd?.Invoke(true);
             yield break;
         }
-        else if (opponentRoundWins >= winsNeeded)
+
+        if (opponentRoundWins >= winsNeeded)
         {
+            if (bgmSource != null) bgmSource.Stop();
             OnMessageShow?.Invoke("YOU LOSE...");
+            yield return new WaitForSeconds(matchEndPanelDelay);
             OnGameEnd?.Invoke(false);
             yield break;
         }
 
         currentRound++;
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(nextRoundDelay);
         StartCoroutine(StartRoundSequence());
     }
 
     private void ResetCombatants()
     {
-        // รีเซ็ต Player
         if (player != null)
         {
             ResetTransform(player.transform, playerStartPoint, playerInitialPosition, playerInitialRotation);
             player.currentHealth = player.maxHealth;
-            player.isStunned = false;
+            player.isStunned = true;
             player.isInvincible = false;
             if (player.healthBar != null) player.healthBar.SetHealth(player.currentHealth);
             if (HUDController.Instance != null) HUDController.Instance.SetPlayerHP(player.currentHealth, player.maxHealth);
         }
 
-        // รีเซ็ต Opponent
         if (opponent != null)
         {
             ResetTransform(opponent.transform, opponentStartPoint, opponentInitialPosition, opponentInitialRotation);
             opponent.currentHealth = opponent.maxHealth;
-            opponent.isStunned = false;
+            opponent.isStunned = true;
             opponent.isKnockedDown = false;
             opponent.isTakingDamage = false;
             if (opponent.healthBar != null) opponent.healthBar.SetHealth(opponent.currentHealth);
             if (HUDController.Instance != null) HUDController.Instance.SetOpponentHP(opponent.currentHealth, opponent.maxHealth);
+        }
+    }
+
+    private void SetCombatantsLocked(bool locked)
+    {
+        if (player != null)
+        {
+            player.isStunned = locked;
+            player.isInvincible = locked;
+        }
+
+        if (opponent != null)
+        {
+            opponent.isStunned = locked;
+            opponent.isKnockedDown = locked;
         }
     }
 

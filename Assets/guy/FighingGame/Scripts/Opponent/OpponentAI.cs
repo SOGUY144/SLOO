@@ -185,8 +185,21 @@ public class OpponentAI : MonoBehaviour
 
         currentHealth -= takeDamage;
         if (healthBar != null) healthBar.SetHealth(currentHealth);
-        // แจ้ง HUD โดยตรงทันทีเมื่อ HP เปลี่ยน
-        if (HUDController.Instance != null) HUDController.Instance.SetOpponentHP(currentHealth, maxHealth);
+        if (HUDController.Instance != null)
+        {
+            HUDController.Instance.SetOpponentHP(currentHealth, maxHealth);
+            HUDController.Instance.ShowCombo(true, currentHitCount); // Opponent โดนตี = Player ทำคอมโบ
+        }
+
+        // --- แสดง Hit Popup สไตล์ Tekken ---
+        if (HitPopupManager.Instance != null)
+        {
+            HitType type = HitType.Normal;
+            if (kbType == KnockbackType.Knockdown) type = HitType.Launch;
+            else if (currentHitCount > 3) type = HitType.Counter;
+
+            HitPopupManager.Instance.ShowHit(transform.position + Vector3.up, type);
+        }
 
         if (currentHealth <= 0)
         {
