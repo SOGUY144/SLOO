@@ -19,6 +19,13 @@ public class HUDController : MonoBehaviour
     public Text playerComboText;
     public Text opponentComboText;
 
+    [Header("Custom UI Assets (Optional)")]
+    public GameObject customFightUI;
+    public GameObject customKOUI;
+    public GameObject customTimeUpUI;
+    public GameObject customYouWinUI;
+    public GameObject customYouLoseUI;
+
     private Coroutine playerComboRoutine;
     private Coroutine opponentComboRoutine;
 
@@ -359,6 +366,9 @@ public class HUDController : MonoBehaviour
 
     private IEnumerator ShowMessage(string message)
     {
+        // ปิด Custom UI ทั้งหมดก่อนเริ่ม
+        HideAllCustomUI();
+
         if (string.IsNullOrEmpty(message))
         {
             SetMessageText("");
@@ -380,10 +390,23 @@ public class HUDController : MonoBehaviour
             else if (message == "ROUND 5" && round5Sound != null) uiAudioSource.PlayOneShot(round5Sound);
         }
 
+        // เช็คว่ามี Custom UI สำหรับข้อความนี้ไหม
+        bool hasCustomUI = ShowCustomUIIfAvailable(message);
+
         MessageStyle style = GetMessageStyle(message);
         SetOverlayVisible(style.showOverlay, style.overlayAlpha);
-        SetMessageText(message);
-        SetMessageColor(style.color);
+
+        // ถ้าไม่มี Custom UI ถึงจะโชว์ Text ปกติ
+        if (!hasCustomUI)
+        {
+            SetMessageText(message);
+            SetMessageColor(style.color);
+        }
+        else
+        {
+            SetMessageText(""); // ซ่อนข้อความปกติ
+        }
+
         SetMessageScale(style.startScale);
 
         float punchTime = 0f;
@@ -409,6 +432,26 @@ public class HUDController : MonoBehaviour
 
         SetMessageText("");
         SetOverlayVisible(false, 0f);
+        HideAllCustomUI();
+    }
+
+    private void HideAllCustomUI()
+    {
+        if (customFightUI != null) customFightUI.SetActive(false);
+        if (customKOUI != null) customKOUI.SetActive(false);
+        if (customTimeUpUI != null) customTimeUpUI.SetActive(false);
+        if (customYouWinUI != null) customYouWinUI.SetActive(false);
+        if (customYouLoseUI != null) customYouLoseUI.SetActive(false);
+    }
+
+    private bool ShowCustomUIIfAvailable(string message)
+    {
+        if (message == "FIGHT!" && customFightUI != null) { customFightUI.SetActive(true); return true; }
+        if (message == "K.O.!" && customKOUI != null) { customKOUI.SetActive(true); return true; }
+        if (message == "TIME UP!" && customTimeUpUI != null) { customTimeUpUI.SetActive(true); return true; }
+        if (message == "YOU WIN!" && customYouWinUI != null) { customYouWinUI.SetActive(true); return true; }
+        if (message == "YOU LOSE..." && customYouLoseUI != null) { customYouLoseUI.SetActive(true); return true; }
+        return false;
     }
 
     private MessageStyle GetMessageStyle(string message)
