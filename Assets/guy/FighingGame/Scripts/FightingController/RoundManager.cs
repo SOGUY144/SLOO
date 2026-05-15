@@ -24,9 +24,8 @@ public class RoundManager : MonoBehaviour
     public Transform opponentStartPoint;
 
     [Header("Audio")]
-    public AudioClip backgroundMusic;
+    public AudioSource bgmSource; // ลาก AudioSource ใส่ตรงนี้ใน Inspector
     [Range(0f, 1f)] public float bgmVolume = 0.5f;
-    private AudioSource bgmSource;
 
     public int currentRound { get; private set; } = 1;
     public float timeRemaining { get; private set; }
@@ -55,14 +54,12 @@ public class RoundManager : MonoBehaviour
 
     void Start()
     {
-        if (backgroundMusic != null)
+        if (bgmSource != null)
         {
-            bgmSource = gameObject.AddComponent<AudioSource>();
-            bgmSource.clip = backgroundMusic;
             bgmSource.volume = bgmVolume;
             bgmSource.loop = true;
-            bgmSource.playOnAwake = false;
-            bgmSource.Play();
+            if (!bgmSource.isPlaying)
+                bgmSource.Play();
         }
 
         CacheInitialPositions();
