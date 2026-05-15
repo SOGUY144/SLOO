@@ -224,27 +224,21 @@ public class RoundManager : MonoBehaviour
         {
             playerInitialPosition = player.transform.position;
             playerInitialRotation = player.transform.rotation;
-            Debug.Log("RoundManager: จดจำตำแหน่งผู้เล่นแล้ว");
         }
 
         if (opponent != null)
         {
             opponentInitialPosition = opponent.transform.position;
             opponentInitialRotation = opponent.transform.rotation;
-            Debug.Log("RoundManager: จดจำตำแหน่งคู่ต่อสู้แล้ว");
         }
     }
 
-    // --- เพิ่มเติม: ให้ Spawner เรียกใช้ฟังก์ชันนี้พอมันสร้างตัวเสร็จ ---
     public void AssignCombatants(FightingController p, OpponentAI o)
     {
         player = p;
         opponent = o;
-        
-        // ล็อคตัวละครทันทีที่ได้รับมา เพื่อไม่ให้เดินได้ก่อนคำว่า FIGHT!
         SetCombatantsLocked(true);
-        
-        CacheInitialPositions(); // จำตำแหน่งจุดเริ่มทันทีที่ได้รับตัวละครมา
+        CacheInitialPositions();
     }
 
     private void ResetTransform(Transform target, Transform startPoint, Vector3 fallbackPosition, Quaternion fallbackRotation)

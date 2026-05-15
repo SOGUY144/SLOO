@@ -37,25 +37,15 @@ public class SceneTransition : MonoBehaviour
         DissolveID = Shader.PropertyToID(dissolvePropertyName);
         _matInstance = new Material(dissolveMaterial);
         dissolveOverlay.material = _matInstance;
-
-        // Debug property ทั้งหมด
-        Shader shader = _matInstance.shader;
-        for (int i = 0; i < shader.GetPropertyCount(); i++)
-        {
-            Debug.Log("Property " + i + ": " + shader.GetPropertyName(i));
-        }
-
         _matInstance.SetFloat(DissolveID, 0f);
         dissolveOverlay.gameObject.SetActive(false);
     }
 
-    // เรียกปกติ ใช้ค่า duration จาก Inspector
     public void GoToScene(string sceneName)
     {
         StartCoroutine(TransitionRoutine(sceneName, durationOut, durationIn));
     }
 
-    // เรียกแบบกำหนด duration เองได้
     public void GoToScene(string sceneName, float outDuration, float inDuration)
     {
         StartCoroutine(TransitionRoutine(sceneName, outDuration, inDuration));
@@ -81,11 +71,16 @@ public class SceneTransition : MonoBehaviour
         StartCoroutine(TransitionRoutine("Mainmenu", outDuration, inDuration));
     }
 
+    public IEnumerator PlayAnimatePublic(float from, float to, float dur)
+    {
+        yield return StartCoroutine(Animate(from, to, dur));
+    }
+
     IEnumerator TransitionRoutine(string sceneName, float outDur, float inDur)
     {
         dissolveOverlay.gameObject.SetActive(true);
 
-        // Dissolve OUT: 0 → 1
+        // Dissolve OUT: 0 → 1 (มืด)
         yield return StartCoroutine(Animate(0f, 1f, outDur));
 
         // โหลด scene
@@ -96,7 +91,7 @@ public class SceneTransition : MonoBehaviour
         yield return null;
         yield return null;
 
-        // Dissolve IN: 1 → 0
+        // Dissolve IN: 1 → 0 (scene ใหม่โผล่)
         yield return StartCoroutine(Animate(1f, 0f, inDur));
 
         dissolveOverlay.gameObject.SetActive(false);

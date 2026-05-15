@@ -94,10 +94,9 @@ public class FightingController : MonoBehaviour
         if (HUDController.Instance != null)
         {
             HUDController.Instance.SetPlayerHP(currentHealth, maxHealth);
-            HUDController.Instance.ShowCombo(false, currentHitCount); // Player โดนตี = Opponent ทำคอมโบ
+            HUDController.Instance.ShowCombo(false, currentHitCount);
         }
 
-        // --- แสดง Hit Popup สไตล์ Tekken ---
         if (HitPopupManager.Instance != null)
         {
             HitType type = HitType.Normal;
@@ -108,7 +107,9 @@ public class FightingController : MonoBehaviour
         }
 
         if (hitSounds != null && hitSounds.Length > 0)
+        {
             AudioSource.PlayClipAtPoint(hitSounds[Random.Range(0, hitSounds.Length)], transform.position);
+        }
 
         if (currentHealth <= 0)
         {
@@ -240,7 +241,6 @@ public class FightingController : MonoBehaviour
         playerAnimator.PlayDie();
         isStunned = true;
         isInvincible = true;
-        // แจ้ง RoundManager ว่า Player ตายแล้ว
         if (RoundManager.Instance != null) RoundManager.Instance.OnPlayerDied();
     }
 
@@ -260,14 +260,11 @@ public class FightingController : MonoBehaviour
             { 
                 heldItem = item; 
                 item.OnPickedUp(handTransform); 
-
-                // ถ้านี่คือสมุดเวทย์ ให้เปิดระบบไมค์
                 if (item.isMagicVoiceItem)
                 {
                     var voiceCtrl = GetComponent<VoiceSkillController>();
                     if (voiceCtrl != null) voiceCtrl.StartListening();
                 }
-
                 break; 
             }
         }
@@ -277,13 +274,11 @@ public class FightingController : MonoBehaviour
     { 
         if (heldItem != null) 
         { 
-            // ปิดระบบไมค์ถ้าตอนทิ้งคือสมุดเวทย์
             if (heldItem.isMagicVoiceItem)
             {
                 var voiceCtrl = GetComponent<VoiceSkillController>();
                 if (voiceCtrl != null) voiceCtrl.StopListening();
             }
-
             heldItem.OnDropped(); 
             heldItem = null; 
         } 
