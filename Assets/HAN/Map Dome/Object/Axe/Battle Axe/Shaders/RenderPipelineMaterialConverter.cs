@@ -1,6 +1,8 @@
 using UnityEngine;
-using UnityEditor;
 using System.IO;
+
+#if UNITY_EDITOR
+using UnityEditor;
 
 public class RenderPipelineConverter
 {
@@ -15,7 +17,6 @@ public class RenderPipelineConverter
             EditorUtility.DisplayDialog("Error", "HDRP/Lit shader not found. Please ensure HDRP is installed.", "OK");
             return;
         }
-
         PerformConversion(hdrpLitShader, "HDRP/Lit", true);
     }
 
@@ -28,7 +29,6 @@ public class RenderPipelineConverter
             EditorUtility.DisplayDialog("Error", "URP Lit shader not found. Please ensure URP is installed.", "OK");
             return;
         }
-
         PerformConversion(urpLitShader, "Universal Render Pipeline/Lit", false);
     }
 
@@ -55,21 +55,18 @@ public class RenderPipelineConverter
 
                 if (material != null && material.shader.name == "Standard")
                 {
-                    // Built-in Standard properties
                     Texture albedoTexture = material.GetTexture("_MainTex");
                     Color baseColor = material.GetColor("_Color");
                     Texture metallicGlossMap = material.GetTexture("_MetallicGlossMap");
                     Texture normalMap = material.GetTexture("_BumpMap");
                     float metallicValue = material.GetFloat("_Metallic");
                     float smoothnessValue = material.GetFloat("_Glossiness");
-                    int renderMode = material.GetInt("_Mode"); // 0 = Opaque, 1 = Cutout, 2 = Fade, 3 = Transparent
+                    int renderMode = material.GetInt("_Mode");
 
-                    // Switch shader
                     material.shader = targetShader;
 
                     if (isHDRP)
                     {
-                        // Assign HDRP properties
                         material.SetTexture("_BaseColorMap", albedoTexture);
                         material.SetColor("_BaseColor", baseColor);
                         material.SetTexture("_MaskMap", metallicGlossMap);
@@ -77,7 +74,6 @@ public class RenderPipelineConverter
                         material.SetFloat("_Metallic", metallicValue);
                         material.SetFloat("_Smoothness", smoothnessValue);
 
-                        // Delay setting remap values to override Unity's internal reset
                         EditorApplication.delayCall += () =>
                         {
                             if (material != null)
@@ -86,52 +82,46 @@ public class RenderPipelineConverter
                                 material.SetFloat("_MetallicRemapMax", 1f);
                                 material.SetFloat("_SmoothnessRemapMin", 0f);
                                 material.SetFloat("_SmoothnessRemapMax", 1f);
-
                                 EditorUtility.SetDirty(material);
                                 AssetDatabase.SaveAssets();
                             }
                         };
                     }
-                    else // URP
+                    else
                     {
                         material.SetTexture("_BaseMap", albedoTexture);
                         material.SetColor("_BaseColor", baseColor);
                         material.SetTexture("_MetallicGlossMap", metallicGlossMap);
                         material.SetTexture("_BumpMap", normalMap);
                         material.SetFloat("_Metallic", metallicValue);
-
-                        // Force smoothness to 1
                         material.SetFloat("_Smoothness", 1f);
                     }
 
-                    // Handle rendering modes
-                    if (renderMode == 0) // Opaque
+                    if (renderMode == 0)
                     {
                         material.SetFloat("_Surface", 0);
                         material.SetFloat("_AlphaClip", 0);
                         if (isHDRP) material.SetFloat("_AlphaCutoffEnable", 0);
                     }
-                    else if (renderMode == 1) // Cutout
+                    else if (renderMode == 1)
                     {
                         material.SetFloat("_Surface", 0);
                         material.SetFloat("_AlphaClip", 1);
                         if (isHDRP) material.SetFloat("_AlphaCutoffEnable", 1);
                     }
-                    else if (renderMode == 2) // Fade
+                    else if (renderMode == 2)
                     {
                         if (!isHDRP)
                         {
-                            // URP Fade → Transparent
                             material.SetFloat("_Surface", 1);
                             material.SetFloat("_AlphaClip", 0);
                             material.SetFloat("_PreserveSpecular", 0);
-                            material.SetFloat("_Cull", 2); // Front
+                            material.SetFloat("_Cull", 2);
                         }
                         else
                         {
-                            // HDRP Fade → Transparent
-                            material.SetFloat("_SurfaceType", 1); // Transparent
-                            material.SetFloat("_BlendMode", 0);   // Alpha
+                            material.SetFloat("_SurfaceType", 1);
+                            material.SetFloat("_BlendMode", 0);
                             material.SetFloat("_AlphaCutoffEnable", 0);
                             material.SetFloat("_TransparentBackfaceEnable", 1);
                             material.SetFloat("_EnableBlendModePreserveSpecularLighting", 0);
@@ -157,3 +147,4 @@ public class RenderPipelineConverter
         AssetDatabase.Refresh();
     }
 }
+#endif
