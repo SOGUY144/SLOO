@@ -53,6 +53,12 @@ public class TekkenHealthBarBuilder : MonoBehaviour
 
     void Start()
     {
+        // --- ส่วนสำคัญ ---
+        // เช็คก่อนว่าฉากนี้คือ "ฉากต่อสู้" จริงๆ หรือไม่ (ต้องมี RoundManager)
+        // ถ้าไม่มี (เช่น อยู่ในหน้า Main Menu) ก็จะไม่สร้างหลอดเลือดเด็ดขาด!
+        if (RoundManager.Instance == null)
+            return;
+
         if (buildOnStart)
             Build();
     }

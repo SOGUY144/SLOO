@@ -20,7 +20,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties: _DissolveTex
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -53,7 +53,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 6d4096180adb1e84cbb647647f0f331e, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -77,9 +77,9 @@ Material:
     - _DstBlend: 0
     - _Edge: 0.01
     - _EdgeAround: 0
-    - _EdgeAroundHDR: 2.08
+    - _EdgeAroundHDR: 2.136
     - _EdgeAroundPower: 5
-    - _EdgeDistortion: 0.747
+    - _EdgeDistortion: 0.751
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1

@@ -26103,7 +26103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: 592f20914d6e09a4bae255d94da3d68e, type: 2}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -26822,6 +26822,10 @@ PrefabInstance:
       propertyPath: customFightUI
       value: 
       objectReference: {fileID: 7137732275196915267}
+    - target: {fileID: 274778778748557607, guid: a9e644e911798ff49a6792d77dcd08d6, type: 3}
+      propertyPath: hudsToHideAtEnd.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3385788908733037019, guid: a9e644e911798ff49a6792d77dcd08d6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.128221
@@ -250044,6 +250048,10 @@ PrefabInstance:
     - target: {fileID: 636510923899900197, guid: 05a64add23bdfff429e1965c41f5057a, type: 3}
       propertyPath: m_TagString
       value: Opponent
+      objectReference: {fileID: 0}
+    - target: {fileID: 2787338493672824030, guid: 05a64add23bdfff429e1965c41f5057a, type: 3}
+      propertyPath: maxHealth
+      value: 130
       objectReference: {fileID: 0}
     - target: {fileID: 2787338493672824030, guid: 05a64add23bdfff429e1965c41f5057a, type: 3}
       propertyPath: 'players.Array.data[0]'

@@ -77,6 +77,12 @@ public class ResultManager : MonoBehaviour
 
     private IEnumerator ShowResultSequence()
     {
+        // --- สั่งปิดหลอดเลือดและ UI ด้านบนทันทีที่เกมจบ ---
+        if (HUDController.Instance != null)
+        {
+            HUDController.Instance.HideGameHUDs();
+        }
+
         if (dissolveOverlay != null)
         {
             dissolveOverlay.gameObject.SetActive(true);
