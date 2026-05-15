@@ -26,10 +26,15 @@ public class MapSelector : MonoBehaviour
     [SerializeField] private GameObject characterSelectionPanel;
 
     [Header("Back")]
-    [SerializeField] private string mainMenuSceneName = "MainMenu"; // ชื่อ Scene MainMenu
+    [SerializeField] private string mainMenuSceneName = "MainMenu";
+
+    [Header("Sound")]
+    [SerializeField] private AudioSource moveSound;
+    [SerializeField] private AudioSource confirmSound;
 
     private int _currentIndex = 0;
     private int _previousIndex = -1;
+
     private Vector3[] _originalScales;
     private Outline[] _outlines;
 
@@ -43,6 +48,7 @@ public class MapSelector : MonoBehaviour
             _originalScales[i] = mapItems[i].transform.localScale;
 
             Outline ol = mapItems[i].GetComponent<Outline>();
+
             if (ol == null)
                 ol = mapItems[i].AddComponent<Outline>();
 
@@ -64,6 +70,8 @@ public class MapSelector : MonoBehaviour
 
     private void HandleInput()
     {
+        int oldIndex = _currentIndex;
+
         int col = _currentIndex % columns;
 
         if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
@@ -79,25 +87,40 @@ public class MapSelector : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
             int next = _currentIndex + columns;
+
             if (next < mapItems.Length)
                 _currentIndex = next;
         }
         else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             int prev = _currentIndex - columns;
+
             if (prev >= 0)
                 _currentIndex = prev;
         }
 
+        // เล่นเสียงตอนเลื่อน
+        if (_currentIndex != oldIndex)
+        {
+            if (moveSound != null)
+                moveSound.Play();
+        }
+
         // Confirm
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
-            ConfirmSelection();
+        {
+            if (confirmSound != null)
+                confirmSound.Play();
 
-        // Back → ไป MainMenu Scene + Reset ค่า
+            ConfirmSelection();
+        }
+
+        // Back
         if (Input.GetKeyDown(KeyCode.B))
         {
             GameData.Instance.selectedMapIndex = 0;
             GameData.Instance.selectedCharacterIndex = 0;
+
             SceneManager.LoadScene(mainMenuSceneName);
         }
 
@@ -108,7 +131,9 @@ public class MapSelector : MonoBehaviour
     private void UpdateSelection()
     {
         for (int i = 0; i < mapItems.Length; i++)
+        {
             _outlines[i].enabled = (i == _currentIndex);
+        }
 
         for (int i = 0; i < mapBackgrounds.Length; i++)
         {
@@ -123,7 +148,8 @@ public class MapSelector : MonoBehaviour
     {
         for (int i = 0; i < mapItems.Length; i++)
         {
-            Vector3 target = (i == _currentIndex)
+            Vector3 target =
+                (i == _currentIndex)
                 ? _originalScales[i] * selectedScale
                 : _originalScales[i];
 
@@ -138,6 +164,7 @@ public class MapSelector : MonoBehaviour
     private void ConfirmSelection()
     {
         GameData.Instance.selectedMapIndex = _currentIndex;
+
         mapSelectionPanel.SetActive(false);
         characterSelectionPanel.SetActive(true);
     }

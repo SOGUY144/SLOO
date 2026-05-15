@@ -1,18 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Audio; // เพิ่มอันนี้เพื่อใช้ Mixer
 using TMPro;
 
 public class SettingManager : MonoBehaviour
 {
-    [Header("Mixer")]
-    [SerializeField] private AudioMixer mainMixer; // ลากไฟล์ Audio Mixer มาใส่ที่นี่
-
     [Header("BGM")]
+    [SerializeField] private AudioSource[] bgmSources;
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private TextMeshProUGUI bgmValueText;
 
     [Header("SFX")]
+    [SerializeField] private AudioSource[] sfxSources;
     [SerializeField] private Slider sfxSlider;
     [SerializeField] private TextMeshProUGUI sfxValueText;
 
@@ -31,10 +29,10 @@ public class SettingManager : MonoBehaviour
         float savedBGM = PlayerPrefs.GetFloat(BGM_KEY, defaultValue);
         float savedSFX = PlayerPrefs.GetFloat(SFX_KEY, defaultValue);
 
-        bgmSlider.minValue = 0.0001f; // ห้ามเป็น 0 เพราะจะคำนวณสูตร Log ไม่ได้
-        bgmSlider.maxValue = 100f;
-        sfxSlider.minValue = 0.0001f;
-        sfxSlider.maxValue = 100f;
+        bgmSlider.minValue = 0;
+        bgmSlider.maxValue = 100;
+        sfxSlider.minValue = 0;
+        sfxSlider.maxValue = 100;
 
         bgmSlider.value = savedBGM;
         sfxSlider.value = savedSFX;
@@ -62,9 +60,8 @@ public class SettingManager : MonoBehaviour
 
     private void UpdateBGM(float value)
     {
-        // คำนวณค่าเป็น Decibel เพื่อส่งให้ Mixer
-        float dB = Mathf.Log10(value / 100f) * 20;
-        mainMixer.SetFloat("BGMVolume", dB);
+        foreach (AudioSource src in bgmSources)
+            if (src != null) src.volume = value / 100f;
 
         if (bgmValueText != null)
             bgmValueText.text = Mathf.RoundToInt(value).ToString();
@@ -72,19 +69,24 @@ public class SettingManager : MonoBehaviour
 
     private void UpdateSFX(float value)
     {
-        float dB = Mathf.Log10(value / 100f) * 20;
-        mainMixer.SetFloat("SFXVolume", dB);
+        foreach (AudioSource src in sfxSources)
+            if (src != null) src.volume = value / 100f;
 
         if (sfxValueText != null)
             sfxValueText.text = Mathf.RoundToInt(value).ToString();
     }
 
+    // ปุ่ม RESET
     public void OnClickReset()
     {
         bgmSlider.value = defaultValue;
         sfxSlider.value = defaultValue;
+        PlayerPrefs.SetFloat(BGM_KEY, defaultValue);
+        PlayerPrefs.SetFloat(SFX_KEY, defaultValue);
+        PlayerPrefs.Save();
     }
 
+    // ปุ่ม BACK
     public void OnClickBack()
     {
         settingPanel.SetActive(false);
