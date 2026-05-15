@@ -836,7 +836,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7991687699967298552, guid: 7287671b1a313bb4cafa1d2965e389c7, type: 3}
       propertyPath: isMagicVoiceItem
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7991687699967298552, guid: 7287671b1a313bb4cafa1d2965e389c7, type: 3}
       propertyPath: weaponAttackAnimations.Array.size
