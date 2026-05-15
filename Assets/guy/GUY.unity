@@ -1814,14 +1814,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: RoundManager
       objectReference: {fileID: 0}
+    - target: {fileID: 3206947268682858394, guid: 7e8a1d89ef6426946997f1f1997c1cc8, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 8891064830507951170, guid: 7e8a1d89ef6426946997f1f1997c1cc8, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 4755782518601021686}
+      objectReference: {fileID: 0}
     - target: {fileID: 8891064830507951170, guid: 7e8a1d89ef6426946997f1f1997c1cc8, type: 3}
       propertyPath: opponent
       value: 
-      objectReference: {fileID: 4414880012521480353}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1878,6 +1882,10 @@ PrefabInstance:
     - target: {fileID: 1417463566659428178, guid: ecfa9c95513e124408a903423fdb5f26, type: 3}
       propertyPath: m_Name
       value: Eddy OC
+      objectReference: {fileID: 0}
+    - target: {fileID: 1417463566659428178, guid: ecfa9c95513e124408a903423fdb5f26, type: 3}
+      propertyPath: m_TagString
+      value: Opponent
       objectReference: {fileID: 0}
     - target: {fileID: 5583391640829134447, guid: ecfa9c95513e124408a903423fdb5f26, type: 3}
       propertyPath: 'players.Array.data[0]'
@@ -2002,17 +2010,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 541f6beb1c73d8c49a19adb54ec6acf2, type: 3}
---- !u!114 &4414880012521480353 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5583391640829134447, guid: ecfa9c95513e124408a903423fdb5f26, type: 3}
-  m_PrefabInstance: {fileID: 2708584845755287137}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38bff0e074a15544c82aea9134bd8558, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &4464360072848066377
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2368,6 +2365,10 @@ PrefabInstance:
     - target: {fileID: 7025094449998166308, guid: 56b10fda975dffc4d924757e27326361, type: 3}
       propertyPath: m_Name
       value: "\u0E04\u0E19\u0E14\u0E35 OC"
+      objectReference: {fileID: 0}
+    - target: {fileID: 7025094449998166308, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: m_TagString
+      value: Fighter_Player
       objectReference: {fileID: 0}
     - target: {fileID: 9033625210654279826, guid: 56b10fda975dffc4d924757e27326361, type: 3}
       propertyPath: 'opponents.Array.data[0]'
