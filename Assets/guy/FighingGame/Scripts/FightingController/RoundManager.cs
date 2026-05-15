@@ -240,6 +240,10 @@ public class RoundManager : MonoBehaviour
     {
         player = p;
         opponent = o;
+        
+        // ล็อคตัวละครทันทีที่ได้รับมา เพื่อไม่ให้เดินได้ก่อนคำว่า FIGHT!
+        SetCombatantsLocked(true);
+        
         CacheInitialPositions(); // จำตำแหน่งจุดเริ่มทันทีที่ได้รับตัวละครมา
     }
 
