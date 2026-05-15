@@ -224,12 +224,14 @@ public class RoundManager : MonoBehaviour
         {
             playerInitialPosition = player.transform.position;
             playerInitialRotation = player.transform.rotation;
+            Debug.Log("RoundManager: จดจำตำแหน่งผู้เล่นแล้ว");
         }
 
         if (opponent != null)
         {
             opponentInitialPosition = opponent.transform.position;
             opponentInitialRotation = opponent.transform.rotation;
+            Debug.Log("RoundManager: จดจำตำแหน่งคู่ต่อสู้แล้ว");
         }
     }
 
