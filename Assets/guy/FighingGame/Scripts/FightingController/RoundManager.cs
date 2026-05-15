@@ -65,8 +65,35 @@ public class RoundManager : MonoBehaviour
             bgmSource.Play();
         }
 
+        // --- เพิ่มเติม: ค้นหาตัวละครอัตโนมัติจาก Tag ถ้าไม่ได้ลากใส่ไว้ ---
+        FindCombatantsByTag();
+
         CacheInitialPositions();
         StartCoroutine(StartRoundSequence());
+    }
+
+    private void FindCombatantsByTag()
+    {
+        // ค้นหาผู้เล่น
+        if (player == null)
+        {
+            GameObject pObj = GameObject.FindWithTag("Fighter_Player");
+            if (pObj != null) player = pObj.GetComponent<FightingController>();
+        }
+
+        // ค้นหาคู่ต่อสู้
+        if (opponent == null)
+        {
+            GameObject oObj = GameObject.FindWithTag("Opponent");
+            if (oObj == null) oObj = GameObject.FindWithTag("EditorOnly");
+            
+            if (oObj != null) opponent = oObj.GetComponent<OpponentAI>();
+        }
+
+        if (player == null || opponent == null)
+        {
+            Debug.LogWarning("RoundManager: ยังหาตัวละครไม่ครบ! อย่าลืมเช็ค Tag 'Fighter_Player' และ 'Opponent' นะครับ");
+        }
     }
 
     void Update()
@@ -99,6 +126,11 @@ public class RoundManager : MonoBehaviour
     {
         isEndingRound = false;
         isRoundActive = false;
+
+        // พยายามหาตัวละครอีกครั้ง เผื่อกรณีที่ตัวละครเพิ่งสปอว์นออกมาหลังเลือกตัว
+        FindCombatantsByTag();
+        CacheInitialPositions(); // อัปเดตจุดเกิดใหม่ให้ตรงกับตัวละครปัจจุบัน
+
         SetCombatantsLocked(true);
         ResetCombatants();
 
@@ -218,18 +250,27 @@ public class RoundManager : MonoBehaviour
         }
     }
 
+    private bool hasCachedPlayer = false;
+    private bool hasCachedOpponent = false;
+
     private void CacheInitialPositions()
     {
-        if (player != null)
+        // จำตำแหน่งผู้เล่น (จำแค่ครั้งแรกที่เจอตัว)
+        if (player != null && !hasCachedPlayer)
         {
             playerInitialPosition = player.transform.position;
             playerInitialRotation = player.transform.rotation;
+            hasCachedPlayer = true;
+            Debug.Log("RoundManager: จำจุดเกิดผู้เล่นแล้วที่ " + playerInitialPosition);
         }
 
-        if (opponent != null)
+        // จำตำแหน่งคู่ต่อสู้ (จำแค่ครั้งแรกที่เจอตัว)
+        if (opponent != null && !hasCachedOpponent)
         {
             opponentInitialPosition = opponent.transform.position;
             opponentInitialRotation = opponent.transform.rotation;
+            hasCachedOpponent = true;
+            Debug.Log("RoundManager: จำจุดเกิดคู่ต่อสู้แล้วที่ " + opponentInitialPosition);
         }
     }
 
