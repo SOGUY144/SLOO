@@ -836,7 +836,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7991687699967298552, guid: 7287671b1a313bb4cafa1d2965e389c7, type: 3}
       propertyPath: isMagicVoiceItem
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7991687699967298552, guid: 7287671b1a313bb4cafa1d2965e389c7, type: 3}
       propertyPath: weaponAttackAnimations.Array.size
@@ -1826,6 +1826,10 @@ PrefabInstance:
       propertyPath: opponent
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8891064830507951170, guid: 7e8a1d89ef6426946997f1f1997c1cc8, type: 3}
+      propertyPath: bgmVolume
+      value: 0.244
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2374,6 +2378,42 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Fighter_Player
       objectReference: {fileID: 0}
+    - target: {fileID: 7325162368321097355, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: boomSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6e45a7172bb28cb4a8a52520afbbc53e, type: 3}
+    - target: {fileID: 7325162368321097355, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: fireSound
+      value: 
+      objectReference: {fileID: 8300000, guid: ba164e78f19a68b4ca2b755bce473d92, type: 3}
+    - target: {fileID: 7325162368321097355, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: pushSound
+      value: 
+      objectReference: {fileID: 8300000, guid: ba164e78f19a68b4ca2b755bce473d92, type: 3}
+    - target: {fileID: 7325162368321097355, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: superSound
+      value: 
+      objectReference: {fileID: 8300000, guid: a504c98e717d7c24085ea1df8ec0e261, type: 3}
+    - target: {fileID: 7325162368321097355, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: micSensitivity
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 9033625210654279826, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: attack1Sound
+      value: 
+      objectReference: {fileID: 8300000, guid: 9f7f4ef432cf71248b61f23b2fa8d55b, type: 3}
+    - target: {fileID: 9033625210654279826, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: attack2Sound
+      value: 
+      objectReference: {fileID: 8300000, guid: db51a8ff3c767d048853115e2e3cfd99, type: 3}
+    - target: {fileID: 9033625210654279826, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: attack3Sound
+      value: 
+      objectReference: {fileID: 8300000, guid: e083b710494c5b8459484341af3f1e8f, type: 3}
+    - target: {fileID: 9033625210654279826, guid: 56b10fda975dffc4d924757e27326361, type: 3}
+      propertyPath: attack4Sound
+      value: 
+      objectReference: {fileID: 8300000, guid: e6bef64bc6b3faf4eaf47d1cc4e57464, type: 3}
     - target: {fileID: 9033625210654279826, guid: 56b10fda975dffc4d924757e27326361, type: 3}
       propertyPath: 'opponents.Array.data[0]'
       value: 

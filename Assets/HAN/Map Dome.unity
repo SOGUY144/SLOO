@@ -1665,7 +1665,9 @@ MonoBehaviour:
   weaponAttackAnimations:
   - Attack_Saber1
   - Attack_Saber2
-  weaponAttackSounds: []
+  weaponAttackSounds:
+  - {fileID: 8300000, guid: 8344e1759afad8941811cabede6caf2c, type: 3}
+  - {fileID: 8300000, guid: 8344e1759afad8941811cabede6caf2c, type: 3}
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
 --- !u!4 &62723738
@@ -3171,12 +3173,56 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2054899247596948172, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
+      propertyPath: attack1Sound
+      value: 
+      objectReference: {fileID: 8300000, guid: 9f7f4ef432cf71248b61f23b2fa8d55b, type: 3}
+    - target: {fileID: 2054899247596948172, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
+      propertyPath: attack2Sound
+      value: 
+      objectReference: {fileID: 8300000, guid: db51a8ff3c767d048853115e2e3cfd99, type: 3}
+    - target: {fileID: 2054899247596948172, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
+      propertyPath: attack3Sound
+      value: 
+      objectReference: {fileID: 8300000, guid: e083b710494c5b8459484341af3f1e8f, type: 3}
+    - target: {fileID: 2054899247596948172, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
+      propertyPath: attack4Sound
+      value: 
+      objectReference: {fileID: 8300000, guid: e6bef64bc6b3faf4eaf47d1cc4e57464, type: 3}
+    - target: {fileID: 2054899247596948172, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
       propertyPath: 'opponents.Array.data[0]'
       value: 
       objectReference: {fileID: 1475836431}
+    - target: {fileID: 2529008734952882312, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
+      propertyPath: boomSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6e45a7172bb28cb4a8a52520afbbc53e, type: 3}
+    - target: {fileID: 2529008734952882312, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
+      propertyPath: fireSound
+      value: 
+      objectReference: {fileID: 8300000, guid: ba164e78f19a68b4ca2b755bce473d92, type: 3}
+    - target: {fileID: 2529008734952882312, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
+      propertyPath: pushSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 8215344e362c50e4abbc1d3276567d8d, type: 3}
+    - target: {fileID: 2529008734952882312, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
+      propertyPath: boomDamage
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529008734952882312, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
+      propertyPath: fireDamage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529008734952882312, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
+      propertyPath: superSound
+      value: 
+      objectReference: {fileID: 8300000, guid: a504c98e717d7c24085ea1df8ec0e261, type: 3}
     - target: {fileID: 3429500004993012573, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
       propertyPath: m_Name
       value: Character3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3429500004993012573, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4605037239195599161, guid: 9f6df2c869bdf2a409d36f3901d4896b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -17377,6 +17423,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RoundManager
       objectReference: {fileID: 0}
+    - target: {fileID: 8891064830507951170, guid: 7e8a1d89ef6426946997f1f1997c1cc8, type: 3}
+      propertyPath: bgmVolume
+      value: 0.145
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -20396,7 +20446,10 @@ MonoBehaviour:
   - Attack_Sword1
   - Attack_Sword2
   - Attack_Sword3
-  weaponAttackSounds: []
+  weaponAttackSounds:
+  - {fileID: 8300000, guid: c10de78d7d90ec74da8260ecfd46449b, type: 3}
+  - {fileID: 8300000, guid: 1c47e40117075834b8abb46f8e218b72, type: 3}
+  - {fileID: 8300000, guid: 8344e1759afad8941811cabede6caf2c, type: 3}
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
 --- !u!4 &809246470
@@ -26871,7 +26924,10 @@ MonoBehaviour:
   - Attack_Bigsword1
   - Attack_Bigsword2
   - Attack_Bigsword3
-  weaponAttackSounds: []
+  weaponAttackSounds:
+  - {fileID: 8300000, guid: 8be7aa3948e56384f8ed0e5c2e82b666, type: 3}
+  - {fileID: 8300000, guid: 8be7aa3948e56384f8ed0e5c2e82b666, type: 3}
+  - {fileID: 8300000, guid: 8be7aa3948e56384f8ed0e5c2e82b666, type: 3}
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
 --- !u!4 &1094741089
@@ -37861,7 +37917,8 @@ MonoBehaviour:
   weaponAttackAnimations:
   - Attack_Axe1
   - Attack_Axe2
-  weaponAttackSounds: []
+  weaponAttackSounds:
+  - {fileID: 0}
   holdLocalPosition: {x: 0, y: 0, z: 0}
   holdLocalRotation: {x: 0, y: 0, z: 0}
 --- !u!65 &1527065475
@@ -41078,6 +41135,50 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character2
       objectReference: {fileID: 0}
+    - target: {fileID: 2524192441138697526, guid: 022a54df5ba18e54fa2c8716175af476, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2605980512553789997, guid: 022a54df5ba18e54fa2c8716175af476, type: 3}
+      propertyPath: boomSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6e45a7172bb28cb4a8a52520afbbc53e, type: 3}
+    - target: {fileID: 2605980512553789997, guid: 022a54df5ba18e54fa2c8716175af476, type: 3}
+      propertyPath: fireSound
+      value: 
+      objectReference: {fileID: 8300000, guid: ba164e78f19a68b4ca2b755bce473d92, type: 3}
+    - target: {fileID: 2605980512553789997, guid: 022a54df5ba18e54fa2c8716175af476, type: 3}
+      propertyPath: pushSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 8215344e362c50e4abbc1d3276567d8d, type: 3}
+    - target: {fileID: 2605980512553789997, guid: 022a54df5ba18e54fa2c8716175af476, type: 3}
+      propertyPath: boomDamage
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 2605980512553789997, guid: 022a54df5ba18e54fa2c8716175af476, type: 3}
+      propertyPath: fireDamage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2605980512553789997, guid: 022a54df5ba18e54fa2c8716175af476, type: 3}
+      propertyPath: superSound
+      value: 
+      objectReference: {fileID: 8300000, guid: a504c98e717d7c24085ea1df8ec0e261, type: 3}
+    - target: {fileID: 3593557971803531015, guid: 022a54df5ba18e54fa2c8716175af476, type: 3}
+      propertyPath: attack1Sound
+      value: 
+      objectReference: {fileID: 8300000, guid: 9f7f4ef432cf71248b61f23b2fa8d55b, type: 3}
+    - target: {fileID: 3593557971803531015, guid: 022a54df5ba18e54fa2c8716175af476, type: 3}
+      propertyPath: attack2Sound
+      value: 
+      objectReference: {fileID: 8300000, guid: db51a8ff3c767d048853115e2e3cfd99, type: 3}
+    - target: {fileID: 3593557971803531015, guid: 022a54df5ba18e54fa2c8716175af476, type: 3}
+      propertyPath: attack3Sound
+      value: 
+      objectReference: {fileID: 8300000, guid: e083b710494c5b8459484341af3f1e8f, type: 3}
+    - target: {fileID: 3593557971803531015, guid: 022a54df5ba18e54fa2c8716175af476, type: 3}
+      propertyPath: attack4Sound
+      value: 
+      objectReference: {fileID: 8300000, guid: e6bef64bc6b3faf4eaf47d1cc4e57464, type: 3}
     - target: {fileID: 3593557971803531015, guid: 022a54df5ba18e54fa2c8716175af476, type: 3}
       propertyPath: 'opponents.Array.data[0]'
       value: 
@@ -82031,16 +82132,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillRadius: 15
   skillCooldown: 1
-  fireDamage: 15
+  fireDamage: 9
   pushDamage: 10
-  boomDamage: 25
+  boomDamage: 19
   fireEffect: {fileID: 198706150799401992, guid: a990e3ac1318b834488c784d851f42a9, type: 3}
   pushEffect: {fileID: 198856239026640498, guid: 9bba9cf244c53c5439505dfc96fdd11c, type: 3}
   boomEffect: {fileID: 198917022394846920, guid: e1b08032bec16ba4eb1ae23cbd572664, type: 3}
-  fireSound: {fileID: 0}
-  pushSound: {fileID: 0}
-  boomSound: {fileID: 0}
-  superSound: {fileID: 0}
+  fireSound: {fileID: 8300000, guid: ba164e78f19a68b4ca2b755bce473d92, type: 3}
+  pushSound: {fileID: 8300000, guid: 8215344e362c50e4abbc1d3276567d8d, type: 3}
+  boomSound: {fileID: 8300000, guid: 6e45a7172bb28cb4a8a52520afbbc53e, type: 3}
+  superSound: {fileID: 8300000, guid: a504c98e717d7c24085ea1df8ec0e261, type: 3}
   micUIPanel: {fileID: 0}
   micStatusText: {fileID: 0}
   micSensitivity: 1
@@ -96630,6 +96731,10 @@ MonoBehaviour:
   attack2Effect: {fileID: 4832020969339330319}
   attack3Effect: {fileID: 4152505364263206952}
   attack4Effect: {fileID: 3692282534477293377}
+  attack1Sound: {fileID: 8300000, guid: 9f7f4ef432cf71248b61f23b2fa8d55b, type: 3}
+  attack2Sound: {fileID: 8300000, guid: db51a8ff3c767d048853115e2e3cfd99, type: 3}
+  attack3Sound: {fileID: 8300000, guid: e083b710494c5b8459484341af3f1e8f, type: 3}
+  attack4Sound: {fileID: 8300000, guid: e6bef64bc6b3faf4eaf47d1cc4e57464, type: 3}
   hitSounds:
   - {fileID: 8300000, guid: e136207ca8b33ac41a9cff2f9b7a0644, type: 3}
   - {fileID: 8300000, guid: e8e0611b255ee454b96fc58233b45fe6, type: 3}
