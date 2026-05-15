@@ -15,9 +15,6 @@ public class ResultManager : MonoBehaviour
     [Header("UI Transition (Optional)")]
     public Image dissolveOverlay;
     public float dissolveDuration = 1.5f;
-    public string dissolvePropertyName = "_DissolveAmount";
-    public float startValue = 0f;
-    public float endValue = 1f;
 
     [Header("Auto-Generation Settings")]
     public bool createPanelIfMissing = true;
@@ -40,7 +37,7 @@ public class ResultManager : MonoBehaviour
 
         if (restartButton != null)
             restartButton.onClick.AddListener(RestartMatch);
-            
+
         if (mainMenuButton != null)
             mainMenuButton.onClick.AddListener(LoadMainMenu);
 
@@ -83,40 +80,48 @@ public class ResultManager : MonoBehaviour
         if (dissolveOverlay != null)
         {
             dissolveOverlay.gameObject.SetActive(true);
+
             Color c = dissolveOverlay.color;
 
-            // --- 1. ค่อยๆ มืดลง (Fade TO Black) ---
             float elapsed = 0;
-            while (elapsed < dissolveDuration * 0.5f) // ใช้เวลาครึ่งแรก
+
+            // Fade To Black
+            while (elapsed < dissolveDuration * 0.5f)
             {
                 elapsed += Time.unscaledDeltaTime;
+
                 c.a = Mathf.Clamp01(elapsed / (dissolveDuration * 0.5f));
+
                 dissolveOverlay.color = c;
+
                 yield return null;
             }
+
             c.a = 1f;
             dissolveOverlay.color = c;
 
-            // --- 2. จังหวะที่จอมืดสนิท ให้เปิดหน้าต่างสรุปผลขึ้นมา ---
+            // เปิด Result Panel
             if (resultPanel != null)
                 resultPanel.SetActive(true);
 
-            // --- 3. ค่อยๆ สว่างกลับมา (Fade FROM Black) ---
+            // Fade From Black
             elapsed = 0;
-            while (elapsed < dissolveDuration * 0.5f) // ใช้เวลาครึ่งหลัง
+
+            while (elapsed < dissolveDuration * 0.5f)
             {
                 elapsed += Time.unscaledDeltaTime;
+
                 c.a = Mathf.Clamp01(1f - (elapsed / (dissolveDuration * 0.5f)));
+
                 dissolveOverlay.color = c;
+
                 yield return null;
             }
-            
-            // ปิด Overlay ไปเลยเมื่อสว่างแล้ว
+
             dissolveOverlay.gameObject.SetActive(false);
         }
         else
         {
-            // ถ้าไม่มี Overlay ก็แค่เปิด Panel เลย
             if (resultPanel != null)
                 resultPanel.SetActive(true);
         }
@@ -129,80 +134,136 @@ public class ResultManager : MonoBehaviour
     public void RestartMatch()
     {
         Time.timeScale = 1f;
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void LoadMainMenu()
     {
+        // คืนเวลาเกม
         Time.timeScale = 1f;
+
+        // ปลดล็อกเมาส์
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
+        // ปิด Result Panel
+        if (resultPanel != null)
+            resultPanel.SetActive(false);
+
+        // ปิด Overlay
+        if (dissolveOverlay != null)
+            dissolveOverlay.gameObject.SetActive(false);
+
+        // ลบ Canvas ที่สร้าง runtime
+        Canvas runtimeCanvas = null;
+
+        if (resultPanel != null)
+        {
+            runtimeCanvas = resultPanel.GetComponentInParent<Canvas>();
+        }
+
+        if (runtimeCanvas != null)
+        {
+            Destroy(runtimeCanvas.gameObject);
+        }
+
+        // รีเซ็ตสถานะ
+        isResultActive = false;
+
+        // โหลด Main Menu
         SceneManager.LoadScene(mainMenuSceneName);
     }
 
     private void CreateResultPanel()
     {
-        // ตรวจสอบว่ามี EventSystem หรือไม่ (ถ้าไม่มีจะคลิกปุ่มไม่ได้)
+        // ตรวจสอบ EventSystem
         if (FindObjectOfType<UnityEngine.EventSystems.EventSystem>() == null)
         {
             GameObject esObj = new GameObject("EventSystem");
+
             esObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
             esObj.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
         }
 
-        // --- สร้าง Canvas ใหม่แยกเฉพาะสำหรับ Result Panel เพื่อป้องกันบั๊กคลิกไม่ได้ ---
+        // สร้าง Canvas
         GameObject canvasObject = new GameObject("Result_Canvas");
+
         Canvas canvas = canvasObject.AddComponent<Canvas>();
+
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 100; // ให้อยู่บนสุดเสมอ จะได้ไม่โดน UI อื่นบัง
+        canvas.sortingOrder = 100;
 
         CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
+
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920, 1080);
         scaler.matchWidthOrHeight = 0.5f;
+
         canvasObject.AddComponent<GraphicRaycaster>();
 
+        // Result Panel
         resultPanel = new GameObject("Auto_ResultPanel", typeof(RectTransform));
+
         resultPanel.transform.SetParent(canvas.transform, false);
+
         Image panelImage = resultPanel.AddComponent<Image>();
+
         panelImage.color = new Color(0f, 0f, 0f, 0.78f);
 
         RectTransform panelRect = resultPanel.GetComponent<RectTransform>();
+
         panelRect.anchorMin = Vector2.zero;
         panelRect.anchorMax = Vector2.one;
         panelRect.offsetMin = Vector2.zero;
         panelRect.offsetMax = Vector2.zero;
 
+        // Result Text
         GameObject textObject = new GameObject("ResultText", typeof(RectTransform));
+
         textObject.transform.SetParent(resultPanel.transform, false);
+
         resultText = textObject.AddComponent<TextMeshProUGUI>();
+
         resultText.fontSize = 96;
         resultText.fontStyle = FontStyles.Bold;
         resultText.color = Color.white;
         resultText.alignment = TextAlignmentOptions.Center;
 
         RectTransform textRect = textObject.GetComponent<RectTransform>();
+
         textRect.anchorMin = new Vector2(0f, 0.5f);
         textRect.anchorMax = new Vector2(1f, 0.5f);
         textRect.pivot = new Vector2(0.5f, 0.5f);
         textRect.anchoredPosition = new Vector2(0f, 80f);
         textRect.sizeDelta = new Vector2(0f, 140f);
 
+        // Buttons
         CreateButton("RestartButton", "RESTART", new Vector2(-150f, -80f), RestartMatch);
+
         CreateButton("MainMenuButton", "MAIN MENU", new Vector2(150f, -80f), LoadMainMenu);
     }
 
     private void CreateButton(string objectName, string label, Vector2 position, UnityEngine.Events.UnityAction onClick)
     {
         GameObject buttonObject = new GameObject(objectName, typeof(RectTransform));
+
         buttonObject.transform.SetParent(resultPanel.transform, false);
 
         Image buttonImage = buttonObject.AddComponent<Image>();
+
         buttonImage.color = new Color(0.12f, 0.12f, 0.12f, 0.95f);
 
         Button button = buttonObject.AddComponent<Button>();
+
         button.targetGraphic = buttonImage;
         button.onClick.AddListener(onClick);
 
         RectTransform buttonRect = buttonObject.GetComponent<RectTransform>();
+
         buttonRect.anchorMin = new Vector2(0.5f, 0.5f);
         buttonRect.anchorMax = new Vector2(0.5f, 0.5f);
         buttonRect.pivot = new Vector2(0.5f, 0.5f);
@@ -210,8 +271,11 @@ public class ResultManager : MonoBehaviour
         buttonRect.sizeDelta = new Vector2(240f, 64f);
 
         GameObject labelObject = new GameObject("Text", typeof(RectTransform));
+
         labelObject.transform.SetParent(buttonObject.transform, false);
+
         TextMeshProUGUI buttonText = labelObject.AddComponent<TextMeshProUGUI>();
+
         buttonText.fontSize = 28;
         buttonText.fontStyle = FontStyles.Bold;
         buttonText.color = Color.white;
@@ -219,6 +283,7 @@ public class ResultManager : MonoBehaviour
         buttonText.text = label;
 
         RectTransform labelRect = labelObject.GetComponent<RectTransform>();
+
         labelRect.anchorMin = Vector2.zero;
         labelRect.anchorMax = Vector2.one;
         labelRect.offsetMin = Vector2.zero;

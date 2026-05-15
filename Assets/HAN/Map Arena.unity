@@ -1092,6 +1092,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1658431305021752454, guid: 75fa0a7b37899c643a843cd4402a7adc, type: 3}
+      propertyPath: resultText
+      value: 
+      objectReference: {fileID: 8816513259321324091}
+    - target: {fileID: 1658431305021752454, guid: 75fa0a7b37899c643a843cd4402a7adc, type: 3}
       propertyPath: resultPanel
       value: 
       objectReference: {fileID: 2808887305836125638}
@@ -48760,63 +48764,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6448171805470960658, guid: 6a9598db077c94d458cb31ba09a02fbd, type: 3}
   m_PrefabInstance: {fileID: 883685194}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &884181083
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 635148635971457349, guid: 78fc7889c4649b94b98168569c3f3a3b, type: 3}
-      propertyPath: m_Name
-      value: Tekken Health Bar Builder
-      objectReference: {fileID: 0}
-    - target: {fileID: 6700447913398757489, guid: 78fc7889c4649b94b98168569c3f3a3b, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 2.7855792
-      objectReference: {fileID: 0}
-    - target: {fileID: 6700447913398757489, guid: 78fc7889c4649b94b98168569c3f3a3b, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -2.0900006
-      objectReference: {fileID: 0}
-    - target: {fileID: 6700447913398757489, guid: 78fc7889c4649b94b98168569c3f3a3b, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 5.2432117
-      objectReference: {fileID: 0}
-    - target: {fileID: 6700447913398757489, guid: 78fc7889c4649b94b98168569c3f3a3b, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6700447913398757489, guid: 78fc7889c4649b94b98168569c3f3a3b, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6700447913398757489, guid: 78fc7889c4649b94b98168569c3f3a3b, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6700447913398757489, guid: 78fc7889c4649b94b98168569c3f3a3b, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6700447913398757489, guid: 78fc7889c4649b94b98168569c3f3a3b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6700447913398757489, guid: 78fc7889c4649b94b98168569c3f3a3b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6700447913398757489, guid: 78fc7889c4649b94b98168569c3f3a3b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 78fc7889c4649b94b98168569c3f3a3b, type: 3}
 --- !u!1001 &885007027
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -96658,6 +96605,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 2196165600455473012, guid: 021c1f338394904488cf959e23855ffd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8244024524138583807, guid: 021c1f338394904488cf959e23855ffd, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -96700,7 +96651,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8244024524138583807, guid: 021c1f338394904488cf959e23855ffd, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -7.8102365
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8244024524138583807, guid: 021c1f338394904488cf959e23855ffd, type: 3}
       propertyPath: m_LocalRotation.w
@@ -96720,11 +96671,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8244024524138583807, guid: 021c1f338394904488cf959e23855ffd, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 3.0497546
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8244024524138583807, guid: 021c1f338394904488cf959e23855ffd, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -2.0982256
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8244024524138583807, guid: 021c1f338394904488cf959e23855ffd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -141259,6 +141210,24 @@ GameObject:
   - component: {fileID: 8424740645269805316}
   m_Layer: 0
   m_Name: RigModels_KH3Riku
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &635148635223660830
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6700447912667668522}
+  - component: {fileID: 9114507656636252037}
+  - component: {fileID: 9114507656636252036}
+  m_Layer: 0
+  m_Name: Tekken Health Bar Builder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -285859,6 +285828,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &6700447912667668522
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635148635223660830}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.7855792, y: -2.0900006, z: 5.2432117}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6731405246373836456
 GameObject:
   m_ObjectHideFlags: 0
@@ -359227,6 +359211,60 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &9114507656636252036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635148635223660830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6af5246019bf533439b2286844720fe6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetCanvas: {fileID: 0}
+  playerLabel: PLAYER 1
+  playerName: PLAYER 2
+  playerHealthFill: {fileID: 0}
+  opponentLabel: CPU
+  opponentName: CHUN-LI
+  opponentHealthFill: {fileID: 0}
+  topOffset: 32
+  sidePadding: 28
+  centerGap: 160
+  barHeight: 18
+  barWidth: 640
+  meterWidth: 220
+  meterHeight: 8
+  frameColor: {r: 0.78, g: 0.86, b: 0.9, a: 1}
+  frameShadowColor: {r: 0.08, g: 0.12, b: 0.12, a: 0.75}
+  healthColor: {r: 0.05, g: 0.78, b: 0.12, a: 1}
+  healthHighlightColor: {r: 1, g: 1, b: 1, a: 0.65}
+  emptyColor: {r: 0.18, g: 0.2, b: 0.22, a: 0.95}
+  meterColor: {r: 0.45, g: 0.72, b: 0.78, a: 0.85}
+  roundDotCount: 2
+  roundDotOnColor: {r: 1, g: 1, b: 1, a: 1}
+  roundDotOffColor: {r: 0.15, g: 0.16, b: 0.16, a: 1}
+  roundDotFrameColor: {r: 0.78, g: 0.86, b: 0.9, a: 1}
+  roundDotSize: 12
+  roundDotSpacing: 18
+  buildOnStart: 1
+  clearOldGeneratedUI: 1
+  autoConnectToHUDController: 1
+  showCenterPlate: 0
+--- !u!114 &9114507656636252037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635148635223660830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7abe46e085d80cc4894bf4315efc78dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &9117550302679498757
 Transform:
   m_ObjectHideFlags: 0
@@ -359479,7 +359517,7 @@ SceneRoots:
   - {fileID: 682473558}
   - {fileID: 7604563}
   - {fileID: 2090425286}
-  - {fileID: 884181083}
+  - {fileID: 6700447912667668522}
   - {fileID: 1148396749}
   - {fileID: 1390654607}
   - {fileID: 5303442795435180339}

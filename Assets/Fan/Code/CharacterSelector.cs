@@ -41,6 +41,8 @@ public class CharacterSelector : MonoBehaviour
     {
         _currentIndex = 0;
         _previousIndex = -1;
+
+        // รีเซ็ตสถานะ transition ทุกครั้ง
         _isTransitioning = false;
 
         if (_outlines != null)
@@ -178,6 +180,9 @@ public class CharacterSelector : MonoBehaviour
 
     private void ConfirmSelection()
     {
+        // กัน Time.timeScale ค้างจาก ResultManager
+        Time.timeScale = 1f;
+
         GameData.Instance.selectedCharacterIndex = _currentIndex;
 
         int mapIndex = GameData.Instance.selectedMapIndex;
