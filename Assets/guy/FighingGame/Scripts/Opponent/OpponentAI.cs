@@ -73,50 +73,61 @@ public class OpponentAI : MonoBehaviour
     {
         if (isStunned || isKnockedDown) return;
 
-        for (int i = 0; i < fightingController.Length; i++)
+        // หา Player ที่ Active อยู่จริงๆ
+        Transform activePlayer = null;
+        FightingController activeFightingController = null;
+
+        for (int i = 0; i < players.Length; i++)
         {
-            if (players[i] == null || fightingController[i] == null) continue;
-
-            if (players[i].gameObject.activeSelf && Vector3.Distance(transform.position, players[i].position) <= attackRadius)
+            if (players[i] != null && players[i].gameObject.activeSelf)
             {
-                animator.SetBool("Walking", false);
+                activePlayer = players[i];
+                activeFightingController = fightingController[i];
+                break;
+            }
+        }
 
-                if (Time.time - lastAttackTime > attackCooldown)
+        // ถ้าไม่เจอ Player ที่ Active เลยให้หยุด
+        if (activePlayer == null || activeFightingController == null) return;
+
+        if (Vector3.Distance(transform.position, activePlayer.position) <= attackRadius)
+        {
+            animator.SetBool("Walking", false);
+
+            if (Time.time - lastAttackTime > attackCooldown)
+            {
+                lastAttackTime = Time.time;
+
+                int randomAttackIndex = Random.Range(0, attackAnumations.Length);
+
+                if (!isTakingDamage)
                 {
-                    lastAttackTime = Time.time;
+                    PerformAttack(randomAttackIndex);
 
-                    int randomAttackIndex = Random.Range(0, attackAnumations.Length);
-
-                    if (!isTakingDamage)
+                    if (!activeFightingController.isStunned && !activeFightingController.isInvincible)
                     {
-                        PerformAttack(randomAttackIndex);
+                        int damage = (attackDamages != null && randomAttackIndex < attackDamages.Length) ? attackDamages[randomAttackIndex] : 5;
+                        KnockbackType kbType = (attackKnockbackTypes != null && randomAttackIndex < attackKnockbackTypes.Length) ? attackKnockbackTypes[randomAttackIndex] : KnockbackType.None;
+                        float kbPower = (attackKnockbackPowers != null && randomAttackIndex < attackKnockbackPowers.Length) ? attackKnockbackPowers[randomAttackIndex] : 0f;
+                        Vector3 kbDir = (activePlayer.position - transform.position).normalized;
+                        kbDir.y = 0;
 
-                        if (!fightingController[i].isStunned && !fightingController[i].isInvincible)
-                        {
-                            int damage = (attackDamages != null && randomAttackIndex < attackDamages.Length) ? attackDamages[randomAttackIndex] : 5;
-                            KnockbackType kbType = (attackKnockbackTypes != null && randomAttackIndex < attackKnockbackTypes.Length) ? attackKnockbackTypes[randomAttackIndex] : KnockbackType.None;
-                            float kbPower = (attackKnockbackPowers != null && randomAttackIndex < attackKnockbackPowers.Length) ? attackKnockbackPowers[randomAttackIndex] : 0f;
-                            Vector3 kbDir = (players[i].position - transform.position).normalized;
-                            kbDir.y = 0;
-
-                            fightingController[i].StartCoroutine(fightingController[i].PlayHitDamageAnimation(damage, kbType, kbDir, kbPower));
-                        }
+                        activeFightingController.StartCoroutine(
+                            activeFightingController.PlayHitDamageAnimation(damage, kbType, kbDir, kbPower)
+                        );
                     }
                 }
             }
-            else
-            {
-                if (players[i].gameObject.activeSelf)
-                {
-                    Vector3 direction = (players[i].position - transform.position).normalized;
-                    characterController.Move(direction * movementSpeed * Time.deltaTime);
+        }
+        else
+        {
+            Vector3 direction = (activePlayer.position - transform.position).normalized;
+            characterController.Move(direction * movementSpeed * Time.deltaTime);
 
-                    Quaternion targetRotation = Quaternion.LookRotation(direction);
-                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-                    animator.SetBool("Walking", true);
-                }
-            }
+            animator.SetBool("Walking", true);
         }
     }
 
@@ -188,10 +199,9 @@ public class OpponentAI : MonoBehaviour
         if (HUDController.Instance != null)
         {
             HUDController.Instance.SetOpponentHP(currentHealth, maxHealth);
-            HUDController.Instance.ShowCombo(true, currentHitCount); // Opponent โดนตี = Player ทำคอมโบ
+            HUDController.Instance.ShowCombo(true, currentHitCount);
         }
 
-        // --- แสดง Hit Popup สไตล์ Tekken ---
         if (HitPopupManager.Instance != null)
         {
             HitType type = HitType.Normal;
@@ -261,7 +271,6 @@ public class OpponentAI : MonoBehaviour
         isStunned = true;
         animator.Play("HitDamageAnimation", 0, 0f);
         Debug.Log("Opponent died.");
-        // แจ้ง RoundManager ว่าศัตรูตายแล้ว
         if (RoundManager.Instance != null) RoundManager.Instance.OnOpponentDied();
     }
 
