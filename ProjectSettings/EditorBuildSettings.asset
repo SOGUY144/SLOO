@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Fan/Mainn.unity
     guid: 8ea4ea0e4c351d54c83224b3afb15810
-  - enabled: 1
+  - enabled: 0
     path: Assets/guy/SOmap.unity
     guid: 353bd6dd7273e0c43a46e0ae403634f9
   - enabled: 1
@@ -23,15 +23,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/HAN/Map SJL.unity
     guid: d7ab32958ac2acb4a9f66724c566b23d
-  - enabled: 1
+  - enabled: 0
     path: Assets/HAN/Map Arena.unity
     guid: 29342fb678cca9f4285431d693bced96
-  - enabled: 1
-    path: Assets/HAN/Hard.unity
-    guid: f7d74946da5f554419b7fedf6fc4a657
-  - enabled: 1
-    path: Assets/Fan/SelectHard.unity
-    guid: 1c1f813eb8238454fb3a49a0d1b7be11
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
