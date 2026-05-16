@@ -94,7 +94,10 @@ public class OpponentAI : MonoBehaviour
         {
             animator.SetBool("Walking", false);
 
-            if (Time.time - lastAttackTime > attackCooldown)
+            float currentCooldown = attackCooldown;
+            if (SkyboxExposureIntro.Instance != null && SkyboxExposureIntro.Instance.isNight) currentCooldown *= 0.7f; // กลางคืนตีถี่ขึ้น 30%
+
+            if (Time.time - lastAttackTime > currentCooldown)
             {
                 lastAttackTime = Time.time;
 
@@ -102,11 +105,14 @@ public class OpponentAI : MonoBehaviour
 
                 if (!isTakingDamage)
                 {
-                    PerformAttack(randomAttackIndex);
+                    int damage = (attackDamages != null && randomAttackIndex < attackDamages.Length) ? attackDamages[randomAttackIndex] : 5;
+                    
+                    if (SkyboxExposureIntro.Instance != null && SkyboxExposureIntro.Instance.isNight) damage = (int)(damage * 1.5f); // กลางคืนตีแรง 1.5 เท่า
+
+                    PerformAttack(randomAttackIndex, damage);
 
                     if (!activeFightingController.isStunned && !activeFightingController.isInvincible)
                     {
-                        int damage = (attackDamages != null && randomAttackIndex < attackDamages.Length) ? attackDamages[randomAttackIndex] : 5;
                         KnockbackType kbType = (attackKnockbackTypes != null && randomAttackIndex < attackKnockbackTypes.Length) ? attackKnockbackTypes[randomAttackIndex] : KnockbackType.None;
                         float kbPower = (attackKnockbackPowers != null && randomAttackIndex < attackKnockbackPowers.Length) ? attackKnockbackPowers[randomAttackIndex] : 0f;
                         Vector3 kbDir = (activePlayer.position - transform.position).normalized;
@@ -121,17 +127,26 @@ public class OpponentAI : MonoBehaviour
         }
         else
         {
+            float currentSpeed = movementSpeed;
+            float currentRotSpeed = rotationSpeed;
+            
+            if (SkyboxExposureIntro.Instance != null && SkyboxExposureIntro.Instance.isNight)
+            {
+                currentSpeed *= 1.5f;    // กลางคืนวิ่งไวขึ้น 1.5 เท่า
+                currentRotSpeed *= 1.5f; // หันหน้าไวขึ้น
+            }
+
             Vector3 direction = (activePlayer.position - transform.position).normalized;
-            characterController.Move(direction * movementSpeed * Time.deltaTime);
+            characterController.Move(direction * currentSpeed * Time.deltaTime);
 
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, currentRotSpeed * Time.deltaTime);
 
             animator.SetBool("Walking", true);
         }
     }
 
-    void PerformAttack(int attackIndex)
+    void PerformAttack(int attackIndex, int actualDamage)
     {
         animator.Play(attackAnumations[attackIndex], 0, 0f);
 
@@ -141,8 +156,7 @@ public class OpponentAI : MonoBehaviour
             if (audioSource != null) audioSource.PlayOneShot(attackSounds[soundIndex], sfxVolume);
         }
 
-        int damage = (attackDamages != null && attackIndex < attackDamages.Length) ? attackDamages[attackIndex] : 5;
-        Debug.Log("Performed attack " + (attackIndex + 1) + " dealing " + damage + " damage");
+        Debug.Log("Performed attack " + (attackIndex + 1) + " dealing " + actualDamage + " damage");
     }
 
     void PerformDodgeFront()
