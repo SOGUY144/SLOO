@@ -1,12 +1,26 @@
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 using UnityEngine.Windows.Speech;
+#endif
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 public class VoiceSkillController : MonoBehaviour
 {
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [DllImport("__Internal")] private static extern void InitWebMic();
+    [DllImport("__Internal")] private static extern float GetWebMicVolume();
+    [DllImport("__Internal")] private static extern void StopWebMic();
+    [DllImport("__Internal")] private static extern void InitWebSpeech(string objectName);
+    [DllImport("__Internal")] private static extern void StartWebSpeech();
+    [DllImport("__Internal")] private static extern void StopWebSpeech();
+#endif
+
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
     private KeywordRecognizer keywordRecognizer;
+#endif
     private Dictionary<string, System.Action> actions = new Dictionary<string, System.Action>();
 
     [Header("Voice Magic Settings")]
@@ -87,7 +101,12 @@ public class VoiceSkillController : MonoBehaviour
             CreateComboUIAutomatically();
         }
 
-        // เช็คว่ามีไมค์เสียบอยู่ไหม
+        // เช็คแพลตฟอร์มและเปิดระบบไมค์ตามความเหมาะสม
+#if UNITY_WEBGL && !UNITY_EDITOR
+        Debug.Log("🌐 WebGL Mode: กำลังเชื่อมต่อ Web Speech & Web Audio API...");
+        InitWebMic();
+        InitWebSpeech(gameObject.name); // ส่งชื่อ Object นี้ให้เบราว์เซอร์รู้จัก เพื่อจะได้ส่งคำร่ายเวทย์กลับมาถูกตัว
+#else
         if (Microphone.devices.Length > 0)
         {
             Debug.Log("🎙️ --- ตรวจพบไมโครโฟนในระบบทั้งหมด " + Microphone.devices.Length + " ตัว ---");
@@ -97,26 +116,41 @@ public class VoiceSkillController : MonoBehaviour
         {
             Debug.LogError("❌ ไม่พบไมโครโฟน! รบกวนเช็คสายแจ็ค หรือตั้งค่าใน Windows ครับ");
         }
+#endif
 
         // กำหนดคำศัพท์ที่จะใช้ร่ายเวทย์
         actions.Add("fire", FireSkill);
         actions.Add("push", PushSkill);
         actions.Add("boom", BoomSkill);
 
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
         // สร้าง Recognizer และผูกกับคำที่เราตั้งไว้
         keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray());
         keywordRecognizer.OnPhraseRecognized += RecognizedSpeech;
+#else
+        Debug.LogWarning("KeywordRecognizer is not supported on WebGL. Voice commands will not work.");
+#endif
     }
 
     public void StartListening()
     {
-        if (keywordRecognizer != null && !keywordRecognizer.IsRunning)
+        if (!isListening)
         {
-            keywordRecognizer.Start();
             isListening = true;
             
-            // เริ่มวัดระดับเสียงด้วยไมค์ Default (null)
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            if (keywordRecognizer != null && !keywordRecognizer.IsRunning)
+            {
+                keywordRecognizer.Start();
+            }
+#endif
+            
+            // เริ่มวัดระดับเสียงด้วยไมค์
+#if UNITY_WEBGL && !UNITY_EDITOR
+            StartWebSpeech();
+#else
             micClip = Microphone.Start(null, true, 10, 44100);
+#endif
             
             // เปิด UI ไมโครโฟนและคอมโบ
             if (micUIPanel != null) micUIPanel.SetActive(true);
@@ -129,13 +163,23 @@ public class VoiceSkillController : MonoBehaviour
 
     public void StopListening()
     {
-        if (keywordRecognizer != null && keywordRecognizer.IsRunning)
+        if (isListening)
         {
-            keywordRecognizer.Stop();
             isListening = false;
             
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            if (keywordRecognizer != null && keywordRecognizer.IsRunning)
+            {
+                keywordRecognizer.Stop();
+            }
+#endif
+            
             // หยุดวัดระดับเสียง
+#if UNITY_WEBGL && !UNITY_EDITOR
+            StopWebSpeech();
+#else
             Microphone.End(null);
+#endif
             
             // ปิด UI ไมโครโฟนและคอมโบ
             if (micUIPanel != null) micUIPanel.SetActive(false);
@@ -145,11 +189,36 @@ public class VoiceSkillController : MonoBehaviour
         }
     }
 
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
     private void RecognizedSpeech(PhraseRecognizedEventArgs speech)
+    {
+        TriggerSkill(speech.text);
+    }
+#endif
+
+    // ฟังก์ชันนี้จะถูกเรียกจาก JavaScript (Web Speech API) เมื่อผู้เล่นพูดบนหน้าเว็บ
+    public void OnWebSpeechRecognized(string recognizedText)
+    {
+        if (!isListening) return;
+        Debug.Log("🌐 Web Browser ได้ยินคำว่า: " + recognizedText);
+
+        // เช็คว่าคำพูดมีคำร่ายเวทย์ซ่อนอยู่ไหม (เพราะบางที Google อาจจะจับคำมาเป็นประโยคยาวๆ)
+        foreach (var action in actions)
+        {
+            if (recognizedText.Contains(action.Key))
+            {
+                TriggerSkill(action.Key);
+                return;
+            }
+        }
+    }
+
+    // เปลี่ยนมาใช้ฟังก์ชันนี้แทน เพื่อให้แพลตฟอร์มอื่น(ที่ไม่ใช่ Windows) สามารถใช้ปุ่มกดเพื่อทดสอบแทนเสียงได้
+    private void TriggerSkill(string skillName)
     {
         if (!isListening) return;
 
-        Debug.Log("🗣️ You casted: " + speech.text);
+        Debug.Log("🗣️ You casted: " + skillName);
         
         // เช็ค Cooldown
         if (Time.time - lastSkillTime < skillCooldown)
@@ -160,7 +229,7 @@ public class VoiceSkillController : MonoBehaviour
         }
 
         // เรียกใช้งานสกิลตามคำพูด
-        if (actions.ContainsKey(speech.text))
+        if (actions.ContainsKey(skillName))
         {
             // เช็คว่าตอนที่พูดร่ายเวทย์ มีการตะโกนเสียงดังเกินเพดานหรือไม่
             isShouting = wasShoutingRecently;
@@ -174,30 +243,30 @@ public class VoiceSkillController : MonoBehaviour
                 
                 if (currentSpeedLevel >= 3)
                 {
-                    micStatusText.text = shoutPrefix + "MAX " + speech.text.ToUpper() + "!!!";
+                    micStatusText.text = shoutPrefix + "MAX " + skillName.ToUpper() + "!!!";
                     micStatusText.color = new Color(1f, 0.2f, 0.2f, 1f); // สีแดง
                 }
                 else if (currentSpeedLevel == 2)
                 {
-                    micStatusText.text = shoutPrefix + "DOUBLE " + speech.text.ToUpper() + "!";
+                    micStatusText.text = shoutPrefix + "DOUBLE " + skillName.ToUpper() + "!";
                     micStatusText.color = new Color(1f, 0.8f, 0f, 1f); // สีเหลือง
                 }
                 else
                 {
                     if (isShouting)
                     {
-                        micStatusText.text = "SUPER " + speech.text.ToUpper() + "!!!";
+                        micStatusText.text = "SUPER " + skillName.ToUpper() + "!!!";
                         micStatusText.color = new Color(1f, 0.4f, 0.2f, 1f); // สีส้มแดง
                     }
                     else
                     {
-                        micStatusText.text = "CASTED: " + speech.text.ToUpper();
+                        micStatusText.text = "CASTED: " + skillName.ToUpper();
                         micStatusText.color = new Color(0.5f, 1f, 0.5f, 1f); // สีเขียวปกติ
                     }
                 }
             }
 
-            actions[speech.text].Invoke();
+            actions[skillName].Invoke();
             
             // รีเซ็ตเกจความเร็วและจังหวะหลังร่ายเวทย์เสร็จ (เพื่อให้ผู้เล่นต้องเริ่มรัวใหม่ในครั้งหน้า)
             currentComboPoints = 0;
@@ -208,11 +277,26 @@ public class VoiceSkillController : MonoBehaviour
 
     void Update()
     {
+        // หาก Build ลง WebGL หรือแพลตฟอร์มอื่น จะใช้เสียงพูดไม่ได้ เลยทำปุ่มคีย์บอร์ด 1, 2, 3 ไว้ให้เทสแทนครับ
+#if !UNITY_STANDALONE_WIN && !UNITY_EDITOR_WIN
+        if (isListening)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1)) TriggerSkill("fire");
+            if (Input.GetKeyDown(KeyCode.Alpha2)) TriggerSkill("push");
+            if (Input.GetKeyDown(KeyCode.Alpha3)) TriggerSkill("boom");
+        }
+#endif
+
         if (isListening && volumeSegments != null && volumeSegments.Length > 0)
         {
             // อัปเดตหลอดระดับเสียง
             float volume = GetMicVolume();
             float fillAmount = Mathf.Clamp01(volume * micSensitivity); 
+            
+#if UNITY_WEBGL && !UNITY_EDITOR
+            // บน WebGL ให้กด Spacebar รัวๆ เพื่อจำลองการทำเสียง
+            if (Input.GetKey(KeyCode.Space)) fillAmount = 1.0f;
+#endif
 
             // --- [STEP 1: ระบบสะสมแต้ม (Energy Gauge)] ---
             if (canCountPulse && fillAmount >= pulseThreshold)
@@ -307,13 +391,17 @@ public class VoiceSkillController : MonoBehaviour
 
     private float GetMicVolume()
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // ดึงความดังเสียงจาก Web Audio API ของเบราว์เซอร์
+        return GetWebMicVolume();
+#else
         if (micClip == null) return 0f;
         int sampleWindow = 128;
         float[] waveData = new float[sampleWindow];
         
         // ใช้ null เพื่อดึงความดังจากไมค์ Default ตัวเดียวกับที่ใช้ร่ายเวทย์
         int micPosition = Microphone.GetPosition(null) - (sampleWindow + 1);
-        if (micPosition < 0) return 0;
+        if (micPosition < 0) return 0f;
 
         micClip.GetData(waveData, micPosition);
         float levelMax = 0;
@@ -323,6 +411,7 @@ public class VoiceSkillController : MonoBehaviour
             if (levelMax < wavePeak) levelMax = wavePeak;
         }
         return Mathf.Sqrt(levelMax);
+#endif
     }
 
     // --- สร้าง UI อัตโนมัติด้วย Code ---
@@ -505,10 +594,19 @@ public class VoiceSkillController : MonoBehaviour
             StartCoroutine(ShakeCamera(0.15f, 0.2f)); // กล้องสั่นปกติ
         }
 
-        // 2. ตรวจสอบ "Combo Level" เพื่อหาจำนวนลูกที่ต้องยิง
+        // 2. ตรวจสอบ "Combo Level" เพื่อหาจำนวนลูกที่ต้องยิงและบวกดาเมจซ้อนทับ!
         int projectileCount = 1; // เริ่มต้นยิง 1 ลูก
-        if (currentSpeedLevel == 2) projectileCount = 2; // คอมโบกลาง ยิง 2 ลูก
-        else if (currentSpeedLevel >= 3) projectileCount = 3; // คอมโบเต็ม ยิง 3 ลูก
+        
+        if (currentSpeedLevel == 2) 
+        {
+            projectileCount = 2; // คอมโบกลาง ยิง 2 ลูก
+            finalDamage = (int)(finalDamage * 1.5f); // บัฟดาเมจ Combo LV2
+        }
+        else if (currentSpeedLevel >= 3) 
+        {
+            projectileCount = 3; // คอมโบเต็ม ยิง 3 ลูก
+            finalDamage = (int)(finalDamage * 2.0f); // บัฟดาเมจ Combo LV3 (ถ้าตะโกนมาด้วย จะกลายเป็นดาเมจ x4 ทันที!)
+        }
 
         Collider[] hits = Physics.OverlapSphere(transform.position, skillRadius);
         bool hitSomeone = false;
@@ -611,10 +709,15 @@ public class VoiceSkillController : MonoBehaviour
 
     void OnDestroy()
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        StopWebMic();
+        StopWebSpeech();
+#elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
         if (keywordRecognizer != null)
         {
             keywordRecognizer.Stop();
             keywordRecognizer.Dispose();
         }
+#endif
     }
 }
