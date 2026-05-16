@@ -2396,7 +2396,7 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: a504c98e717d7c24085ea1df8ec0e261, type: 3}
     - target: {fileID: 7325162368321097355, guid: 56b10fda975dffc4d924757e27326361, type: 3}
       propertyPath: micSensitivity
-      value: 20
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9033625210654279826, guid: 56b10fda975dffc4d924757e27326361, type: 3}
       propertyPath: attack1Sound

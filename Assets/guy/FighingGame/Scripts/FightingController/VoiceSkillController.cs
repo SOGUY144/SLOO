@@ -54,12 +54,37 @@ public class VoiceSkillController : MonoBehaviour
     private float peakVolumeTimer = 0f;
     private AudioClip micClip; // เอาไว้อัดเสียงชั่วคราวเพื่อวัดระดับความดัง
 
+    [Header("Speed/Combo Mechanics")]
+    public float pulseThreshold = 0.6f; // ต้องดังแค่ไหนถึงจะนับ 1 จังหวะ
+    public float pulseDropThreshold = 0.2f; // ต้องเบาลงแค่ไหนถึงจะเริ่มนับจังหวะใหม่ได้
+    
+    public int maxComboPoints = 20; // แต้มสะสมสูงสุด
+    public int comboForLevel2 = 8;  // แต้มที่ต้องใช้สำหรับ LV2
+    public int comboForLevel3 = 16; // แต้มที่ต้องใช้สำหรับ LV3
+    public float pointDecayTimer = 3.0f; // หยุดพูดกี่วินาที แต้มถึงจะเริ่มลด (ไม่เหนื่อยแล้ว!)
+    
+    private int currentComboPoints = 0;
+    private float lastPulseTime = 0f;
+    private bool canCountPulse = true;
+    public int currentSpeedLevel { get; private set; } = 1; // 1=Normal, 2=Fast, 3=Max
+
+    // สำหรับ UI คอมโบแยก
+    private GameObject comboUIPanel;
+    private UnityEngine.UI.Text comboStatusText;
+    private UnityEngine.UI.Image[] comboSegments;
+
     void Start()
     {
         // สร้าง UI อัตโนมัติถ้ายังไม่ได้ลากใส่ช่อง
         if (micUIPanel == null || micStatusText == null)
         {
             CreateUIAutomatically();
+        }
+
+        // สร้างหลอดคอมโบซ้อนไว้ด้านบน (แบบไม่ยุ่งกับ UI เดิม)
+        if (comboUIPanel == null)
+        {
+            CreateComboUIAutomatically();
         }
 
         // เช็คว่ามีไมค์เสียบอยู่ไหม
@@ -93,8 +118,9 @@ public class VoiceSkillController : MonoBehaviour
             // เริ่มวัดระดับเสียงด้วยไมค์ Default (null)
             micClip = Microphone.Start(null, true, 10, 44100);
             
-            // เปิด UI ไมโครโฟน
+            // เปิด UI ไมโครโฟนและคอมโบ
             if (micUIPanel != null) micUIPanel.SetActive(true);
+            if (comboUIPanel != null) comboUIPanel.SetActive(true);
             if (micStatusText != null) micStatusText.text = "🎤 พร้อมร่ายเวทย์!";
             
             Debug.Log("🎤 Voice Magic Started! You can now cast spells.");
@@ -111,8 +137,9 @@ public class VoiceSkillController : MonoBehaviour
             // หยุดวัดระดับเสียง
             Microphone.End(null);
             
-            // ปิด UI ไมโครโฟน
+            // ปิด UI ไมโครโฟนและคอมโบ
             if (micUIPanel != null) micUIPanel.SetActive(false);
+            if (comboUIPanel != null) comboUIPanel.SetActive(false);
             
             Debug.Log("🎤 Voice Magic Stopped! (Dropped book)");
         }
@@ -135,29 +162,46 @@ public class VoiceSkillController : MonoBehaviour
         // เรียกใช้งานสกิลตามคำพูด
         if (actions.ContainsKey(speech.text))
         {
-            // เช็คว่าใน 1.5 วินาทีที่ผ่านมา มีจังหวะไหนที่หลอดเสียงทะลุหลอดบ้างไหม
+            // เช็คว่าตอนที่พูดร่ายเวทย์ มีการตะโกนเสียงดังเกินเพดานหรือไม่
             isShouting = wasShoutingRecently;
-
-            // รีเซ็ตเพื่อไม่ให้ร่ายเวทย์ครั้งต่อไปติด Super ฟรีๆ
-            wasShoutingRecently = false;
+            wasShoutingRecently = false; // รีเซ็ตเพื่อไม่ให้ร่ายครั้งหน้าติดไปด้วย
             peakVolumeTimer = 0f;
 
-            // อัปเดต UI ให้รู้ว่าร่ายแบบปกติ หรือแบบตะโกน
+            // อัปเดต UI ให้รู้ว่าร่ายแบบระดับไหนและตะโกนหรือไม่
             if (micStatusText != null) 
             {
-                if (isShouting)
+                string shoutPrefix = isShouting ? "SUPER " : "";
+                
+                if (currentSpeedLevel >= 3)
                 {
-                    micStatusText.text = "SUPER " + speech.text.ToUpper() + "!!!";
-                    micStatusText.color = new Color(1f, 0.4f, 0.2f, 1f); // สีส้มแดง (คริติคอล)
+                    micStatusText.text = shoutPrefix + "MAX " + speech.text.ToUpper() + "!!!";
+                    micStatusText.color = new Color(1f, 0.2f, 0.2f, 1f); // สีแดง
+                }
+                else if (currentSpeedLevel == 2)
+                {
+                    micStatusText.text = shoutPrefix + "DOUBLE " + speech.text.ToUpper() + "!";
+                    micStatusText.color = new Color(1f, 0.8f, 0f, 1f); // สีเหลือง
                 }
                 else
                 {
-                    micStatusText.text = "CASTED: " + speech.text.ToUpper();
-                    micStatusText.color = new Color(0.5f, 1f, 0.5f, 1f); // สีเขียวปกติ
+                    if (isShouting)
+                    {
+                        micStatusText.text = "SUPER " + speech.text.ToUpper() + "!!!";
+                        micStatusText.color = new Color(1f, 0.4f, 0.2f, 1f); // สีส้มแดง
+                    }
+                    else
+                    {
+                        micStatusText.text = "CASTED: " + speech.text.ToUpper();
+                        micStatusText.color = new Color(0.5f, 1f, 0.5f, 1f); // สีเขียวปกติ
+                    }
                 }
             }
 
             actions[speech.text].Invoke();
+            
+            // รีเซ็ตเกจความเร็วและจังหวะหลังร่ายเวทย์เสร็จ (เพื่อให้ผู้เล่นต้องเริ่มรัวใหม่ในครั้งหน้า)
+            currentComboPoints = 0;
+            currentSpeedLevel = 1;
             lastSkillTime = Time.time;
         }
     }
@@ -169,6 +213,36 @@ public class VoiceSkillController : MonoBehaviour
             // อัปเดตหลอดระดับเสียง
             float volume = GetMicVolume();
             float fillAmount = Mathf.Clamp01(volume * micSensitivity); 
+
+            // --- [STEP 1: ระบบสะสมแต้ม (Energy Gauge)] ---
+            if (canCountPulse && fillAmount >= pulseThreshold)
+            {
+                currentComboPoints++;
+                if (currentComboPoints > maxComboPoints) currentComboPoints = maxComboPoints;
+
+                lastPulseTime = Time.time;
+                canCountPulse = false; // ป้องกันนับซ้ำในเสียงลากยาว
+                
+                Debug.Log($"🔋 ชาร์จพลัง! แต้มสะสม: {currentComboPoints}/{maxComboPoints} | ความเร็ว LV.{currentSpeedLevel}");
+            }
+            else if (!canCountPulse && fillAmount <= pulseDropThreshold)
+            {
+                canCountPulse = true; // รีเซ็ตเพื่อรับเสียงกระแทกครั้งต่อไป
+            }
+
+            // ถอยหลังแต้มลงทีละ 1 ถ้าหยุดพูดนานเกิน (เช่น 3 วินาที)
+            if (currentComboPoints > 0 && Time.time - lastPulseTime > pointDecayTimer)
+            {
+                currentComboPoints--;
+                lastPulseTime = Time.time; // รีเซ็ตเพื่อหน่วงเวลาการลดแต้มต่อไป 
+                Debug.Log($"⚠️ พลังลดลงเล็กน้อย! แต้มสะสมเหลือ: {currentComboPoints}");
+            }
+
+            // คำนวณเลเวลความเร็วปัจจุบันจากแต้มสะสม
+            if (currentComboPoints >= comboForLevel3) currentSpeedLevel = 3;
+            else if (currentComboPoints >= comboForLevel2) currentSpeedLevel = 2;
+            else currentSpeedLevel = 1;
+            // -----------------------------------------------------------
 
             // จำไว้ว่าเพิ่งตะโกน (หน่วงเวลาไว้ 1.5 วินาที เพราะกว่าระบบพูดจะจับคำได้ เสียงเรามักจะเงียบไปแล้ว)
             if (fillAmount >= shoutThreshold)
@@ -183,6 +257,11 @@ public class VoiceSkillController : MonoBehaviour
                 if (peakVolumeTimer <= 0) wasShoutingRecently = false;
             }
 
+            // --- [STEP 2: เปลี่ยนสีหลอดตาม Speed Level] ---
+            Color activeColor = new Color(0.2f, 0.9f, 0.2f, 1f); // สีเขียวปกติ (LV 1)
+            if (currentSpeedLevel == 2) activeColor = new Color(1f, 0.8f, 0f, 1f); // สีเหลือง/ส้ม (LV 2)
+            else if (currentSpeedLevel >= 3) activeColor = new Color(1f, 0.2f, 0.2f, 1f); // สีแดงเพลิง (LV 3)
+
             // คำนวณว่าควรจะให้ขีดสว่างกี่ขีด
             int litCount = Mathf.RoundToInt(fillAmount * segmentCount);
 
@@ -190,13 +269,37 @@ public class VoiceSkillController : MonoBehaviour
             {
                 if (i < litCount)
                 {
-                    // ช่องที่สว่าง (สีเขียวสว่างเหมือนเกม)
-                    volumeSegments[i].color = new Color(0.2f, 0.9f, 0.2f, 1f);
+                    // ช่องที่สว่าง (สีเปลี่ยนตามเลเวลความเร็ว)
+                    volumeSegments[i].color = activeColor;
                 }
                 else
                 {
                     // ช่องที่มืด (สีเทาเข้มแบบเห็นชัดๆ)
                     volumeSegments[i].color = new Color(0.2f, 0.2f, 0.2f, 1f);
+                }
+            }
+
+            // --- [อัปเดต UI หลอดคอมโบด้านบน] ---
+            if (comboSegments != null && comboSegments.Length == maxComboPoints)
+            {
+                if (comboStatusText != null)
+                {
+                    if (currentSpeedLevel == 3) comboStatusText.text = "MAX POWER!";
+                    else if (currentSpeedLevel == 2) comboStatusText.text = "LV.2 FAST!";
+                    else comboStatusText.text = "COMBO";
+                    comboStatusText.color = activeColor;
+                }
+
+                for (int i = 0; i < maxComboPoints; i++)
+                {
+                    if (i < currentComboPoints)
+                    {
+                        comboSegments[i].color = activeColor; // สว่างตามสี LV
+                    }
+                    else
+                    {
+                        comboSegments[i].color = new Color(0.1f, 0.1f, 0.1f, 1f); // มืด
+                    }
                 }
             }
         }
@@ -299,6 +402,61 @@ public class VoiceSkillController : MonoBehaviour
         micUIPanel.SetActive(false);
     }
 
+    // --- สร้าง UI หลอดคอมโบแยกต่างหาก (ไม่ยุ่งกับ UI เดิม) ---
+    private void CreateComboUIAutomatically()
+    {
+        Canvas canvas = FindObjectOfType<Canvas>();
+        if (canvas == null) return; 
+
+        comboUIPanel = new GameObject("ComboPanel_AutoUI");
+        comboUIPanel.transform.SetParent(canvas.transform, false);
+        Image comboPanelImg = comboUIPanel.AddComponent<Image>();
+        comboPanelImg.color = new Color(0.1f, 0.1f, 0.1f, 0.8f);
+
+        RectTransform comboRect = comboUIPanel.GetComponent<RectTransform>();
+        comboRect.anchorMin = new Vector2(0, 0);
+        comboRect.anchorMax = new Vector2(0, 0);
+        comboRect.pivot = new Vector2(0, 0);
+        
+        // วางซ้อนด้านบนหลอดไมค์ (หลอดไมค์เดิมอยู่ที่ Y=30 ความสูง=60 ดังนั้นวางคอมโบไว้ที่ Y=100)
+        comboRect.anchoredPosition = new Vector2(30, 100); 
+        comboRect.sizeDelta = new Vector2(550, 40); // ความสูงน้อยกว่าหลอดไมค์
+
+        HorizontalLayoutGroup comboLayout = comboUIPanel.AddComponent<HorizontalLayoutGroup>();
+        comboLayout.childAlignment = TextAnchor.MiddleLeft;
+        comboLayout.childControlHeight = false;
+        comboLayout.childControlWidth = false;
+        comboLayout.spacing = 4; // ลดช่องว่างลงนิดนึง
+        comboLayout.padding = new RectOffset(15, 15, 0, 0);
+
+        // ข้อความ
+        GameObject comboTextObj = new GameObject("ComboText_AutoUI");
+        comboTextObj.transform.SetParent(comboUIPanel.transform, false);
+        comboStatusText = comboTextObj.AddComponent<Text>();
+        comboStatusText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        comboStatusText.fontSize = 16;
+        comboStatusText.color = new Color(1f, 1f, 1f, 1f);
+        comboStatusText.text = "COMBO";
+        comboStatusText.alignment = TextAnchor.MiddleLeft;
+        comboTextObj.GetComponent<RectTransform>().sizeDelta = new Vector2(80, 40); // ลดความกว้างกล่องข้อความลง
+
+        // ช่องคอมโบ 20 ช่อง
+        comboSegments = new Image[maxComboPoints];
+        for (int i = 0; i < maxComboPoints; i++)
+        {
+            GameObject cSegObj = new GameObject("CSeg_" + i);
+            cSegObj.transform.SetParent(comboUIPanel.transform, false);
+            Image cSegImg = cSegObj.AddComponent<Image>();
+            cSegImg.color = new Color(0.1f, 0.1f, 0.1f, 1f);
+            
+            RectTransform cSegRect = cSegObj.GetComponent<RectTransform>();
+            cSegRect.sizeDelta = new Vector2(14, 20); // ลดความกว้างแต่ละช่องลง จะได้ไม่ทะลุกรอบ
+            comboSegments[i] = cSegImg;
+        }
+        
+        comboUIPanel.SetActive(false);
+    }
+
     // --- SKILLS IMPLEMENTATION ---
     private void FireSkill()
     {
@@ -324,36 +482,33 @@ public class VoiceSkillController : MonoBehaviour
             AudioSource.PlayClipAtPoint(skillSound, transform.position);
         }
 
-        // 1. ตรวจสอบว่าเป็นการ "ตะโกน" หรือไม่ ถ้าใช่ให้อัปเกรดสกิล!
         int finalDamage = damage;
         KnockbackType finalKbType = kbType;
         float finalKbPower = kbPower;
         float effectScale = 1f;
 
+        // 1. ตรวจสอบว่า "ตะโกนสุดเสียง" หรือไม่ (เพื่ออัปเกรดความรุนแรงและขนาด)
         if (isShouting)
         {
-            finalDamage = damage * 2;          // ดาเมจแรงขึ้น 2 เท่า
-            effectScale = 2f;                  // เอฟเฟกต์ใหญ่ขึ้น 2 เท่า
-            finalKbPower = kbPower * 1.5f;     // กระเด็นแรงขึ้น 1.5 เท่า
-
-            // เลื่อนขั้นสถานะการกระเด็นให้รุนแรงขึ้น
+            finalDamage = damage * 2;          // ดาเมจ x2
+            effectScale = 2f;                  // ลูกระเบิดใหญ่ขึ้น 2 เท่า
+            finalKbPower = kbPower * 1.5f;     // กระเด็นแรงขึ้น
+            
             if (kbType == KnockbackType.None) finalKbType = KnockbackType.Pushback;
             else if (kbType == KnockbackType.Pushback) finalKbType = KnockbackType.Knockdown;
 
-            // เล่นเสียงโบนัสตอนตะโกน (ถ้ามี)
-            if (superSound != null)
-            {
-                AudioSource.PlayClipAtPoint(superSound, transform.position);
-            }
-
-            // สั่นกล้องรุนแรงขึ้น (0.3 วินาที, ความสั่น 0.8)
-            StartCoroutine(ShakeCamera(0.3f, 0.8f));
+            if (superSound != null) AudioSource.PlayClipAtPoint(superSound, transform.position);
+            StartCoroutine(ShakeCamera(0.4f, 0.8f)); // กล้องสั่นแรง
         }
         else
         {
-            // ร่ายเวทย์ธรรมดาก็ให้กล้องสั่นนิดนึงเพื่อความหนักแน่น (0.15 วินาที, ความสั่น 0.2)
-            StartCoroutine(ShakeCamera(0.15f, 0.2f));
+            StartCoroutine(ShakeCamera(0.15f, 0.2f)); // กล้องสั่นปกติ
         }
+
+        // 2. ตรวจสอบ "Combo Level" เพื่อหาจำนวนลูกที่ต้องยิง
+        int projectileCount = 1; // เริ่มต้นยิง 1 ลูก
+        if (currentSpeedLevel == 2) projectileCount = 2; // คอมโบกลาง ยิง 2 ลูก
+        else if (currentSpeedLevel >= 3) projectileCount = 3; // คอมโบเต็ม ยิง 3 ลูก
 
         Collider[] hits = Physics.OverlapSphere(transform.position, skillRadius);
         bool hitSomeone = false;
@@ -365,10 +520,26 @@ public class VoiceSkillController : MonoBehaviour
             {
                 hitSomeone = true;
                 
-                // 1. สร้างเอฟเฟกต์ระเบิด/แสง ตรงจุดที่ศัตรูยืนอยู่ พร้อมขยายขนาดถ้าตะโกน
-                PlayEffectAtPosition(effectPrefab, hit.transform.position + Vector3.up, effectScale);
+                // สร้างเอฟเฟกต์ตามจำนวน Projectile Count
+                Vector3 targetPos = hit.transform.position + Vector3.up;
+                
+                if (projectileCount == 3)
+                {
+                    PlayEffectAtPosition(effectPrefab, targetPos, effectScale);
+                    PlayEffectAtPosition(effectPrefab, targetPos + transform.right * 2f, effectScale);
+                    PlayEffectAtPosition(effectPrefab, targetPos - transform.right * 2f, effectScale);
+                }
+                else if (projectileCount == 2)
+                {
+                    PlayEffectAtPosition(effectPrefab, targetPos + transform.right * 1.5f, effectScale);
+                    PlayEffectAtPosition(effectPrefab, targetPos - transform.right * 1.5f, effectScale);
+                }
+                else
+                {
+                    PlayEffectAtPosition(effectPrefab, targetPos, effectScale);
+                }
 
-                // 2. คำนวณทิศทางให้กระเด็นออกจากตัว Player
+                // คำนวณทิศทางให้กระเด็นออกจากตัว Player
                 Vector3 dir = (hit.transform.position - transform.position).normalized;
                 dir.y = 0;
                 
@@ -379,8 +550,23 @@ public class VoiceSkillController : MonoBehaviour
         // ถ้าร่ายเวทย์แล้วไม่โดนใครเลย (วืด) ให้แสงไปโผล่ข้างหน้าผู้เล่น
         if (!hitSomeone)
         {
-            Vector3 frontPosition = transform.position + (transform.forward * 2f) + Vector3.up;
-            PlayEffectAtPosition(effectPrefab, frontPosition, effectScale);
+            Vector3 frontPos = transform.position + (transform.forward * 2f) + Vector3.up;
+            
+            if (projectileCount == 3)
+            {
+                PlayEffectAtPosition(effectPrefab, frontPos, effectScale);
+                PlayEffectAtPosition(effectPrefab, frontPos + transform.right * 2f, effectScale);
+                PlayEffectAtPosition(effectPrefab, frontPos - transform.right * 2f, effectScale);
+            }
+            else if (projectileCount == 2)
+            {
+                PlayEffectAtPosition(effectPrefab, frontPos + transform.right * 1.5f, effectScale);
+                PlayEffectAtPosition(effectPrefab, frontPos - transform.right * 1.5f, effectScale);
+            }
+            else
+            {
+                PlayEffectAtPosition(effectPrefab, frontPos, effectScale);
+            }
         }
     }
 
